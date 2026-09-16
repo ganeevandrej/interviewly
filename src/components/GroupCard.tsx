@@ -1,7 +1,9 @@
 'use client';
 
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
-import { Box, IconButton, Stack, Typography } from '@mui/material';
+import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 import Link from 'next/link';
 import { QuestionGroup } from '@/types';
 import { GlassPanel } from './GlassPanel';
@@ -25,8 +27,8 @@ export function GroupCard({ group, count }: GroupCardProps) {
         '&:hover': {
           transform: 'translateY(-3px)',
           borderColor: `${group.accentColor}cc`,
-          boxShadow: `0 22px 70px ${group.accentColor}33`
-        }
+          boxShadow: `0 22px 70px ${group.accentColor}33`,
+        },
       }}
     >
       <Stack direction="row" alignItems="center" gap={2}>
@@ -34,13 +36,13 @@ export function GroupCard({ group, count }: GroupCardProps) {
           sx={{
             width: 52,
             height: 52,
-            borderRadius: 3,
+            borderRadius: '12px',
             display: 'grid',
             placeItems: 'center',
-            color: '#050816',
+            color: 'background.default',
             fontWeight: 900,
             background: group.accentColor,
-            boxShadow: `0 0 34px ${group.accentColor}77`
+            boxShadow: `0 0 34px ${group.accentColor}77`,
           }}
         >
           {group.name.slice(0, 2).toUpperCase()}
@@ -53,9 +55,7 @@ export function GroupCard({ group, count }: GroupCardProps) {
             {count} {count === 1 ? 'вопрос' : 'вопросов'}
           </Typography>
         </Box>
-        <IconButton aria-label={`Открыть ${group.name}`}>
-          <ArrowForwardRoundedIcon />
-        </IconButton>
+        <ArrowForwardRoundedIcon color="primary" aria-hidden="true" />
       </Stack>
     </GlassPanel>
   );

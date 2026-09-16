@@ -1,7 +1,13 @@
 'use client';
 
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack, TextField } from '@mui/material';
-import { useEffect, useState } from 'react';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
+import { useState } from 'react';
 import { Question } from '@/types';
 
 type QuestionDialogProps = {
@@ -11,14 +17,13 @@ type QuestionDialogProps = {
   onSave: (payload: Pick<Question, 'question' | 'answer'>) => void;
 };
 
-export function QuestionDialog({ open, question, onClose, onSave }: QuestionDialogProps) {
-  const [questionText, setQuestionText] = useState('');
-  const [answer, setAnswer] = useState('');
+export function QuestionDialog(props: QuestionDialogProps) {
+  return props.open ? <QuestionDialogForm key={props.question?.id ?? 'new'} {...props} /> : null;
+}
 
-  useEffect(() => {
-    setQuestionText(question?.question ?? '');
-    setAnswer(question?.answer ?? '');
-  }, [question, open]);
+function QuestionDialogForm({ open, question, onClose, onSave }: QuestionDialogProps) {
+  const [questionText, setQuestionText] = useState(question?.question ?? '');
+  const [answer, setAnswer] = useState(question?.answer ?? '');
 
   const handleSave = () => {
     if (!questionText.trim() || !answer.trim()) return;
@@ -39,7 +44,13 @@ export function QuestionDialog({ open, question, onClose, onSave }: QuestionDial
             minRows={3}
             autoFocus
           />
-          <TextField label="Ответ" value={answer} onChange={(event) => setAnswer(event.target.value)} multiline minRows={5} />
+          <TextField
+            label="Ответ"
+            value={answer}
+            onChange={(event) => setAnswer(event.target.value)}
+            multiline
+            minRows={5}
+          />
         </Stack>
       </DialogContent>
       <DialogActions>

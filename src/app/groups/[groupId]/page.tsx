@@ -6,17 +6,15 @@ import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
-import {
-  Box,
-  Button,
-  IconButton,
-  InputAdornment,
-  Menu,
-  MenuItem,
-  Stack,
-  TextField,
-  Typography,
-} from '@mui/material';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import InputAdornment from '@mui/material/InputAdornment';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { MouseEvent, useMemo, useState } from 'react';
@@ -63,8 +61,6 @@ export default function GroupPage() {
   }
 
   const openQuestionMenu = (event: MouseEvent<HTMLElement>, question: Question) => {
-    event.preventDefault();
-    event.stopPropagation();
     setEditingQuestion(question);
     setMenuAnchor(event.currentTarget);
   };
@@ -82,7 +78,12 @@ export default function GroupPage() {
   return (
     <AppShell onCreate={openCreateQuestion}>
       <Stack gap={3}>
-        <Button component={Link} href="/" startIcon={<ArrowBackRoundedIcon />} sx={{ alignSelf: 'start' }}>
+        <Button
+          component={Link}
+          href="/"
+          startIcon={<ArrowBackRoundedIcon />}
+          sx={{ alignSelf: 'start' }}
+        >
           Мои группы
         </Button>
         <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" gap={2}>
@@ -91,11 +92,11 @@ export default function GroupPage() {
               sx={{
                 width: 76,
                 height: 76,
-                borderRadius: 4,
+                borderRadius: '16px',
                 display: 'grid',
                 placeItems: 'center',
                 background: group.accentColor,
-                color: '#050816',
+                color: 'background.default',
                 fontWeight: 900,
                 fontSize: 24,
                 boxShadow: `0 0 42px ${group.accentColor}77`,
@@ -143,16 +144,27 @@ export default function GroupPage() {
           {filteredQuestions.map((question, index) => (
             <GlassPanel
               key={question.id}
-              component={Link}
-              href={`/groups/${group.id}/focus/${question.id}`}
-              sx={{ p: 2, transition: 'transform .2s ease', '&:hover': { transform: 'translateX(3px)' } }}
+              sx={{
+                p: 2,
+                transition: 'transform .2s ease',
+                '&:hover': { transform: 'translateX(3px)' },
+              }}
             >
               <Stack direction="row" alignItems="center" gap={2}>
-                <Typography color="text.secondary" sx={{ width: 34 }}>
-                  {(index + 1).toString().padStart(2, '0')}
-                </Typography>
-                <Typography sx={{ flex: 1 }}>{question.question}</Typography>
-                <IconButton aria-label="Действия" onClick={(event) => openQuestionMenu(event, question)}>
+                <Box
+                  component={Link}
+                  href={`/groups/${group.id}/focus/${question.id}`}
+                  sx={{ display: 'flex', alignItems: 'center', gap: 2, flex: 1, minWidth: 0 }}
+                >
+                  <Typography color="text.secondary" sx={{ width: 34 }}>
+                    {(index + 1).toString().padStart(2, '0')}
+                  </Typography>
+                  <Typography sx={{ flex: 1 }}>{question.question}</Typography>
+                </Box>
+                <IconButton
+                  aria-label="Действия"
+                  onClick={(event) => openQuestionMenu(event, question)}
+                >
                   <MoreHorizRoundedIcon />
                 </IconButton>
               </Stack>

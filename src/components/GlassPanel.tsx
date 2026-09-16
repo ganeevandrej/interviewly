@@ -1,25 +1,26 @@
-﻿'use client';
+'use client';
 
-import { Paper, PaperProps } from '@mui/material';
+import Paper, { PaperProps } from '@mui/material/Paper';
+import { alpha } from '@mui/material/styles';
 import { ElementType } from 'react';
 
-type GlassPanelProps = PaperProps & {
-  component?: ElementType;
-  href?: string;
-};
-
-export function GlassPanel(props: GlassPanelProps) {
+export function GlassPanel<C extends ElementType = 'div'>({
+  sx = [],
+  ...props
+}: PaperProps<C, { component?: C }>) {
   return (
     <Paper
       {...props}
-      sx={{
-        border: '1px solid rgba(148, 163, 184, 0.2)',
-        background: 'linear-gradient(145deg, rgba(15, 23, 42, 0.78), rgba(15, 23, 42, 0.42))',
-        boxShadow: '0 24px 80px rgba(0, 0, 0, 0.34)',
-        backdropFilter: 'blur(18px)',
-        ...props.sx
-      }}
+      sx={[
+        (theme) => ({
+          border: '1px solid',
+          borderColor: 'divider',
+          background: `linear-gradient(145deg, ${alpha(theme.palette.background.paper, 0.78)}, ${alpha(theme.palette.background.paper, 0.42)})`,
+          boxShadow: `0 24px 80px ${alpha(theme.palette.common.black, 0.34)}`,
+          backdropFilter: 'blur(18px)',
+        }),
+        ...(Array.isArray(sx) ? sx : [sx]),
+      ]}
     />
   );
 }
-

@@ -1,19 +1,20 @@
 ﻿import type { Metadata } from 'next';
 import { Providers } from './providers';
-import './globals.css';
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
 
 export const metadata: Metadata = {
   title: 'InterviewPrep',
-  description: 'Pet-project for interview preparation'
+  description: 'Pet-project for interview preparation',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ru">
       <body>
-        <Providers>{children}</Providers>
+        <AppRouterCacheProvider>
+          <Providers>{children}</Providers>
+        </AppRouterCacheProvider>
       </body>
     </html>
   );
 }
-

@@ -2,7 +2,14 @@
 
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
-import { Box, Button, Chip, Grid, InputAdornment, Stack, TextField, Typography } from '@mui/material';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Chip from '@mui/material/Chip';
+import Grid from '@mui/material/Grid';
+import InputAdornment from '@mui/material/InputAdornment';
+import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { AppShell } from '@/components/AppShell';
@@ -40,7 +47,7 @@ export default function HomePage() {
             display: 'grid',
             gridTemplateColumns: { xs: '1fr', md: '1.5fr .8fr' },
             gap: 3,
-            alignItems: 'end'
+            alignItems: 'end',
           }}
         >
           <Box>
@@ -70,10 +77,14 @@ export default function HomePage() {
                 <InputAdornment position="start">
                   <SearchRoundedIcon />
                 </InputAdornment>
-              )
+              ),
             }}
           />
-          <Button variant="contained" startIcon={<AddRoundedIcon />} onClick={() => setGroupDialogOpen(true)}>
+          <Button
+            variant="contained"
+            startIcon={<AddRoundedIcon />}
+            onClick={() => setGroupDialogOpen(true)}
+          >
             Создать группу
           </Button>
         </Stack>
@@ -113,7 +124,9 @@ export default function HomePage() {
                     </GlassPanel>
                   );
                 })}
-                {!questionResults.length && <Typography color="text.secondary">Ничего не найдено.</Typography>}
+                {!questionResults.length && (
+                  <Typography color="text.secondary">Ничего не найдено.</Typography>
+                )}
               </Stack>
             </Box>
           </Stack>
@@ -133,7 +146,11 @@ export default function HomePage() {
         )}
       </Stack>
 
-      <GroupDialog open={groupDialogOpen} onClose={() => setGroupDialogOpen(false)} onSave={createGroup} />
+      <GroupDialog
+        open={groupDialogOpen}
+        onClose={() => setGroupDialogOpen(false)}
+        onSave={createGroup}
+      />
     </AppShell>
   );
 }

@@ -4,7 +4,12 @@ import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 import ArrowOutwardRoundedIcon from '@mui/icons-material/ArrowOutwardRounded';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
-import { Box, Button, IconButton, LinearProgress, Stack, Typography } from '@mui/material';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import LinearProgress from '@mui/material/LinearProgress';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
@@ -14,16 +19,26 @@ import { useInterviewlyStore } from '@/store/useInterviewlyStore';
 
 export default function FocusPage() {
   const params = useParams<{ groupId: string; questionId: string }>();
+  return (
+    <FocusQuestion
+      key={params.groupId + '/' + params.questionId}
+      groupId={params.groupId}
+      questionId={params.questionId}
+    />
+  );
+}
+
+function FocusQuestion({ groupId, questionId }: { groupId: string; questionId: string }) {
   const router = useRouter();
   const store = useInterviewlyStore();
   const [flipped, setFlipped] = useState(false);
   const [editing, setEditing] = useState(false);
-  const group = store.groups.find((item) => item.id === params.groupId);
+  const group = store.groups.find((item) => item.id === groupId);
   const questions = useMemo(
-    () => store.questions.filter((question) => question.groupId === params.groupId),
-    [params.groupId, store.questions],
+    () => store.questions.filter((question) => question.groupId === groupId),
+    [groupId, store.questions],
   );
-  const currentIndex = questions.findIndex((question) => question.id === params.questionId);
+  const currentIndex = questions.findIndex((question) => question.id === questionId);
   const current = questions[currentIndex];
 
   if (!group || !current) {
@@ -42,7 +57,6 @@ export default function FocusPage() {
   const goToQuestion = (index: number) => {
     const next = questions[index];
     if (!next) return;
-    setFlipped(false);
     router.push(`/groups/${group.id}/focus/${next.id}`);
   };
 
@@ -53,13 +67,17 @@ export default function FocusPage() {
         display: 'grid',
         placeItems: 'center',
         px: 2,
-        py: 3
+        py: 3,
       }}
     >
       <Box sx={{ width: 'min(940px, 100%)' }}>
         <Stack gap={3}>
           <Stack direction="row" justifyContent="space-between" alignItems="center" gap={2}>
-            <Button component={Link} href={`/groups/${group.id}`} startIcon={<ArrowBackRoundedIcon />}>
+            <Button
+              component={Link}
+              href={`/groups/${group.id}`}
+              startIcon={<ArrowBackRoundedIcon />}
+            >
               Выйти
             </Button>
             <Stack alignItems="center">
@@ -88,12 +106,16 @@ export default function FocusPage() {
                 transformStyle: 'preserve-3d',
                 transition: 'transform .65s cubic-bezier(.2,.7,.2,1)',
                 transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-                cursor: 'pointer'
+                cursor: 'pointer',
               }}
             >
               {[
-                { title: current.question, hint: 'Нажмите, чтобы показать ответ', rotate: 'rotateY(0deg)' },
-                { title: current.answer, hint: 'Ответ', rotate: 'rotateY(180deg)' }
+                {
+                  title: current.question,
+                  hint: 'Нажмите, чтобы показать ответ',
+                  rotate: 'rotateY(0deg)',
+                },
+                { title: current.answer, hint: 'Ответ', rotate: 'rotateY(180deg)' },
               ].map((side) => (
                 <GlassPanel
                   key={side.rotate}
@@ -108,7 +130,7 @@ export default function FocusPage() {
                     overflow: 'hidden',
                     display: 'flex',
                     flexDirection: 'column',
-                    justifyContent: 'center'
+                    justifyContent: 'center',
                   }}
                 >
                   <Typography color="text.secondary" sx={{ mb: 2 }}>
@@ -121,7 +143,7 @@ export default function FocusPage() {
                       overflow: 'auto',
                       maxHeight: '100%',
                       lineHeight: 1.6,
-                      pr: 1
+                      pr: 1,
                     }}
                   >
                     {side.title}
@@ -132,10 +154,18 @@ export default function FocusPage() {
           </Box>
 
           <Stack direction="row" justifyContent="space-between" alignItems="center">
-            <IconButton disabled={currentIndex === 0} onClick={() => goToQuestion(currentIndex - 1)} aria-label="Предыдущий">
+            <IconButton
+              disabled={currentIndex === 0}
+              onClick={() => goToQuestion(currentIndex - 1)}
+              aria-label="Предыдущий"
+            >
               <ArrowBackRoundedIcon />
             </IconButton>
-            <Button component={Link} href={`/groups/${group.id}`} endIcon={<ArrowOutwardRoundedIcon />}>
+            <Button
+              component={Link}
+              href={`/groups/${group.id}`}
+              endIcon={<ArrowOutwardRoundedIcon />}
+            >
               К группе
             </Button>
             <IconButton
