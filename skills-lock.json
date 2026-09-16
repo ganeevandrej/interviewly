@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "skills": {
+    "manage-server-data/adopt-rtk-query": {
+      "source": "reduxjs/redux-toolkit",
+      "sourceType": "github",
+      "skillPath": "packages/toolkit/skills/manage-server-data/adopt-rtk-query/SKILL.md",
+      "computedHash": "b55d687e07fcfa3e6e0ee6740d39b6371f9753f8ac89d12167e5daa14c121f63"
+    },
+    "material-ui-nextjs": {
+      "source": "mui/material-ui",
+      "sourceType": "github",
+      "skillPath": "skills/material-ui-nextjs/SKILL.md",
+      "computedHash": "c304c084df2b50efd47e2557209f87f2da6ffe4ec0c43fecf0b9096fe77ed7a0"
+    },
+    "material-ui-styling": {
+      "source": "mui/material-ui",
+      "sourceType": "github",
+      "skillPath": "skills/material-ui-styling/SKILL.md",
+      "computedHash": "3aee2bcb4c2ea1fcba3d97f7e43a3208bfc0d477f494d06dad22c1ec25c33ac3"
+    },
+    "material-ui-theming": {
+      "source": "mui/material-ui",
+      "sourceType": "github",
+      "skillPath": "skills/material-ui-theming/SKILL.md",
+      "computedHash": "06f09d0152bf43a8f64d170a67418e7f33ac265bc995e2fed47adb5bcc979a54"
+    },
+    "model-redux-state/build-slices-and-selectors": {
+      "source": "reduxjs/redux-toolkit",
+      "sourceType": "github",
+      "skillPath": "packages/toolkit/skills/model-redux-state/build-slices-and-selectors/SKILL.md",
+      "computedHash": "95084920357bcff68b049b2227d18cd04e1f1c1da70af498119abb83e6e9716c"
+    },
+    "vercel-composition-patterns": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/composition-patterns/SKILL.md",
+      "computedHash": "10eb4ec94577b79ae98c63ce3e7f35f8a6a06436a4011bff083b397de6960eeb"
+    },
+    "vercel-react-best-practices": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/react-best-practices/SKILL.md",
+      "computedHash": "6b526d013e28073246a36f99b529bc43745d30832ecfa8217b359c34f260ca6b"
+    }
+  }
+}

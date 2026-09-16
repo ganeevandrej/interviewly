@@ -1,0 +1,209 @@
+﻿'use client';
+
+import AddRoundedIcon from '@mui/icons-material/AddRounded';
+import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
+import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
+import EditRoundedIcon from '@mui/icons-material/EditRounded';
+import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
+import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
+import {
+  Box,
+  Button,
+  IconButton,
+  InputAdornment,
+  Menu,
+  MenuItem,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material';
+import Link from 'next/link';
+import { useParams, useRouter } from 'next/navigation';
+import { MouseEvent, useMemo, useState } from 'react';
+import { AppShell } from '@/components/AppShell';
+import { GlassPanel } from '@/components/GlassPanel';
+import { GroupDialog } from '@/components/GroupDialog';
+import { QuestionDialog } from '@/components/QuestionDialog';
+import { useInterviewlyStore } from '@/store/useInterviewlyStore';
+import { Question } from '@/types';
+
+export default function GroupPage() {
+  const params = useParams<{ groupId: string }>();
+  const router = useRouter();
+  const store = useInterviewlyStore();
+  const group = store.groups.find((item) => item.id === params.groupId);
+  const [query, setQuery] = useState('');
+  const [groupDialogOpen, setGroupDialogOpen] = useState(false);
+  const [questionDialogOpen, setQuestionDialogOpen] = useState(false);
+  const [editingQuestion, setEditingQuestion] = useState<Question | undefined>();
+  const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null);
+
+  const groupQuestions = useMemo(
+    () => store.questions.filter((question) => question.groupId === params.groupId),
+    [params.groupId, store.questions],
+  );
+  const filteredQuestions = useMemo(() => {
+    const normalized = query.trim().toLowerCase();
+    return normalized
+      ? groupQuestions.filter((question) => question.question.toLowerCase().includes(normalized))
+      : groupQuestions;
+  }, [groupQuestions, query]);
+
+  if (!group) {
+    return (
+      <AppShell>
+        <Stack gap={2}>
+          <Typography variant="h4">Группа не найдена</Typography>
+          <Button component={Link} href="/" startIcon={<ArrowBackRoundedIcon />}>
+            Вернуться на главную
+          </Button>
+        </Stack>
+      </AppShell>
+    );
+  }
+
+  const openQuestionMenu = (event: MouseEvent<HTMLElement>, question: Question) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setEditingQuestion(question);
+    setMenuAnchor(event.currentTarget);
+  };
+
+  const openCreateQuestion = () => {
+    setEditingQuestion(undefined);
+    setQuestionDialogOpen(true);
+  };
+
+  const handleDeleteGroup = () => {
+    store.deleteGroup(group.id);
+    router.push('/');
+  };
+
+  return (
+    <AppShell onCreate={openCreateQuestion}>
+      <Stack gap={3}>
+        <Button component={Link} href="/" startIcon={<ArrowBackRoundedIcon />} sx={{ alignSelf: 'start' }}>
+          Мои группы
+        </Button>
+        <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" gap={2}>
+          <Stack direction="row" gap={2} alignItems="center">
+            <Box
+              sx={{
+                width: 76,
+                height: 76,
+                borderRadius: 4,
+                display: 'grid',
+                placeItems: 'center',
+                background: group.accentColor,
+                color: '#050816',
+                fontWeight: 900,
+                fontSize: 24,
+                boxShadow: `0 0 42px ${group.accentColor}77`,
+              }}
+            >
+              {group.name.slice(0, 2).toUpperCase()}
+            </Box>
+            <Box>
+              <Typography variant="h3" sx={{ fontSize: { xs: 30, md: 42 } }}>
+                {group.name}
+              </Typography>
+              <Typography color="text.secondary">{groupQuestions.length} вопросов</Typography>
+            </Box>
+          </Stack>
+          <Stack direction="row" gap={1}>
+            <Button startIcon={<EditRoundedIcon />} onClick={() => setGroupDialogOpen(true)}>
+              Редактировать
+            </Button>
+            <Button color="error" startIcon={<DeleteRoundedIcon />} onClick={handleDeleteGroup}>
+              Удалить
+            </Button>
+          </Stack>
+        </Stack>
+
+        <Stack direction={{ xs: 'column', sm: 'row' }} gap={2}>
+          <TextField
+            fullWidth
+            placeholder="Поиск по вопросам..."
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchRoundedIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
+          <Button variant="contained" startIcon={<AddRoundedIcon />} onClick={openCreateQuestion}>
+            Добавить вопрос
+          </Button>
+        </Stack>
+
+        <Stack gap={1.5}>
+          {filteredQuestions.map((question, index) => (
+            <GlassPanel
+              key={question.id}
+              component={Link}
+              href={`/groups/${group.id}/focus/${question.id}`}
+              sx={{ p: 2, transition: 'transform .2s ease', '&:hover': { transform: 'translateX(3px)' } }}
+            >
+              <Stack direction="row" alignItems="center" gap={2}>
+                <Typography color="text.secondary" sx={{ width: 34 }}>
+                  {(index + 1).toString().padStart(2, '0')}
+                </Typography>
+                <Typography sx={{ flex: 1 }}>{question.question}</Typography>
+                <IconButton aria-label="Действия" onClick={(event) => openQuestionMenu(event, question)}>
+                  <MoreHorizRoundedIcon />
+                </IconButton>
+              </Stack>
+            </GlassPanel>
+          ))}
+          {!filteredQuestions.length && (
+            <GlassPanel sx={{ p: 4, textAlign: 'center' }}>
+              <Typography color="text.secondary">Вопросов пока нет.</Typography>
+            </GlassPanel>
+          )}
+        </Stack>
+      </Stack>
+
+      <Menu open={Boolean(menuAnchor)} anchorEl={menuAnchor} onClose={() => setMenuAnchor(null)}>
+        <MenuItem
+          onClick={() => {
+            setMenuAnchor(null);
+            setQuestionDialogOpen(true);
+          }}
+        >
+          Редактировать
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            if (editingQuestion) store.deleteQuestion(editingQuestion.id);
+            setMenuAnchor(null);
+          }}
+          sx={{ color: 'error.main' }}
+        >
+          Удалить
+        </MenuItem>
+      </Menu>
+
+      <GroupDialog
+        open={groupDialogOpen}
+        group={group}
+        onClose={() => setGroupDialogOpen(false)}
+        onSave={(payload) => store.updateGroup(group.id, payload)}
+      />
+      <QuestionDialog
+        open={questionDialogOpen}
+        question={editingQuestion}
+        onClose={() => {
+          setQuestionDialogOpen(false);
+          setEditingQuestion(undefined);
+        }}
+        onSave={(payload) => {
+          if (editingQuestion) store.updateQuestion(editingQuestion.id, payload);
+          else store.createQuestion({ ...payload, groupId: group.id });
+        }}
+      />
+    </AppShell>
+  );
+}
