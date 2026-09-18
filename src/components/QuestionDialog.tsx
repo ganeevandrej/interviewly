@@ -1,5 +1,6 @@
 'use client';
 
+import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -8,26 +9,43 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import { useState } from 'react';
-import { Question } from '@/types';
+import { Category, Question } from '@/types';
 
 type QuestionDialogProps = {
   open: boolean;
   question?: Question;
+  categories: Category[];
+  initialCategoryId?: string | null;
   onClose: () => void;
-  onSave: (payload: Pick<Question, 'question' | 'answer'>) => void;
+  onSave: (payload: Pick<Question, 'question' | 'answer' | 'categoryId'>) => void;
 };
 
 export function QuestionDialog(props: QuestionDialogProps) {
   return props.open ? <QuestionDialogForm key={props.question?.id ?? 'new'} {...props} /> : null;
 }
 
-function QuestionDialogForm({ open, question, onClose, onSave }: QuestionDialogProps) {
+function QuestionDialogForm({
+  open,
+  question,
+  categories,
+  initialCategoryId,
+  onClose,
+  onSave,
+}: QuestionDialogProps) {
   const [questionText, setQuestionText] = useState(question?.question ?? '');
+  const [categoryId, setCategoryId] = useState(
+    question ? question.categoryId : (initialCategoryId ?? null),
+  );
+  const selectedCategoryId = categories.some((c) => c.id === categoryId) ? categoryId : null;
   const [answer, setAnswer] = useState(question?.answer ?? '');
 
   const handleSave = () => {
     if (!questionText.trim() || !answer.trim()) return;
-    onSave({ question: questionText.trim(), answer: answer.trim() });
+    onSave({
+      question: questionText.trim(),
+      answer: answer.trim(),
+      categoryId: selectedCategoryId,
+    });
     onClose();
   };
 
@@ -36,6 +54,19 @@ function QuestionDialogForm({ open, question, onClose, onSave }: QuestionDialogP
       <DialogTitle>{question ? 'Редактировать вопрос' : 'Новый вопрос'}</DialogTitle>
       <DialogContent>
         <Stack gap={2} sx={{ pt: 1 }}>
+          <TextField
+            select
+            label="Категория"
+            value={selectedCategoryId ?? ''}
+            onChange={(event) => setCategoryId(event.target.value || null)}
+          >
+            <MenuItem value="">Без категории — на уровне группы</MenuItem>
+            {categories.map((category) => (
+              <MenuItem key={category.id} value={category.id}>
+                {category.name}
+              </MenuItem>
+            ))}
+          </TextField>
           <TextField
             label="Вопрос"
             value={questionText}

@@ -1,14 +1,18 @@
 ﻿'use client';
 
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
+import { CategoryManager } from '@/components/CategoryManager';
+import { QuestionList } from '@/components/QuestionList';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
-import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
@@ -30,6 +34,8 @@ export default function GroupPage() {
   const router = useRouter();
   const store = useInterviewlyStore();
   const group = store.groups.find((item) => item.id === params.groupId);
+  const [categoriesOpen, setCategoriesOpen] = useState(false);
+  const [initialCategoryId, setInitialCategoryId] = useState<string | null>(null);
   const [query, setQuery] = useState('');
   const [groupDialogOpen, setGroupDialogOpen] = useState(false);
   const [questionDialogOpen, setQuestionDialogOpen] = useState(false);
@@ -47,6 +53,25 @@ export default function GroupPage() {
       : groupQuestions;
   }, [groupQuestions, query]);
 
+  const categoryIds = new Set(
+    store.groupCategories
+      .filter((link) => link.groupId === params.groupId)
+      .map((link) => link.categoryId),
+  );
+  const categories = store.categories.filter((category) => categoryIds.has(category.id));
+  const questionsByCategory = new Map<string | null, Question[]>();
+  for (const question of filteredQuestions) {
+    const list = questionsByCategory.get(question.categoryId) ?? [];
+    list.push(question);
+    questionsByCategory.set(question.categoryId, list);
+  }
+
+  if (!store.hydrated)
+    return (
+      <AppShell>
+        <Typography>Загрузка…</Typography>
+      </AppShell>
+    );
   if (!group) {
     return (
       <AppShell>
@@ -65,7 +90,8 @@ export default function GroupPage() {
     setMenuAnchor(event.currentTarget);
   };
 
-  const openCreateQuestion = () => {
+  const openCreateQuestion = (categoryId: string | null = null) => {
+    setInitialCategoryId(categoryId);
     setEditingQuestion(undefined);
     setQuestionDialogOpen(true);
   };
@@ -76,7 +102,7 @@ export default function GroupPage() {
   };
 
   return (
-    <AppShell onCreate={openCreateQuestion}>
+    <AppShell onCreate={() => openCreateQuestion()}>
       <Stack gap={3}>
         <Button
           component={Link}
@@ -135,47 +161,65 @@ export default function GroupPage() {
               ),
             }}
           />
-          <Button variant="contained" startIcon={<AddRoundedIcon />} onClick={openCreateQuestion}>
+          <Button
+            variant="contained"
+            startIcon={<AddRoundedIcon />}
+            onClick={() => openCreateQuestion()}
+          >
             Добавить вопрос
           </Button>
         </Stack>
 
-        <Stack gap={1.5}>
-          {filteredQuestions.map((question, index) => (
-            <GlassPanel
-              key={question.id}
-              sx={{
-                p: 2,
-                transition: 'transform .2s ease',
-                '&:hover': { transform: 'translateX(3px)' },
-              }}
-            >
-              <Stack direction="row" alignItems="center" gap={2}>
-                <Box
-                  component={Link}
-                  href={`/groups/${group.id}/focus/${question.id}`}
-                  sx={{ display: 'flex', alignItems: 'center', gap: 2, flex: 1, minWidth: 0 }}
-                >
-                  <Typography color="text.secondary" sx={{ width: 34 }}>
-                    {(index + 1).toString().padStart(2, '0')}
-                  </Typography>
-                  <Typography sx={{ flex: 1 }}>{question.question}</Typography>
-                </Box>
-                <IconButton
-                  aria-label="Действия"
-                  onClick={(event) => openQuestionMenu(event, question)}
-                >
-                  <MoreHorizRoundedIcon />
-                </IconButton>
-              </Stack>
-            </GlassPanel>
-          ))}
-          {!filteredQuestions.length && (
-            <GlassPanel sx={{ p: 4, textAlign: 'center' }}>
-              <Typography color="text.secondary">Вопросов пока нет.</Typography>
-            </GlassPanel>
-          )}
-        </Stack>
+        <Button sx={{ alignSelf: 'start' }} onClick={() => setCategoriesOpen(true)}>
+          Управление категориями
+        </Button>
+        <QuestionList
+          questions={questionsByCategory.get(null) ?? []}
+          onQuestionMenu={openQuestionMenu}
+        />
+        {categories.map((category) => {
+          const questions = questionsByCategory.get(category.id) ?? [];
+          if (query.trim() && !questions.length) return null;
+          return (
+            <Accordion key={category.id} defaultExpanded>
+              <AccordionSummary
+                expandIcon={<ExpandMoreRoundedIcon />}
+                id={'category-' + category.id + '-header'}
+                aria-controls={'category-' + category.id + '-content'}
+              >
+                <Typography sx={{ overflowWrap: 'anywhere' }}>
+                  {category.name} · {questions.length}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Stack gap={2}>
+                  <QuestionList questions={questions} onQuestionMenu={openQuestionMenu} />
+                  {!questions.length && (
+                    <Typography color="text.secondary">
+                      В этой категории пока нет вопросов.
+                    </Typography>
+                  )}
+                  <Button
+                    sx={{ alignSelf: 'start' }}
+                    startIcon={<AddRoundedIcon />}
+                    onClick={() => openCreateQuestion(category.id)}
+                  >
+                    Добавить вопрос в категорию
+                  </Button>
+                </Stack>
+              </AccordionDetails>
+            </Accordion>
+          );
+        })}
+        {!filteredQuestions.length && (
+          <GlassPanel sx={{ p: 4, textAlign: 'center' }}>
+            <Typography color="text.secondary">
+              {query.trim()
+                ? 'Ничего не найдено.'
+                : 'В группе пока нет вопросов. Добавьте вопрос в категорию или непосредственно в группу.'}
+            </Typography>
+          </GlassPanel>
+        )}
       </Stack>
 
       <Menu open={Boolean(menuAnchor)} anchorEl={menuAnchor} onClose={() => setMenuAnchor(null)}>
@@ -185,7 +229,7 @@ export default function GroupPage() {
             setQuestionDialogOpen(true);
           }}
         >
-          Редактировать
+          Редактировать / изменить категорию
         </MenuItem>
         <MenuItem
           onClick={() => {
@@ -198,6 +242,9 @@ export default function GroupPage() {
         </MenuItem>
       </Menu>
 
+      {categoriesOpen && (
+        <CategoryManager open groupId={group.id} onClose={() => setCategoriesOpen(false)} />
+      )}
       <GroupDialog
         open={groupDialogOpen}
         group={group}
@@ -207,6 +254,8 @@ export default function GroupPage() {
       <QuestionDialog
         open={questionDialogOpen}
         question={editingQuestion}
+        categories={categories}
+        initialCategoryId={initialCategoryId}
         onClose={() => {
           setQuestionDialogOpen(false);
           setEditingQuestion(undefined);

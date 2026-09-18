@@ -12,6 +12,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
+import { CategoryManager } from '@/components/CategoryManager';
 import { AppShell } from '@/components/AppShell';
 import { GlassPanel } from '@/components/GlassPanel';
 import { GroupCard } from '@/components/GroupCard';
@@ -20,6 +21,7 @@ import { useInterviewlyStore } from '@/store/useInterviewlyStore';
 
 export default function HomePage() {
   const { groups, questions, questionCountByGroup, createGroup } = useInterviewlyStore();
+  const [categoriesOpen, setCategoriesOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [groupDialogOpen, setGroupDialogOpen] = useState(false);
 
@@ -89,6 +91,10 @@ export default function HomePage() {
           </Button>
         </Stack>
 
+        <Button sx={{ alignSelf: 'start' }} onClick={() => setCategoriesOpen(true)}>
+          Управление категориями
+        </Button>
+
         {normalizedQuery ? (
           <Stack gap={3}>
             <Box>
@@ -146,6 +152,7 @@ export default function HomePage() {
         )}
       </Stack>
 
+      {categoriesOpen && <CategoryManager open onClose={() => setCategoriesOpen(false)} />}
       <GroupDialog
         open={groupDialogOpen}
         onClose={() => setGroupDialogOpen(false)}

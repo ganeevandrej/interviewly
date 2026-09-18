@@ -15,15 +15,25 @@ function loadModule(window) {
   return context.exports;
 }
 
-const validData = {
+const legacyData = {
   groups: [{ id: 'group', name: 'Example', accentColor: '#ffffff' }],
   questions: [{ id: 'question', groupId: 'group', question: 'Why?', answer: 'Because.' }],
+};
+
+const validData = {
+  ...legacyData,
+  categories: [],
+  groupCategories: [],
+  questions: legacyData.questions.map((q) => ({ ...q, categoryId: null })),
 };
 
 test('valid and empty libraries are accepted', () => {
   const { isInterviewlyData } = loadModule();
   assert.equal(isInterviewlyData(validData), true);
-  assert.equal(isInterviewlyData({ groups: [], questions: [] }), true);
+  assert.equal(
+    isInterviewlyData({ groups: [], questions: [], categories: [], groupCategories: [] }),
+    true,
+  );
 });
 
 test('malformed records, duplicate IDs and orphan questions are rejected', () => {
@@ -46,15 +56,16 @@ test('saved v1 data loads without being rewritten', () => {
   const api = loadModule({
     localStorage: {
       getItem(key) {
+        if (key === 'interviewly:data:v2') return null;
         assert.equal(key, 'interviewly:data:v1');
-        return JSON.stringify(validData);
+        return JSON.stringify(legacyData);
       },
       setItem() {
         writes++;
       },
     },
   });
-  assert.equal(JSON.stringify(api.loadInterviewlyData()), JSON.stringify(validData));
+  assert.deepEqual(JSON.parse(JSON.stringify(api.loadInterviewlyData())), validData);
   assert.equal(writes, 0);
 });
 
@@ -96,7 +107,7 @@ test('saving preserves the storage key and library', () => {
   const api = loadModule({
     localStorage: {
       setItem(key, value) {
-        assert.equal(key, 'interviewly:data:v1');
+        assert.equal(key, 'interviewly:data:v2');
         assert.deepEqual(JSON.parse(value), validData);
       },
     },
@@ -108,4 +119,57 @@ test('server rendering does not access browser storage', () => {
   const api = loadModule();
   assert.equal(api.loadInterviewlyData(), api.seedData);
   assert.equal(api.saveInterviewlyData(validData), false);
+});
+
+const categorizedData = {
+  ...validData,
+  categories: [{ id: 'category', name: 'Shared' }],
+  groupCategories: [{ groupId: 'group', categoryId: 'category' }],
+  questions: [{ ...validData.questions[0], categoryId: 'category' }],
+};
+
+test('category links and question placement are validated', () => {
+  const { isInterviewlyData } = loadModule();
+  assert.equal(isInterviewlyData(categorizedData), true);
+  assert.equal(isInterviewlyData({ ...validData, categories: categorizedData.categories }), true);
+  for (const data of [
+    { ...categorizedData, categories: [] },
+    {
+      ...categorizedData,
+      categories: [...categorizedData.categories, ...categorizedData.categories],
+    },
+    { ...categorizedData, groupCategories: [] },
+    {
+      ...categorizedData,
+      groupCategories: [...categorizedData.groupCategories, ...categorizedData.groupCategories],
+    },
+    { ...categorizedData, groupCategories: [{ groupId: 'missing', categoryId: 'category' }] },
+    { ...categorizedData, questions: [{ ...categorizedData.questions[0], categoryId: 42 }] },
+    { ...categorizedData, categories: [{ id: 'category', name: '   ' }] },
+    legacyData,
+  ])
+    assert.equal(isInterviewlyData(data), false);
+});
+
+test('v2 round trip preserves categories and takes precedence over v1', () => {
+  const values = new Map([['interviewly:data:v1', JSON.stringify(legacyData)]]);
+  const api = loadModule({
+    localStorage: {
+      getItem: (key) => values.get(key) ?? null,
+      setItem: (key, value) => values.set(key, value),
+    },
+  });
+  assert.equal(api.saveInterviewlyData(categorizedData), true);
+  assert.deepEqual(JSON.parse(JSON.stringify(api.loadInterviewlyData())), categorizedData);
+  assert.equal(values.get('interviewly:data:v1'), JSON.stringify(legacyData));
+});
+
+test('migration does not reinterpret broken current schemas as legacy data', () => {
+  const { migrateInterviewlyData } = loadModule();
+  assert.equal(migrateInterviewlyData({ ...legacyData, categories: [] }), null);
+  assert.equal(migrateInterviewlyData({ ...categorizedData, groupCategories: [] }), null);
+  assert.deepEqual(
+    JSON.parse(JSON.stringify(migrateInterviewlyData({ groups: [], questions: [] }))),
+    { groups: [], questions: [], categories: [], groupCategories: [] },
+  );
 });

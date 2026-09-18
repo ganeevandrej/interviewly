@@ -182,6 +182,11 @@ function FocusQuestion({ groupId, questionId }: { groupId: string; questionId: s
       <QuestionDialog
         open={editing}
         question={current}
+        categories={store.categories.filter((c) =>
+          store.groupCategories.some(
+            (link) => link.groupId === groupId && link.categoryId === c.id,
+          ),
+        )}
         onClose={() => setEditing(false)}
         onSave={(payload) => store.updateQuestion(current.id, payload)}
       />
