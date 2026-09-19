@@ -40,6 +40,7 @@ function FocusQuestion({ groupId, questionId }: { groupId: string; questionId: s
   );
   const currentIndex = questions.findIndex((question) => question.id === questionId);
   const current = questions[currentIndex];
+  const category = store.categories.find((item) => item.id === current?.categoryId);
 
   if (!group || !current) {
     return (
@@ -133,6 +134,19 @@ function FocusQuestion({ groupId, questionId }: { groupId: string; questionId: s
                     justifyContent: 'center',
                   }}
                 >
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{
+                      mb: 2,
+                      overflowWrap: 'anywhere',
+                      maxHeight: 80,
+                      overflow: 'auto',
+                      flexShrink: 0,
+                    }}
+                  >
+                    {category?.name ?? 'Без категории'}
+                  </Typography>
                   <Typography color="text.secondary" sx={{ mb: 2 }}>
                     {side.hint}
                   </Typography>
