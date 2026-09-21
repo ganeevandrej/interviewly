@@ -9,15 +9,17 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import { useState } from 'react';
-import { Category, Question } from '@/types';
+import Alert from '@mui/material/Alert';
+import { useAsyncAction } from '@/client/useAsyncAction';
+import { Topic, Question, QuestionInput } from '@/types';
 
 type QuestionDialogProps = {
   open: boolean;
   question?: Question;
-  categories: Category[];
-  initialCategoryId?: string | null;
+  topics: Topic[];
+  initialTopicId?: string | null;
   onClose: () => void;
-  onSave: (payload: Pick<Question, 'question' | 'answer' | 'categoryId'>) => void;
+  onSave: (payload: QuestionInput) => Promise<void>;
 };
 
 export function QuestionDialog(props: QuestionDialogProps) {
@@ -27,47 +29,53 @@ export function QuestionDialog(props: QuestionDialogProps) {
 function QuestionDialogForm({
   open,
   question,
-  categories,
-  initialCategoryId,
+  topics,
+  initialTopicId,
   onClose,
   onSave,
 }: QuestionDialogProps) {
   const [questionText, setQuestionText] = useState(question?.question ?? '');
-  const [categoryId, setCategoryId] = useState(
-    question ? question.categoryId : (initialCategoryId ?? null),
-  );
-  const selectedCategoryId = categories.some((c) => c.id === categoryId) ? categoryId : null;
+  const [topicId, setTopicId] = useState(question ? question.topicId : (initialTopicId ?? null));
+  const selectedTopicId = topics.some((c) => c.id === topicId && !c.isDefault) ? topicId : null;
   const [answer, setAnswer] = useState(question?.answer ?? '');
 
-  const handleSave = () => {
+  const action = useAsyncAction();
+  const handleSave = async () => {
     if (!questionText.trim() || !answer.trim()) return;
-    onSave({
-      question: questionText.trim(),
-      answer: answer.trim(),
-      categoryId: selectedCategoryId,
-    });
-    onClose();
+    const saved = await action.run(() =>
+      onSave({
+        question: questionText.trim(),
+        answer: answer.trim(),
+        topicId: selectedTopicId,
+      }),
+    );
+    if (saved) onClose();
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+    <Dialog open={open} onClose={action.busy ? undefined : onClose} fullWidth maxWidth="sm">
       <DialogTitle>{question ? 'Редактировать вопрос' : 'Новый вопрос'}</DialogTitle>
       <DialogContent>
         <Stack gap={2} sx={{ pt: 1 }}>
+          {action.error && <Alert severity="error">{action.error}</Alert>}
           <TextField
+            disabled={action.busy}
             select
-            label="Категория"
-            value={selectedCategoryId ?? ''}
-            onChange={(event) => setCategoryId(event.target.value || null)}
+            label="Тема"
+            value={selectedTopicId ?? ''}
+            onChange={(event) => setTopicId(event.target.value || null)}
           >
-            <MenuItem value="">Без категории — на уровне группы</MenuItem>
-            {categories.map((category) => (
-              <MenuItem key={category.id} value={category.id}>
-                {category.name}
-              </MenuItem>
-            ))}
+            <MenuItem value="">Без темы</MenuItem>
+            {topics
+              .filter((topic) => !topic.isDefault)
+              .map((topic) => (
+                <MenuItem key={topic.id} value={topic.id}>
+                  {topic.name}
+                </MenuItem>
+              ))}
           </TextField>
           <TextField
+            disabled={action.busy}
             label="Вопрос"
             value={questionText}
             onChange={(event) => setQuestionText(event.target.value)}
@@ -76,6 +84,7 @@ function QuestionDialogForm({
             autoFocus
           />
           <TextField
+            disabled={action.busy}
             label="Ответ"
             value={answer}
             onChange={(event) => setAnswer(event.target.value)}
@@ -85,9 +94,15 @@ function QuestionDialogForm({
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Отмена</Button>
-        <Button onClick={handleSave} variant="contained">
-          Сохранить
+        <Button disabled={action.busy} onClick={onClose}>
+          Отмена
+        </Button>
+        <Button
+          disabled={action.busy || !questionText.trim() || !answer.trim()}
+          onClick={handleSave}
+          variant="contained"
+        >
+          {action.busy ? 'Сохранение…' : 'Сохранить'}
         </Button>
       </DialogActions>
     </Dialog>

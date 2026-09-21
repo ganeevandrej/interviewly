@@ -1,4 +1,4 @@
-import { Category, GroupCategory, InterviewlyData, Question, QuestionGroup } from '@/types';
+import { Category, GroupCategory, InterviewlyData, Question, QuestionGroup } from './legacy-types';
 
 const STORAGE_KEY = 'interviewly:data:v2';
 const LEGACY_STORAGE_KEY = 'interviewly:data:v1';
