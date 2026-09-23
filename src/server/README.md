@@ -5,19 +5,19 @@ No authentication or per-user ownership: all application visitors use the same d
 
 ## Routes
 
-| Method | Path | Body / response |
-| --- | --- | --- |
-| GET | /api/groups | All groups with nested topics and questions |
-| POST | /api/groups | { name, accentColor } |
-| GET | /api/groups/:groupId | One group with nested topics and questions |
-| PUT | /api/groups/:groupId | { name, accentColor } |
-| DELETE | /api/groups/:groupId | Delete group, topics and questions |
-| POST | /api/groups/:groupId/topics | { name } |
-| PUT | /api/groups/:groupId/topics/:topicId | { name } |
-| DELETE | /api/groups/:groupId/topics/:topicId | Move questions to default, then delete topic |
-| POST | /api/groups/:groupId/questions | { question, answer, topicId? } |
-| PUT | /api/groups/:groupId/questions/:questionId | { question, answer, topicId? } |
-| DELETE | /api/groups/:groupId/questions/:questionId | Delete question |
+| Method | Path                                       | Body / response                              |
+| ------ | ------------------------------------------ | -------------------------------------------- |
+| GET    | /api/groups                                | All groups with nested topics and questions  |
+| POST   | /api/groups                                | { name, accentColor }                        |
+| GET    | /api/groups/:groupId                       | One group with nested topics and questions   |
+| PUT    | /api/groups/:groupId                       | { name, accentColor }                        |
+| DELETE | /api/groups/:groupId                       | Delete group, topics and questions           |
+| POST   | /api/groups/:groupId/topics                | { name }                                     |
+| PUT    | /api/groups/:groupId/topics/:topicId       | { name }                                     |
+| DELETE | /api/groups/:groupId/topics/:topicId       | Move questions to default, then delete topic |
+| POST   | /api/groups/:groupId/questions             | { question, answer, topicId? }               |
+| PUT    | /api/groups/:groupId/questions/:questionId | { question, answer, topicId? }               |
+| DELETE | /api/groups/:groupId/questions/:questionId | Delete question                              |
 
 POST/PUT require Content-Type: application/json. PUT replaces editable fields.
 A missing or null topicId chooses the group's system topic.

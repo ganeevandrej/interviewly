@@ -21,15 +21,18 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { MouseEvent, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
+
+import type { MouseEvent } from 'react';
 import { AppShell } from '@/components/AppShell';
 import { GlassPanel } from '@/components/GlassPanel';
 import { GroupDialog } from '@/components/GroupDialog';
 import { QuestionDialog } from '@/components/QuestionDialog';
 import { useInterviewlyStore } from '@/store/useInterviewlyStore';
-import { Question } from '@/types';
 import Alert from '@mui/material/Alert';
 import { useAsyncAction } from '@/client/useAsyncAction';
+
+import type { Question } from '@/types';
 
 export default function GroupPage() {
   const params = useParams<{ groupId: string }>();
@@ -57,6 +60,7 @@ export default function GroupPage() {
   }, [groupQuestions, query]);
 
   const topics = store.topics.filter((topic) => topic.groupId === params.groupId);
+
   const questionsByTopic = new Map<string | null, Question[]>();
   for (const question of filteredQuestions) {
     const list = questionsByTopic.get(question.topicId) ?? [];
@@ -64,12 +68,14 @@ export default function GroupPage() {
     questionsByTopic.set(question.topicId, list);
   }
 
-  if (!store.hydrated)
+  if (!store.hydrated) {
     return (
       <AppShell>
         <Typography>Загрузка…</Typography>
       </AppShell>
     );
+  }
+
   if (!group) {
     return (
       <AppShell>
@@ -95,7 +101,23 @@ export default function GroupPage() {
   };
 
   const handleDeleteGroup = async () => {
-    if (await action.run(() => store.deleteGroup(group.id))) router.push('/');
+    const deleted = await action.run(() => store.deleteGroup(group.id));
+
+    if (deleted) {
+      router.push('/');
+    }
+  };
+
+  const handleDeleteQuestion = async () => {
+    if (!editingQuestion) {
+      return;
+    }
+
+    const deleted = await action.run(() => store.deleteQuestion(group.id, editingQuestion.id));
+
+    if (deleted) {
+      setMenuAnchor(null);
+    }
   };
 
   return (
@@ -123,7 +145,8 @@ export default function GroupPage() {
                 color: 'background.default',
                 fontWeight: 900,
                 fontSize: 24,
-                boxShadow: `0 0 42px ${group.accentColor}77`,
+                border: '1px solid',
+                borderColor: 'divider',
               }}
             >
               {group.name.slice(0, 2).toUpperCase()}
@@ -180,7 +203,16 @@ export default function GroupPage() {
           const questions = questionsByTopic.get(topic.id) ?? [];
           if (query.trim() && !questions.length) return null;
           return (
-            <Accordion key={topic.id} defaultExpanded>
+            <Accordion
+              key={topic.id}
+              defaultExpanded
+              sx={{
+                backgroundColor: 'background.paper',
+                border: '1px solid',
+                borderColor: 'divider',
+                '&:before': { display: 'none' },
+              }}
+            >
               <AccordionSummary
                 expandIcon={<ExpandMoreRoundedIcon />}
                 id={'topic-' + topic.id + '-header'}
@@ -230,13 +262,7 @@ export default function GroupPage() {
         </MenuItem>
         <MenuItem
           disabled={action.busy || store.pending}
-          onClick={async () => {
-            if (
-              editingQuestion &&
-              (await action.run(() => store.deleteQuestion(group.id, editingQuestion.id)))
-            )
-              setMenuAnchor(null);
-          }}
+          onClick={handleDeleteQuestion}
           sx={{ color: 'error.main' }}
         >
           Удалить

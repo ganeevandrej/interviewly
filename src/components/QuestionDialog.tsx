@@ -11,7 +11,8 @@ import TextField from '@mui/material/TextField';
 import { useState } from 'react';
 import Alert from '@mui/material/Alert';
 import { useAsyncAction } from '@/client/useAsyncAction';
-import { Topic, Question, QuestionInput } from '@/types';
+
+import type { Topic, Question, QuestionInput } from '@/types';
 
 type QuestionDialogProps = {
   open: boolean;
@@ -36,12 +37,18 @@ function QuestionDialogForm({
 }: QuestionDialogProps) {
   const [questionText, setQuestionText] = useState(question?.question ?? '');
   const [topicId, setTopicId] = useState(question ? question.topicId : (initialTopicId ?? null));
-  const selectedTopicId = topics.some((c) => c.id === topicId && !c.isDefault) ? topicId : null;
   const [answer, setAnswer] = useState(question?.answer ?? '');
 
+  const selectedTopicId = topics.some((topic) => topic.id === topicId && !topic.isDefault)
+    ? topicId
+    : null;
+  const availableTopics = topics.filter((topic) => !topic.isDefault);
+
   const action = useAsyncAction();
+
   const handleSave = async () => {
     if (!questionText.trim() || !answer.trim()) return;
+
     const saved = await action.run(() =>
       onSave({
         question: questionText.trim(),
@@ -49,6 +56,7 @@ function QuestionDialogForm({
         topicId: selectedTopicId,
       }),
     );
+
     if (saved) onClose();
   };
 
@@ -66,13 +74,11 @@ function QuestionDialogForm({
             onChange={(event) => setTopicId(event.target.value || null)}
           >
             <MenuItem value="">Без темы</MenuItem>
-            {topics
-              .filter((topic) => !topic.isDefault)
-              .map((topic) => (
-                <MenuItem key={topic.id} value={topic.id}>
-                  {topic.name}
-                </MenuItem>
-              ))}
+            {availableTopics.map((topic) => (
+              <MenuItem key={topic.id} value={topic.id}>
+                {topic.name}
+              </MenuItem>
+            ))}
           </TextField>
           <TextField
             disabled={action.busy}

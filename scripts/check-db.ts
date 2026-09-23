@@ -18,6 +18,7 @@ async function main() {
         const topicId = randomUUID();
         const otherTopicId = randomUUID();
         const questionId = randomUUID();
+
         await tx.questionGroup.create({
           data: {
             id: groupId,

@@ -4,14 +4,14 @@ import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
+import MenuBookRoundedIcon from '@mui/icons-material/MenuBookRounded';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { alpha } from '@mui/material/styles';
 import Link from 'next/link';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 type AppShellProps = {
   children: ReactNode;
@@ -25,23 +25,25 @@ export function AppShell({ children, onCreate }: AppShellProps) {
         component="aside"
         sx={{
           display: { xs: 'none', md: 'flex' },
-          width: 250,
-          p: 3,
+          width: 248,
+          p: 2,
           borderRight: '1px solid',
           borderColor: 'divider',
-          backgroundColor: (theme) => alpha(theme.palette.background.default, 0.72),
-          backdropFilter: 'blur(18px)',
+          backgroundColor: 'background.default',
           flexDirection: 'column',
-          gap: 4,
+          gap: 3,
         }}
       >
-        <Typography variant="h6">InterviewPrep</Typography>
+        <Typography variant="h6">Interviewly</Typography>
         <Stack gap={1}>
           <Button
             component={Link}
             href="/"
             startIcon={<HomeRoundedIcon />}
-            sx={{ justifyContent: 'start' }}
+            sx={{
+              justifyContent: 'start',
+              backgroundColor: (theme) => theme.interviewly.surfaces.primarySubtle,
+            }}
           >
             Главная
           </Button>
@@ -50,6 +52,14 @@ export function AppShell({ children, onCreate }: AppShellProps) {
             sx={{ justifyContent: 'start', color: 'text.secondary' }}
           >
             Поиск
+          </Button>
+          <Button
+            component={Link}
+            href="/stories"
+            startIcon={<MenuBookRoundedIcon />}
+            sx={{ justifyContent: 'start', color: 'text.secondary' }}
+          >
+            Истории
           </Button>
           <Button
             startIcon={<SettingsRoundedIcon />}
@@ -75,13 +85,12 @@ export function AppShell({ children, onCreate }: AppShellProps) {
           bottom: 0,
           zIndex: 'appBar',
           display: { xs: 'grid', md: 'none' },
-          gridTemplateColumns: 'repeat(4, 1fr)',
+          gridTemplateColumns: 'repeat(5, 1fr)',
           px: 1,
           py: 1,
           borderTop: '1px solid',
           borderColor: 'divider',
-          backgroundColor: (theme) => alpha(theme.palette.background.default, 0.88),
-          backdropFilter: 'blur(16px)',
+          backgroundColor: 'background.paper',
         }}
       >
         <Button
@@ -104,6 +113,14 @@ export function AppShell({ children, onCreate }: AppShellProps) {
           sx={{ minWidth: 0, flexDirection: 'column' }}
         >
           Создать
+        </Button>
+        <Button
+          component={Link}
+          href="/stories"
+          startIcon={<MenuBookRoundedIcon />}
+          sx={{ minWidth: 0, flexDirection: 'column', color: 'text.secondary' }}
+        >
+          Истории
         </Button>
         <Button
           startIcon={<SettingsRoundedIcon />}

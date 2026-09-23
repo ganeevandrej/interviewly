@@ -42,3 +42,52 @@ export function questionInput(value: unknown) {
     answer: text(data.answer, 'Ответ'),
   };
 }
+
+const storyFields = [
+  'title',
+  'context',
+  'problem',
+  'responsibility',
+  'solution',
+  'difficulties',
+  'learned',
+  'additionalQuestions',
+] as const;
+
+function optionalText(value: unknown, field: string): string | null {
+  if (value === undefined || value === null) return null;
+  return text(value, field);
+}
+
+export function storyInput(value: unknown) {
+  const data = record(value, storyFields);
+  return {
+    title: text(data.title, 'Заголовок'),
+    context: optionalText(data.context, 'Контекст'),
+    problem: optionalText(data.problem, 'Проблема'),
+    responsibility: optionalText(data.responsibility, 'Ответственность'),
+    solution: optionalText(data.solution, 'Решение'),
+    difficulties: optionalText(data.difficulties, 'Сложности'),
+    learned: optionalText(data.learned, 'Полученные знания'),
+    additionalQuestions: optionalText(data.additionalQuestions, 'Дополнительные вопросы'),
+  };
+}
+
+export function storyCreateInput(value: unknown) {
+  const data = record(value, [...storyFields, 'tags', 'questionIds']);
+  const story = storyInput(data);
+  const tags = data.tags === undefined ? [] : listOfText(data.tags, 'Теги');
+  const questionIds = data.questionIds === undefined ? [] : listOfText(data.questionIds, 'Вопросы');
+  return {
+    ...story,
+    tags: Array.from(new Set(tags)),
+    questionIds: Array.from(new Set(questionIds)),
+  };
+}
+
+export const storyUpdateInput = storyCreateInput;
+
+function listOfText(value: unknown, field: string): string[] {
+  if (!Array.isArray(value)) throw new InputError(`Поле «${field}» должно быть массивом.`);
+  return value.map((item) => text(item, field));
+}

@@ -15,9 +15,20 @@ function api(fetch) {
 test('server library derives question group from its topic without sharing topics', () => {
   const { flattenLibrary } = api();
   const groups = ['a', 'b'].map((id) => ({
-    id, name: id, accentColor: '#123456',
-    topics: [{ id: 'topic-' + id, groupId: id, name: 'Same name', isDefault: false,
-      questions: [{ id: 'question-' + id, topicId: 'topic-' + id, question: 'Q', answer: 'A', position: 0 }] }],
+    id,
+    name: id,
+    accentColor: '#123456',
+    topics: [
+      {
+        id: 'topic-' + id,
+        groupId: id,
+        name: 'Same name',
+        isDefault: false,
+        questions: [
+          { id: 'question-' + id, topicId: 'topic-' + id, question: 'Q', answer: 'A', position: 0 },
+        ],
+      },
+    ],
   }));
   const data = flattenLibrary(groups);
   assert.equal(data.groups.length, 2);
@@ -40,25 +51,51 @@ test('mutations send JSON and never cache API responses', async () => {
   assert.equal((await apiRequest('/api/groups', 'POST', { name: 'New' })).id, 'created');
 });
 test('successful deletes do not attempt to parse an empty body', async () => {
-  const { apiRequest } = api(async () => ({ ok: true, status: 204, json: () => { throw new Error('Unexpected JSON'); } }));
+  const { apiRequest } = api(async () => ({
+    ok: true,
+    status: 204,
+    json: () => {
+      throw new Error('Unexpected JSON');
+    },
+  }));
   assert.equal(await apiRequest('/api/groups/a', 'DELETE'), undefined);
 });
 test('server validation errors reach the form and writes are never automatically retried', async () => {
   let calls = 0;
-  const { apiRequest } = api(async () => { calls++; return {
-    ok: false, status: 409, json: async () => ({ error: 'Protected topic' }),
-  }; });
+  const { apiRequest } = api(async () => {
+    calls++;
+    return {
+      ok: false,
+      status: 409,
+      json: async () => ({ error: 'Protected topic' }),
+    };
+  });
   await assert.rejects(apiRequest('/api/groups/a', 'PUT', {}), { message: 'Protected topic' });
   assert.equal(calls, 1);
 });
 test('network and non-JSON errors reject without returning demo data', async () => {
-  await assert.rejects(api(async () => { throw new Error('network'); }).apiRequest('/api/groups'));
-  await assert.rejects(api(async () => ({
-    ok: false, status: 502, json: async () => { throw new Error('invalid json'); },
-  })).apiRequest('/api/groups'));
+  await assert.rejects(
+    api(async () => {
+      throw new Error('network');
+    }).apiRequest('/api/groups'),
+  );
+  await assert.rejects(
+    api(async () => ({
+      ok: false,
+      status: 502,
+      json: async () => {
+        throw new Error('invalid json');
+      },
+    })).apiRequest('/api/groups'),
+  );
 });
 test('aborted requests preserve cancellation', async () => {
   const failure = new Error('aborted');
-  const { apiRequest } = api(async () => { throw failure; });
-  await assert.rejects(apiRequest('/api/groups', 'GET', undefined, { aborted: true }), (error) => error === failure);
+  const { apiRequest } = api(async () => {
+    throw failure;
+  });
+  await assert.rejects(
+    apiRequest('/api/groups', 'GET', undefined, { aborted: true }),
+    (error) => error === failure,
+  );
 });

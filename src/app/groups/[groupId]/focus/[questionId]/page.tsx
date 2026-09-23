@@ -57,7 +57,9 @@ function FocusQuestion({ groupId, questionId }: { groupId: string; questionId: s
 
   const goToQuestion = (index: number) => {
     const next = questions[index];
+
     if (!next) return;
+
     router.push(`/groups/${group.id}/focus/${next.id}`);
   };
 
@@ -67,8 +69,8 @@ function FocusQuestion({ groupId, questionId }: { groupId: string; questionId: s
         minHeight: '100vh',
         display: 'grid',
         placeItems: 'center',
-        px: 2,
-        py: 3,
+        px: { xs: 2, md: 4 },
+        py: { xs: 2, md: 4 },
       }}
     >
       <Box sx={{ width: 'min(940px, 100%)' }}>
@@ -82,7 +84,9 @@ function FocusQuestion({ groupId, questionId }: { groupId: string; questionId: s
               Выйти
             </Button>
             <Stack alignItems="center">
-              <Typography variant="h6">{group.name}</Typography>
+              <Typography variant="h6" sx={{ color: 'text.primary' }}>
+                {group.name}
+              </Typography>
               <Typography color="text.secondary">
                 {currentIndex + 1} / {questions.length}
               </Typography>
@@ -95,7 +99,15 @@ function FocusQuestion({ groupId, questionId }: { groupId: string; questionId: s
           <LinearProgress
             variant="determinate"
             value={((currentIndex + 1) / questions.length) * 100}
-            sx={{ maxWidth: 320, alignSelf: 'center', width: '100%', borderRadius: 999 }}
+            sx={{
+              maxWidth: 320,
+              alignSelf: 'center',
+              width: '100%',
+              borderRadius: 999,
+              height: 6,
+              backgroundColor: '#27323A',
+              '& .MuiLinearProgress-bar': { backgroundColor: 'primary.main' },
+            }}
           />
 
           <Box sx={{ perspective: '1400px' }}>
@@ -105,7 +117,7 @@ function FocusQuestion({ groupId, questionId }: { groupId: string; questionId: s
                 position: 'relative',
                 minHeight: { xs: 420, md: 480 },
                 transformStyle: 'preserve-3d',
-                transition: 'transform .65s cubic-bezier(.2,.7,.2,1)',
+                transition: 'transform 420ms cubic-bezier(0.4, 0, 0.2, 1)',
                 transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
                 cursor: 'pointer',
               }}
@@ -124,8 +136,8 @@ function FocusQuestion({ groupId, questionId }: { groupId: string; questionId: s
                     position: 'absolute',
                     inset: 0,
                     p: { xs: 3, md: 6 },
-                    borderColor: `${group.accentColor}66`,
-                    boxShadow: `0 0 90px ${group.accentColor}22`,
+                    borderColor: 'divider',
+                    boxShadow: '0 12px 32px rgba(0, 0, 0, 0.2)',
                     backfaceVisibility: 'hidden',
                     transform: side.rotate,
                     overflow: 'hidden',

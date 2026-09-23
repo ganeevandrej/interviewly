@@ -13,7 +13,7 @@ export function getDb(): PrismaClient {
 
   const adapter = new PrismaPg({ connectionString, max: 3, connectionTimeoutMillis: 10000 });
   const client = new PrismaClient({ adapter });
-  
+
   globalForPrisma.prisma = client;
 
   return client;

@@ -15,8 +15,10 @@ export async function jsonBody(request: Request): Promise<unknown> {
 }
 export async function respond(operation: () => Promise<unknown>, status = 200): Promise<Response> {
   const headers = { 'Cache-Control': 'no-store' };
+
   try {
     const data = await operation();
+
     return status === 204
       ? new Response(null, { status, headers })
       : Response.json({ data }, { status, headers });

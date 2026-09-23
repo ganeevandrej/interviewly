@@ -14,6 +14,9 @@ type GroupCardProps = {
 };
 
 export function GroupCard({ group, count }: GroupCardProps) {
+  const questionLabel = count === 1 ? 'вопрос' : 'вопросов';
+  const initials = group.name.slice(0, 2).toUpperCase();
+
   return (
     <GlassPanel
       component={Link}
@@ -21,13 +24,13 @@ export function GroupCard({ group, count }: GroupCardProps) {
       sx={{
         display: 'block',
         p: 3,
-        borderColor: `${group.accentColor}66`,
-        boxShadow: `0 18px 50px ${group.accentColor}22`,
-        transition: 'transform .22s ease, border-color .22s ease, box-shadow .22s ease',
+        borderColor: 'divider',
+        transition:
+          'transform 180ms cubic-bezier(0.2, 0, 0, 1), border-color 180ms cubic-bezier(0.2, 0, 0, 1), background-color 180ms cubic-bezier(0.2, 0, 0, 1)',
         '&:hover': {
-          transform: 'translateY(-3px)',
-          borderColor: `${group.accentColor}cc`,
-          boxShadow: `0 22px 70px ${group.accentColor}33`,
+          transform: 'translateY(-2px)',
+          borderColor: 'primary.main',
+          backgroundColor: 'background.paper',
         },
       }}
     >
@@ -42,17 +45,18 @@ export function GroupCard({ group, count }: GroupCardProps) {
             color: 'background.default',
             fontWeight: 900,
             background: group.accentColor,
-            boxShadow: `0 0 34px ${group.accentColor}77`,
+            border: '1px solid',
+            borderColor: 'divider',
           }}
         >
-          {group.name.slice(0, 2).toUpperCase()}
+          {initials}
         </Box>
         <Box sx={{ minWidth: 0, flex: 1 }}>
           <Typography variant="h6" noWrap>
             {group.name}
           </Typography>
           <Typography color="text.secondary">
-            {count} {count === 1 ? 'вопрос' : 'вопросов'}
+            {count} {questionLabel}
           </Typography>
         </Box>
         <ArrowForwardRoundedIcon color="primary" aria-hidden="true" />
