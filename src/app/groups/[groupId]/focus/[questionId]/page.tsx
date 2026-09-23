@@ -40,6 +40,7 @@ function FocusQuestion({ groupId, questionId }: { groupId: string; questionId: s
   );
   const currentIndex = questions.findIndex((question) => question.id === questionId);
   const current = questions[currentIndex];
+  const topic = store.topics.find((item) => item.id === current?.topicId);
 
   if (!group || !current) {
     return (
@@ -133,6 +134,19 @@ function FocusQuestion({ groupId, questionId }: { groupId: string; questionId: s
                     justifyContent: 'center',
                   }}
                 >
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{
+                      mb: 2,
+                      overflowWrap: 'anywhere',
+                      maxHeight: 80,
+                      overflow: 'auto',
+                      flexShrink: 0,
+                    }}
+                  >
+                    {topic?.name ?? 'Без темы'}
+                  </Typography>
                   <Typography color="text.secondary" sx={{ mb: 2 }}>
                     {side.hint}
                   </Typography>
@@ -182,13 +196,9 @@ function FocusQuestion({ groupId, questionId }: { groupId: string; questionId: s
       <QuestionDialog
         open={editing}
         question={current}
-        categories={store.categories.filter((c) =>
-          store.groupCategories.some(
-            (link) => link.groupId === groupId && link.categoryId === c.id,
-          ),
-        )}
+        topics={store.topics.filter((topic) => topic.groupId === groupId)}
         onClose={() => setEditing(false)}
-        onSave={(payload) => store.updateQuestion(current.id, payload)}
+        onSave={(payload) => store.updateQuestion(groupId, current.id, payload)}
       />
     </Box>
   );

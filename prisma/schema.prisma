@@ -1,0 +1,37 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model QuestionGroup {
+  id          String  @id
+  name        String
+  accentColor String
+  topics      Topic[]
+}
+
+model Topic {
+  id        String        @id
+  groupId   String
+  name      String
+  isDefault Boolean       @default(false)
+  group     QuestionGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  questions Question[]
+
+  @@index([groupId])
+}
+
+model Question {
+  id       String @id
+  topicId  String
+  question String
+  answer   String
+  position Int
+  topic    Topic  @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@index([topicId, position, id])
+}

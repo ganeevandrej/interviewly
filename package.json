@@ -8,7 +8,14 @@
     "lint": "next lint",
     "type-check": "tsc --noEmit",
     "format": "prettier --write .",
-    "test": "node --test tests/*.test.cjs"
+    "test": "node --test tests/*.test.cjs",
+    "db:generate": "prisma generate",
+    "db:validate": "prisma validate",
+    "db:migrate": "prisma migrate deploy",
+    "db:status": "prisma migrate status",
+    "db:check": "node --conditions=react-server --import tsx scripts/check-db.ts",
+    "postinstall": "prisma generate",
+    "test:integration": "node --conditions=react-server --import tsx --test tests/server.integration.ts"
   },
   "dependencies": {
     "@emotion/cache": "^11.11.0",
@@ -17,17 +24,25 @@
     "@mui/icons-material": "^5.15.20",
     "@mui/material": "^5.15.20",
     "@mui/material-nextjs": "^5.18.0",
+    "@prisma/adapter-pg": "7.10.0",
+    "@prisma/client": "7.10.0",
+    "dotenv": "18.0.1",
     "next": "^14.2.4",
+    "pg": "8.23.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "server-only": "0.0.1"
   },
   "devDependencies": {
     "@types/node": "^20.14.2",
+    "@types/pg": "8.23.1",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "eslint": "^8.57.0",
     "eslint-config-next": "^14.2.4",
     "prettier": "^3.3.1",
+    "prisma": "7.10.0",
+    "tsx": "4.23.15",
     "typescript": "^5.4.5"
   }
 }

@@ -4,7 +4,7 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
-import { CategoryManager } from '@/components/CategoryManager';
+import { TopicManager } from '@/components/TopicManager';
 import { QuestionList } from '@/components/QuestionList';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
@@ -28,14 +28,17 @@ import { GroupDialog } from '@/components/GroupDialog';
 import { QuestionDialog } from '@/components/QuestionDialog';
 import { useInterviewlyStore } from '@/store/useInterviewlyStore';
 import { Question } from '@/types';
+import Alert from '@mui/material/Alert';
+import { useAsyncAction } from '@/client/useAsyncAction';
 
 export default function GroupPage() {
   const params = useParams<{ groupId: string }>();
   const router = useRouter();
   const store = useInterviewlyStore();
+  const action = useAsyncAction();
   const group = store.groups.find((item) => item.id === params.groupId);
-  const [categoriesOpen, setCategoriesOpen] = useState(false);
-  const [initialCategoryId, setInitialCategoryId] = useState<string | null>(null);
+  const [topicsOpen, setTopicsOpen] = useState(false);
+  const [initialTopicId, setInitialTopicId] = useState<string | null>(null);
   const [query, setQuery] = useState('');
   const [groupDialogOpen, setGroupDialogOpen] = useState(false);
   const [questionDialogOpen, setQuestionDialogOpen] = useState(false);
@@ -53,17 +56,12 @@ export default function GroupPage() {
       : groupQuestions;
   }, [groupQuestions, query]);
 
-  const categoryIds = new Set(
-    store.groupCategories
-      .filter((link) => link.groupId === params.groupId)
-      .map((link) => link.categoryId),
-  );
-  const categories = store.categories.filter((category) => categoryIds.has(category.id));
-  const questionsByCategory = new Map<string | null, Question[]>();
+  const topics = store.topics.filter((topic) => topic.groupId === params.groupId);
+  const questionsByTopic = new Map<string | null, Question[]>();
   for (const question of filteredQuestions) {
-    const list = questionsByCategory.get(question.categoryId) ?? [];
+    const list = questionsByTopic.get(question.topicId) ?? [];
     list.push(question);
-    questionsByCategory.set(question.categoryId, list);
+    questionsByTopic.set(question.topicId, list);
   }
 
   if (!store.hydrated)
@@ -90,20 +88,20 @@ export default function GroupPage() {
     setMenuAnchor(event.currentTarget);
   };
 
-  const openCreateQuestion = (categoryId: string | null = null) => {
-    setInitialCategoryId(categoryId);
+  const openCreateQuestion = (topicId: string | null = null) => {
+    setInitialTopicId(topicId);
     setEditingQuestion(undefined);
     setQuestionDialogOpen(true);
   };
 
-  const handleDeleteGroup = () => {
-    store.deleteGroup(group.id);
-    router.push('/');
+  const handleDeleteGroup = async () => {
+    if (await action.run(() => store.deleteGroup(group.id))) router.push('/');
   };
 
   return (
     <AppShell onCreate={() => openCreateQuestion()}>
       <Stack gap={3}>
+        {action.error && <Alert severity="error">{action.error}</Alert>}
         <Button
           component={Link}
           href="/"
@@ -141,7 +139,12 @@ export default function GroupPage() {
             <Button startIcon={<EditRoundedIcon />} onClick={() => setGroupDialogOpen(true)}>
               Редактировать
             </Button>
-            <Button color="error" startIcon={<DeleteRoundedIcon />} onClick={handleDeleteGroup}>
+            <Button
+              disabled={action.busy || store.pending}
+              color="error"
+              startIcon={<DeleteRoundedIcon />}
+              onClick={handleDeleteGroup}
+            >
               Удалить
             </Button>
           </Stack>
@@ -170,41 +173,35 @@ export default function GroupPage() {
           </Button>
         </Stack>
 
-        <Button sx={{ alignSelf: 'start' }} onClick={() => setCategoriesOpen(true)}>
-          Управление категориями
+        <Button sx={{ alignSelf: 'start' }} onClick={() => setTopicsOpen(true)}>
+          Управление темами
         </Button>
-        <QuestionList
-          questions={questionsByCategory.get(null) ?? []}
-          onQuestionMenu={openQuestionMenu}
-        />
-        {categories.map((category) => {
-          const questions = questionsByCategory.get(category.id) ?? [];
+        {topics.map((topic) => {
+          const questions = questionsByTopic.get(topic.id) ?? [];
           if (query.trim() && !questions.length) return null;
           return (
-            <Accordion key={category.id} defaultExpanded>
+            <Accordion key={topic.id} defaultExpanded>
               <AccordionSummary
                 expandIcon={<ExpandMoreRoundedIcon />}
-                id={'category-' + category.id + '-header'}
-                aria-controls={'category-' + category.id + '-content'}
+                id={'topic-' + topic.id + '-header'}
+                aria-controls={'topic-' + topic.id + '-content'}
               >
                 <Typography sx={{ overflowWrap: 'anywhere' }}>
-                  {category.name} · {questions.length}
+                  {topic.name} · {questions.length}
                 </Typography>
               </AccordionSummary>
               <AccordionDetails>
                 <Stack gap={2}>
                   <QuestionList questions={questions} onQuestionMenu={openQuestionMenu} />
                   {!questions.length && (
-                    <Typography color="text.secondary">
-                      В этой категории пока нет вопросов.
-                    </Typography>
+                    <Typography color="text.secondary">В этой теме пока нет вопросов.</Typography>
                   )}
                   <Button
                     sx={{ alignSelf: 'start' }}
                     startIcon={<AddRoundedIcon />}
-                    onClick={() => openCreateQuestion(category.id)}
+                    onClick={() => openCreateQuestion(topic.id)}
                   >
-                    Добавить вопрос в категорию
+                    Добавить вопрос в тему
                   </Button>
                 </Stack>
               </AccordionDetails>
@@ -216,7 +213,7 @@ export default function GroupPage() {
             <Typography color="text.secondary">
               {query.trim()
                 ? 'Ничего не найдено.'
-                : 'В группе пока нет вопросов. Добавьте вопрос в категорию или непосредственно в группу.'}
+                : 'В группе пока нет вопросов. Добавьте вопрос в тему или в «Без темы».'}
             </Typography>
           </GlassPanel>
         )}
@@ -229,12 +226,16 @@ export default function GroupPage() {
             setQuestionDialogOpen(true);
           }}
         >
-          Редактировать / изменить категорию
+          Редактировать / изменить тему
         </MenuItem>
         <MenuItem
-          onClick={() => {
-            if (editingQuestion) store.deleteQuestion(editingQuestion.id);
-            setMenuAnchor(null);
+          disabled={action.busy || store.pending}
+          onClick={async () => {
+            if (
+              editingQuestion &&
+              (await action.run(() => store.deleteQuestion(group.id, editingQuestion.id)))
+            )
+              setMenuAnchor(null);
           }}
           sx={{ color: 'error.main' }}
         >
@@ -242,9 +243,7 @@ export default function GroupPage() {
         </MenuItem>
       </Menu>
 
-      {categoriesOpen && (
-        <CategoryManager open groupId={group.id} onClose={() => setCategoriesOpen(false)} />
-      )}
+      {topicsOpen && <TopicManager groupId={group.id} onClose={() => setTopicsOpen(false)} />}
       <GroupDialog
         open={groupDialogOpen}
         group={group}
@@ -254,15 +253,15 @@ export default function GroupPage() {
       <QuestionDialog
         open={questionDialogOpen}
         question={editingQuestion}
-        categories={categories}
-        initialCategoryId={initialCategoryId}
+        topics={topics}
+        initialTopicId={initialTopicId}
         onClose={() => {
           setQuestionDialogOpen(false);
           setEditingQuestion(undefined);
         }}
         onSave={(payload) => {
-          if (editingQuestion) store.updateQuestion(editingQuestion.id, payload);
-          else store.createQuestion({ ...payload, groupId: group.id });
+          if (editingQuestion) return store.updateQuestion(group.id, editingQuestion.id, payload);
+          return store.createQuestion({ ...payload, groupId: group.id });
         }}
       />
     </AppShell>
