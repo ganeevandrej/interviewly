@@ -1,6 +1,12 @@
 {
   "version": 1,
   "skills": {
+    "accelint-nextjs-best-practices": {
+      "source": "gohypergiant/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/accelint-nextjs-best-practices/SKILL.md",
+      "computedHash": "de849adcf90c68871e9b3335c7550b5e537336bce6c4be90420b3bd0176a68bb"
+    },
     "cover-letter-generator": {
       "source": "paramchoudhary/resumeskills",
       "sourceType": "github",
@@ -42,6 +48,18 @@
       "sourceType": "github",
       "skillPath": "packages/toolkit/skills/model-redux-state/build-slices-and-selectors/SKILL.md",
       "computedHash": "95084920357bcff68b049b2227d18cd04e1f1c1da70af498119abb83e6e9716c"
+    },
+    "nextjs-app-router-patterns": {
+      "source": "wshobson/agents",
+      "sourceType": "github",
+      "skillPath": "plugins/frontend-mobile-development/skills/nextjs-app-router-patterns/SKILL.md",
+      "computedHash": "3a46e9093baecb3a85819529ce05006f817663f48d9e872868c32ae6049c0d5c"
+    },
+    "prisma-client-api": {
+      "source": "prisma/skills",
+      "sourceType": "github",
+      "skillPath": "prisma-client-api/SKILL.md",
+      "computedHash": "5dcc0793337151efa73a444e5adbc7e1c24180778e83b4fe94c9109c391bd333"
     },
     "vercel-composition-patterns": {
       "source": "vercel-labs/agent-skills",
