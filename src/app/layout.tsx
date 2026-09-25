@@ -3,8 +3,8 @@ import { Providers } from './providers';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
 
 export const metadata: Metadata = {
-  title: 'InterviewPrep',
-  description: 'Pet-project for interview preparation',
+  title: 'Interviewly',
+  description: 'Спокойная библиотека для подготовки к собеседованиям',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

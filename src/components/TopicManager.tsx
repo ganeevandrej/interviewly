@@ -11,7 +11,8 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { useInterviewlyStore } from '@/store/useInterviewlyStore';
 import { useAsyncAction } from '@/client/useAsyncAction';
-import { Topic } from '@/types';
+
+import type { Topic } from '@/types';
 
 export function TopicManager({ onClose, groupId }: { onClose: () => void; groupId: string }) {
   const store = useInterviewlyStore();
@@ -19,23 +20,29 @@ export function TopicManager({ onClose, groupId }: { onClose: () => void; groupI
   const [name, setName] = useState('');
   const [editing, setEditing] = useState<Topic | null>(null);
   const [deleting, setDeleting] = useState<Topic | null>(null);
+
   const topics = store.topics.filter((topic) => topic.groupId === groupId);
   const busy = action.busy || store.pending;
+
   async function save() {
     if (!name.trim()) return;
+
     const saved = await action.run(() =>
       editing
         ? store.renameTopic(groupId, editing.id, name.trim())
         : store.createTopic(groupId, name.trim()),
     );
+
     if (saved) {
       setName('');
       setEditing(null);
     }
   }
+
   async function remove() {
     if (!deleting) return;
     const removed = await action.run(() => store.deleteTopic(groupId, deleting.id));
+
     if (removed) {
       if (editing?.id === deleting.id) {
         setEditing(null);
@@ -44,6 +51,7 @@ export function TopicManager({ onClose, groupId }: { onClose: () => void; groupI
       setDeleting(null);
     }
   }
+
   return (
     <>
       <Dialog

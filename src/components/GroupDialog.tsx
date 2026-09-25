@@ -10,10 +10,10 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import { useState } from 'react';
 import Alert from '@mui/material/Alert';
+import { useTheme } from '@mui/material/styles';
 import { useAsyncAction } from '@/client/useAsyncAction';
-import { QuestionGroup } from '@/types';
 
-const colors = ['#6d7cff', '#22d3ee', '#8b5cf6', '#f472b6', '#34d399', '#facc15'];
+import type { QuestionGroup } from '@/types';
 
 type GroupDialogProps = {
   open: boolean;
@@ -28,11 +28,22 @@ export function GroupDialog(props: GroupDialogProps) {
 
 function GroupDialogForm({ open, group, onClose, onSave }: GroupDialogProps) {
   const [name, setName] = useState(group?.name ?? '');
+  const theme = useTheme();
+  const colors = [
+    theme.palette.primary.main,
+    theme.palette.secondary.main,
+    theme.palette.success.main,
+    theme.palette.warning.main,
+    theme.palette.info.main,
+    theme.palette.error.main,
+  ];
   const [accentColor, setAccentColor] = useState(group?.accentColor ?? colors[0]);
 
   const action = useAsyncAction();
+
   const handleSave = async () => {
     if (!name.trim()) return;
+
     if (await action.run(() => onSave({ name: name.trim(), accentColor }))) onClose();
   };
 

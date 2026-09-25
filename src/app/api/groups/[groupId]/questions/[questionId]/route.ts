@@ -1,9 +1,10 @@
 import { updateQuestion, deleteQuestion } from '@/server/library';
 import { respond, jsonBody } from '@/server/http';
-export const runtime = 'nodejs';
-export const dynamic = 'force-dynamic';
 
 type Context = { params: { groupId: string; questionId: string } };
+
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 export function PUT(request: Request, { params }: Context) {
   return respond(async () =>

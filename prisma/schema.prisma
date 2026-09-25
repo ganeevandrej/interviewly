@@ -26,12 +26,53 @@ model Topic {
 }
 
 model Question {
-  id       String @id
+  id       String          @id
   topicId  String
   question String
   answer   String
   position Int
-  topic    Topic  @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  topic    Topic           @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  stories  StoryQuestion[]
 
   @@index([topicId, position, id])
+}
+
+model Story {
+  id                  String          @id
+  title               String
+  context             String?
+  problem             String?
+  responsibility      String?
+  solution            String?
+  difficulties        String?
+  learned             String?
+  additionalQuestions String?
+  tags                StoryTag[]
+  questions           StoryQuestion[]
+}
+
+model Tag {
+  id      String     @id
+  name    String     @unique
+  stories StoryTag[]
+}
+
+model StoryTag {
+  storyId String
+  tagId   String
+  story   Story  @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  tag     Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([storyId, tagId])
+  @@index([tagId])
+}
+
+model StoryQuestion {
+  storyId    String
+  questionId String
+  story      Story    @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@id([storyId, questionId])
+  @@index([questionId])
 }

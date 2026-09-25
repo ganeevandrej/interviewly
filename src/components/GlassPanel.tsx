@@ -1,7 +1,6 @@
 'use client';
 
 import Paper, { PaperProps } from '@mui/material/Paper';
-import { alpha } from '@mui/material/styles';
 import { ElementType } from 'react';
 
 export function GlassPanel<C extends ElementType = 'div'>({
@@ -15,9 +14,8 @@ export function GlassPanel<C extends ElementType = 'div'>({
         (theme) => ({
           border: '1px solid',
           borderColor: 'divider',
-          background: `linear-gradient(145deg, ${alpha(theme.palette.background.paper, 0.78)}, ${alpha(theme.palette.background.paper, 0.42)})`,
-          boxShadow: `0 24px 80px ${alpha(theme.palette.common.black, 0.34)}`,
-          backdropFilter: 'blur(18px)',
+          backgroundColor: theme.palette.background.paper,
+          boxShadow: theme.interviewly.shadows.panel,
         }),
         ...(Array.isArray(sx) ? sx : [sx]),
       ]}
