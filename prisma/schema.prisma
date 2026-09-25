@@ -12,7 +12,6 @@ model QuestionGroup {
   name        String
   accentColor String
   topics      Topic[]
-  autoTag     Tag?    @relation("QuestionGroupAutoTag")
 }
 
 model Topic {
@@ -22,7 +21,7 @@ model Topic {
   isDefault Boolean       @default(false)
   group     QuestionGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
   questions Question[]
-  autoTag   Tag?          @relation("TopicAutoTag")
+  tags      TopicTag[]
 
   @@index([groupId])
 }
@@ -57,7 +56,7 @@ model Project {
   status           ProjectStatus      @default(DRAFT)
   technologies     ProjectTechnology[]
   questions        ProjectQuestion[]
-  autoTag          Tag?               @relation("ProjectAutoTag")
+  tags             ProjectTag[]
 }
 
 model Technology {
@@ -87,6 +86,28 @@ model ProjectQuestion {
   @@index([questionId])
 }
 
+model ProjectTag {
+  projectId     String
+  tagId         String
+  isAutoCreated Boolean @default(false)
+  project       Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tag           Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([projectId, tagId])
+  @@index([tagId])
+}
+
+model TopicTag {
+  topicId       String
+  tagId         String
+  isAutoCreated Boolean @default(false)
+  topic         Topic   @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  tag           Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([topicId, tagId])
+  @@index([tagId])
+}
+
 model Story {
   id                  String          @id
   title               String
@@ -102,15 +123,11 @@ model Story {
 }
 
 model Tag {
-  id            String         @id
-  name          String         @unique
-  projectId     String?        @unique
-  topicId       String?        @unique
-  groupId       String?        @unique
-  project       Project?       @relation("ProjectAutoTag", fields: [projectId], references: [id], onDelete: Cascade)
-  topic         Topic?         @relation("TopicAutoTag", fields: [topicId], references: [id], onDelete: Cascade)
-  questionGroup QuestionGroup? @relation("QuestionGroupAutoTag", fields: [groupId], references: [id], onDelete: Cascade)
-  stories       StoryTag[]
+  id       String        @id
+  name     String        @unique
+  stories  StoryTag[]
+  projects ProjectTag[]
+  topics   TopicTag[]
 }
 
 model StoryTag {
