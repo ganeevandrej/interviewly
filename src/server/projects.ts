@@ -70,7 +70,13 @@ async function saveTechnologies(
 ) {
   await tx.projectTechnology.deleteMany({ where: { projectId } });
 
-  for (const item of technologies) {
+  const uniqueTechnologies = technologies.filter(
+    (item, index, items) =>
+      items.findIndex((candidate) => (candidate.id ?? candidate.name) === (item.id ?? item.name)) ===
+      index,
+  );
+
+  for (const item of uniqueTechnologies) {
     const technology = item.id
       ? await tx.technology.findUnique({ where: { id: item.id } })
       : await tx.technology.upsert({
@@ -122,7 +128,7 @@ export async function createProject(input: unknown) {
     await syncProjectTag(tx, project.id, project.title);
     if (data.technologies) await saveTechnologies(tx, project.id, data.technologies);
     return tx.project.findUniqueOrThrow({ where: { id: project.id }, include: projectInclude });
-  });
+  }, { maxWait: 10000, timeout: 15000 });
   return serializeProject(project);
 }
 
@@ -150,7 +156,7 @@ export async function updateProject(projectId: string, input: unknown) {
     if (current.title !== data.title) await syncProjectTag(tx, id, data.title);
     if (data.technologies) await saveTechnologies(tx, id, data.technologies);
     return tx.project.findUniqueOrThrow({ where: { id }, include: projectInclude });
-  });
+  }, { maxWait: 10000, timeout: 15000 });
   return serializeProject(project);
 }
 

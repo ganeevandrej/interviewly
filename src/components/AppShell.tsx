@@ -5,6 +5,7 @@ import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
 import MenuBookRoundedIcon from '@mui/icons-material/MenuBookRounded';
+import WorkOutlineRoundedIcon from '@mui/icons-material/WorkOutlineRounded';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
@@ -62,6 +63,14 @@ export function AppShell({ children, onCreate }: AppShellProps) {
             Истории
           </Button>
           <Button
+            component={Link}
+            href="/projects"
+            startIcon={<WorkOutlineRoundedIcon />}
+            sx={{ justifyContent: 'start', color: 'text.secondary' }}
+          >
+            Проекты
+          </Button>
+          <Button
             startIcon={<SettingsRoundedIcon />}
             sx={{ justifyContent: 'start', color: 'text.secondary' }}
           >
@@ -85,7 +94,7 @@ export function AppShell({ children, onCreate }: AppShellProps) {
           bottom: 0,
           zIndex: 'appBar',
           display: { xs: 'grid', md: 'none' },
-          gridTemplateColumns: 'repeat(5, 1fr)',
+          gridTemplateColumns: 'repeat(6, 1fr)',
           px: 1,
           py: 1,
           borderTop: '1px solid',
@@ -121,6 +130,14 @@ export function AppShell({ children, onCreate }: AppShellProps) {
           sx={{ minWidth: 0, flexDirection: 'column', color: 'text.secondary' }}
         >
           Истории
+        </Button>
+        <Button
+          component={Link}
+          href="/projects"
+          startIcon={<WorkOutlineRoundedIcon />}
+          sx={{ minWidth: 0, flexDirection: 'column', color: 'text.secondary' }}
+        >
+          Проекты
         </Button>
         <Button
           startIcon={<SettingsRoundedIcon />}

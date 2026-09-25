@@ -139,6 +139,8 @@ const projectFields = [
 
 function projectText(value: unknown, field: string): string | null {
   if (value === undefined || value === null) return null;
+  if (typeof value === 'string' && !value.trim()) return null;
+
   return text(value, field);
 }
 
