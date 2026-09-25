@@ -75,6 +75,20 @@ async function defaultTopic(tx: Prisma.TransactionClient, groupId: string) {
   return topic;
 }
 
+async function syncTopicTag(tx: Prisma.TransactionClient, topicId: string, name: string) {
+  const link = await tx.topicTag.findFirst({ where: { topicId, isAutoCreated: true } });
+  if (link) {
+    await tx.tag.update({ where: { id: link.tagId }, data: { name } });
+    return;
+  }
+  const tag = await tx.tag.upsert({
+    where: { name },
+    update: {},
+    create: { id: randomUUID(), name },
+  });
+  await tx.topicTag.create({ data: { topicId, tagId: tag.id, isAutoCreated: true } });
+}
+
 async function nextPosition(tx: Prisma.TransactionClient, topicId: string) {
   const result = await tx.question.aggregate({ where: { topicId }, _max: { position: true } });
   return (result._max.position ?? -1) + 1;
@@ -101,9 +115,11 @@ export function deleteGroup(groupId: string) {
 
 export function createTopic(groupId: string, input: unknown) {
   const data = topicInput(input);
-  return inGroup(groupId, (tx) =>
-    tx.topic.create({ data: { ...data, id: randomUUID(), groupId } }),
-  );
+  return inGroup(groupId, async (tx) => {
+    const topic = await tx.topic.create({ data: { ...data, id: randomUUID(), groupId } });
+    await syncTopicTag(tx, topic.id, topic.name);
+    return topic;
+  });
 }
 
 export function updateTopic(groupId: string, topicId: string, input: unknown) {
@@ -111,7 +127,9 @@ export function updateTopic(groupId: string, topicId: string, input: unknown) {
   return inGroup(groupId, async (tx) => {
     const topic = await findTopic(tx, groupId, topicId);
     if (topic.isDefault) throw new InputError('Системную тему нельзя переименовать.', 409);
-    return tx.topic.update({ where: { id: topic.id }, data });
+    const result = await tx.topic.update({ where: { id: topic.id }, data });
+    await syncTopicTag(tx, topic.id, result.name);
+    return result;
   });
 }
 
@@ -131,7 +149,9 @@ export function deleteTopic(groupId: string, topicId: string) {
       SET "topicId" = ${target.id}, "position" = (${position} + ordered.offset)::integer
       FROM ordered WHERE q."id" = ordered."id"
     `;
+    const link = await tx.topicTag.findFirst({ where: { topicId: topic.id, isAutoCreated: true } });
     await tx.topic.delete({ where: { id: topic.id } });
+    if (link) await tx.tag.delete({ where: { id: link.tagId } });
   });
 }
 
