@@ -1,27 +1,8 @@
 import { api } from '@/services/api';
-import type { InterviewlyData, LibraryGroup, QuestionGroup, QuestionInput, Topic } from '@/types';
-
-export function flattenLibrary(groups: LibraryGroup[]): InterviewlyData {
-  return {
-    groups: groups.map(({ topics: _topics, ...group }) => group),
-    topics: groups.flatMap((group) =>
-      group.topics.map(({ questions: _questions, ...topic }) => topic),
-    ),
-    questions: groups.flatMap((group) =>
-      group.topics.flatMap((topic) =>
-        topic.questions.map((question) => ({ ...question, groupId: group.id })),
-      ),
-    ),
-  };
-}
+import type { Question, QuestionGroup, QuestionInput, Topic } from '@/types';
 
 export const libraryApi = api.injectEndpoints({
   endpoints: (build) => ({
-    getLibrary: build.query<InterviewlyData, void>({
-      query: () => 'groups',
-      transformResponse: (response: LibraryGroup[]) => flattenLibrary(response),
-      providesTags: ['Library', 'Group', 'Topic', 'Question'],
-    }),
     createGroup: build.mutation<QuestionGroup, Omit<QuestionGroup, 'id'>>({
       query: (body) => ({ url: 'groups', method: 'POST', body }),
       invalidatesTags: ['Library', 'Group', 'Topic'],
@@ -46,11 +27,11 @@ export const libraryApi = api.injectEndpoints({
       query: ({ groupId, topicId }) => ({ url: `groups/${encodeURIComponent(groupId)}/topics/${encodeURIComponent(topicId)}`, method: 'DELETE' }),
       invalidatesTags: ['Library', 'Topic', 'Question'],
     }),
-    createQuestion: build.mutation<void, { groupId: string; input: QuestionInput }>({
+    createQuestion: build.mutation<Question, { groupId: string; input: QuestionInput }>({
       query: ({ groupId, input }) => ({ url: `groups/${encodeURIComponent(groupId)}/questions`, method: 'POST', body: input }),
       invalidatesTags: ['Library', 'Question'],
     }),
-    updateQuestion: build.mutation<void, { groupId: string; questionId: string; input: QuestionInput }>({
+    updateQuestion: build.mutation<Question, { groupId: string; questionId: string; input: QuestionInput }>({
       query: ({ groupId, questionId, input }) => ({ url: `groups/${encodeURIComponent(groupId)}/questions/${encodeURIComponent(questionId)}`, method: 'PUT', body: input }),
       invalidatesTags: ['Library', 'Question'],
     }),
@@ -62,7 +43,6 @@ export const libraryApi = api.injectEndpoints({
 });
 
 export const {
-  useGetLibraryQuery,
   useCreateGroupMutation,
   useUpdateGroupMutation,
   useDeleteGroupMutation,

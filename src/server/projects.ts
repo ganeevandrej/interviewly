@@ -4,6 +4,7 @@ import { randomUUID } from 'node:crypto';
 import type { Prisma } from '../generated/prisma/client';
 import { getDb } from './db';
 import { InputError, projectCreateInput, projectUpdateInput, text } from './validation';
+import type { Project } from '@/types';
 
 const projectInclude = {
   technologies: { include: { technology: true }, orderBy: { technology: { name: 'asc' } } },
@@ -18,14 +19,15 @@ function serializeProject(project: ProjectPayload) {
 
   return {
     ...data,
-    team: data.team ?? [],
-    tasks: data.tasks ?? [],
-    responsibilities: data.responsibilities ?? [],
-    achievements: data.achievements ?? [],
+    color: data.color ?? '#6c63ff',
+    team: (Array.isArray(data.team) ? data.team : []) as Project['team'],
+    tasks: (Array.isArray(data.tasks) ? data.tasks : []) as Project['tasks'],
+    responsibilities: (Array.isArray(data.responsibilities) ? data.responsibilities : []) as Project['responsibilities'],
+    achievements: (Array.isArray(data.achievements) ? data.achievements : []) as Project['achievements'],
     technologies: technologies.map(({ technology, isFeatured }) => ({ ...technology, isFeatured })),
     questions: questions.map(({ question }) => question),
     tag: tags.find(({ isAutoCreated }) => isAutoCreated)?.tag ?? null,
-    histories: tags.flatMap(({ tag }) => tag.stories.map(({ story }) => story)),
+    histories: tags.flatMap(({ tag }) => tag.stories.map(({ story }) => story)) as Project['histories'],
   };
 }
 

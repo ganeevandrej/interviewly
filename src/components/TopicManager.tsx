@@ -12,14 +12,12 @@ import Typography from '@mui/material/Typography';
 import {
   useCreateTopicMutation,
   useDeleteTopicMutation,
-  useGetLibraryQuery,
   useUpdateTopicMutation,
 } from '@/services/libraryApi';
 
 import type { Topic } from '@/types';
 
-export function TopicManager({ onClose, groupId }: { onClose: () => void; groupId: string }) {
-  const { data } = useGetLibraryQuery();
+export function TopicManager({ onClose, groupId, topics: groupTopics }: { onClose: () => void; groupId: string; topics: Topic[] }) {
   const [createTopic, createState] = useCreateTopicMutation();
   const [updateTopic, updateState] = useUpdateTopicMutation();
   const [deleteTopic, deleteState] = useDeleteTopicMutation();
@@ -27,7 +25,7 @@ export function TopicManager({ onClose, groupId }: { onClose: () => void; groupI
   const [editing, setEditing] = useState<Topic | null>(null);
   const [deleting, setDeleting] = useState<Topic | null>(null);
 
-  const topics = data?.topics.filter((topic) => topic.groupId === groupId) ?? [];
+  const topics = groupTopics.filter((topic) => topic.groupId === groupId);
   const busy = createState.isLoading || updateState.isLoading || deleteState.isLoading;
 
   async function save() {

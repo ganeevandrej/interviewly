@@ -1,16 +1,8 @@
 import { api } from '@/services/api';
-import type { Project, ProjectInput, ProjectListItem } from '@/types';
+import type { Project, ProjectInput } from '@/types';
 
 export const projectsApi = api.injectEndpoints({
   endpoints: (build) => ({
-    getProjects: build.query<ProjectListItem[], void>({
-      query: () => 'projects',
-      providesTags: ['Project'],
-    }),
-    getProject: build.query<Project, string>({
-      query: (id) => `projects/${id}`,
-      providesTags: (_result, _error, id) => [{ type: 'Project', id }],
-    }),
     createProject: build.mutation<Project, ProjectInput>({
       query: (body) => ({ url: 'projects', method: 'POST', body }),
       invalidatesTags: ['Project'],
@@ -42,8 +34,6 @@ export const projectsApi = api.injectEndpoints({
 });
 
 export const {
-  useGetProjectsQuery,
-  useGetProjectQuery,
   useCreateProjectMutation,
   useUpdateProjectMutation,
   useDeleteProjectMutation,
