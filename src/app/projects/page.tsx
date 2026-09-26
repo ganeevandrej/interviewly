@@ -5,23 +5,14 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useGetProjectsQuery } from '@/services/projects';
 
-import { projectsApi } from '@/client/projects';
 import { AppShell } from '@/components/AppShell';
 import { ProjectCard } from '@/components/ProjectCard';
 import type { ProjectListItem } from '@/types';
 
 export default function ProjectsPage() {
-  const [projects, setProjects] = useState<ProjectListItem[]>([]);
-  const [error, setError] = useState('');
-
-  useEffect(() => {
-    projectsApi
-      .list()
-      .then(setProjects)
-      .catch(() => setError('Не удалось загрузить проекты.'));
-  }, []);
+  const { data: projects = [], error } = useGetProjectsQuery();
 
   const ready = projects.filter((project) => project.status === 'READY');
   const drafts = projects.filter((project) => project.status === 'DRAFT');
@@ -42,7 +33,7 @@ export default function ProjectsPage() {
             Новый проект
           </Button>
         </Stack>
-        {error && <Typography color="error">{error}</Typography>}
+        {error && <Typography color="error">Не удалось загрузить проекты.</Typography>}
         {!projects.length && !error && (
           <Typography color="text.secondary">Проектов пока нет.</Typography>
         )}

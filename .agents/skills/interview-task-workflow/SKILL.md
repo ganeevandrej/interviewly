@@ -17,15 +17,18 @@ Use this skill when the user asks to read one or more tasks and implement them i
 - Use only skills relevant to the current task. Inspect available skill descriptions and load the selected skills before taking the related action.
 - Do not expand the task based on the broader project context. Mention useful follow-up work instead of implementing it unless the user explicitly included it.
 
-## Branch safety — perform first
+## Branch safety and task relationship — perform first
 
 Before reading external tasks or editing code:
 
 1. Run `git status --short --branch` and identify the current branch.
-2. If the current branch is `master`, create a new branch named for the feature or bug before continuing, such as `feature/<short-name>` or `fix/<short-name>`.
-3. If the current branch is not `master`, check whether it is already merged into `master` using the repository’s local git information.
-4. If the current branch is not merged into `master`, stop. Tell the user which branch is active and that work will not be performed until it is merged into `master`.
-5. Do not reset, rebase, delete, or rewrite the user’s branch without explicit instruction.
+2. Determine whether the requested task belongs to the feature or bug currently represented by the branch.
+3. If it belongs to the current branch, keep working in that branch and, when the user requests a commit, include the changes in a commit there.
+4. If it belongs to a different feature or bug and the current branch is not `master`, check whether the current branch is already merged into `master` using the repository’s local git information.
+5. If the current branch is not merged into `master`, stop. Tell the user which branch is active and that work will not be performed until it is merged into `master`.
+6. If the current branch is `master`, create a new branch named for the feature or bug before continuing, such as `feature/<short-name>` or `fix/<short-name>`.
+7. If the task’s relationship to the current branch is unclear, ask exactly: “Будем менять ветку и достаточно внести изменения в текущей ветке одним коммитом?” Continue only after the user answers.
+8. Do not reset, rebase, delete, or rewrite the user’s branch without explicit instruction.
 
 Preserve unrelated working-tree changes and ask before a requested change would overlap them dangerously.
 

@@ -14,38 +14,36 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
-import { projectsApi } from '@/client/projects';
 import { AppShell } from '@/components/AppShell';
 import { GlassPanel } from '@/components/GlassPanel';
 import { ProjectQuestionsWidget } from '@/components/projects/ProjectQuestionsWidget';
 import { ProjectTechnologyWidget } from '@/components/projects/ProjectTechnologyWidget';
+import {
+  useDeleteProjectMutation,
+  useGetProjectQuery,
+  useUpdateProjectMutation,
+} from '@/services/projects';
 import type { Project, ProjectInput, ProjectTeamItem } from '@/types';
 
 export default function ProjectPage() {
   const { projectId } = useParams<{ projectId: string }>();
   const router = useRouter();
-  const [project, setProject] = useState<Project | null>(null);
   const [draft, setDraft] = useState<ProjectInput | null>(null);
   const [editing, setEditing] = useState(false);
-  const [error, setError] = useState('');
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const { data: project, error: queryError, isLoading } = useGetProjectQuery(projectId);
+  const [updateProject, { error: updateError }] = useUpdateProjectMutation();
+  const [deleteProject, { error: deleteError }] = useDeleteProjectMutation();
 
-  useEffect(() => {
-    projectsApi
-      .read(projectId)
-      .then(setProject)
-      .catch(() => setError('Не удалось загрузить проект.'));
-  }, [projectId]);
-
-  if (error)
+  if (queryError)
     return (
       <AppShell>
-        <Typography color="error">{error}</Typography>
+        <Typography color="error">Не удалось загрузить проект.</Typography>
       </AppShell>
     );
-  if (!project)
+  if (isLoading || !project)
     return (
       <AppShell>
         <Typography color="text.secondary">Загрузка проекта…</Typography>
@@ -72,21 +70,20 @@ export default function ProjectPage() {
   async function save() {
     if (!draft) return;
     try {
-      const saved = await projectsApi.update(currentProject.id, draft);
-      setProject(saved);
+      await updateProject({ id: currentProject.id, input: draft }).unwrap();
       setDraft(null);
       setEditing(false);
     } catch {
-      setError('Не удалось сохранить проект.');
+      return;
     }
   }
 
   async function remove() {
     try {
-      await projectsApi.delete(currentProject.id);
+      await deleteProject(currentProject.id).unwrap();
       router.push('/projects');
     } catch {
-      setError('Не удалось удалить проект.');
+      return;
     }
   }
 
@@ -126,7 +123,9 @@ export default function ProjectPage() {
             </Button>
           </Stack>
         </Stack>
-        {error && <Typography color="error">{error}</Typography>}
+        {(updateError || deleteError) && (
+          <Typography color="error">Не удалось сохранить или удалить проект.</Typography>
+        )}
         {editing && draft ? (
           <ProjectEditForm value={draft} onChange={setDraft} />
         ) : (
