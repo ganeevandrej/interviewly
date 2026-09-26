@@ -91,3 +91,84 @@ function listOfText(value: unknown, field: string): string[] {
   if (!Array.isArray(value)) throw new InputError(`Поле «${field}» должно быть массивом.`);
   return value.map((item) => text(item, field));
 }
+
+function stringList(value: unknown, field: string): string[] {
+  return Array.from(new Set(listOfText(value, field)));
+}
+
+function teamList(value: unknown): { name: string; count: number }[] {
+  if (!Array.isArray(value)) throw new InputError('Поле «Команда» должно быть массивом.');
+
+  return value.map((item) => {
+    const data = record(item, ['name', 'count']);
+
+    if (typeof data.count !== 'number' || !Number.isFinite(data.count))
+      throw new InputError('Количество участников команды должно быть числом.');
+
+    return { name: text(data.name, 'Участник команды'), count: data.count };
+  });
+}
+
+function projectTechnologies(value: unknown) {
+  if (!Array.isArray(value)) throw new InputError('Поле «Технологии» должно быть массивом.');
+
+  return value.map((item) => {
+    const data = record(item, ['id', 'name', 'isFeatured']);
+    const id = data.id === undefined || data.id === null ? undefined : text(data.id, 'Технология');
+    const name = data.name === undefined ? undefined : text(data.name, 'Технология');
+
+    if (!id && !name) throw new InputError('Укажите идентификатор или название технологии.');
+    if (data.isFeatured !== undefined && typeof data.isFeatured !== 'boolean')
+      throw new InputError('Признак избранной технологии должен быть логическим.');
+
+    return { id, name, isFeatured: data.isFeatured ?? false };
+  });
+}
+
+const projectFields = [
+  'title',
+  'color',
+  'description',
+  'team',
+  'tasks',
+  'responsibilities',
+  'achievements',
+  'status',
+  'technologies',
+] as const;
+
+function projectText(value: unknown, field: string): string | null {
+  if (value === undefined || value === null) return null;
+  if (typeof value === 'string' && !value.trim()) return null;
+
+  return text(value, field);
+}
+
+export function projectInput(value: unknown) {
+  const data = record(value, projectFields);
+
+  if (data.status !== undefined && data.status !== 'DRAFT' && data.status !== 'READY')
+    throw new InputError('Статус проекта должен быть DRAFT или READY.');
+
+  return {
+    title: text(data.title, 'Название'),
+    color: projectText(data.color, 'Цвет'),
+    description: projectText(data.description, 'Описание'),
+    team: data.team === undefined || data.team === null ? [] : teamList(data.team),
+    tasks: data.tasks === undefined || data.tasks === null ? [] : stringList(data.tasks, 'Задачи'),
+    responsibilities:
+      data.responsibilities === undefined || data.responsibilities === null
+        ? []
+        : stringList(data.responsibilities, 'Обязанности'),
+    achievements:
+      data.achievements === undefined || data.achievements === null
+        ? []
+        : stringList(data.achievements, 'Достижения'),
+    status: data.status ?? 'DRAFT',
+    technologies:
+      data.technologies === undefined ? undefined : projectTechnologies(data.technologies),
+  };
+}
+
+export const projectCreateInput = projectInput;
+export const projectUpdateInput = projectInput;
