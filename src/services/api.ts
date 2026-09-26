@@ -48,6 +48,9 @@ const baseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> =
 export const api = createApi({
   reducerPath: 'api',
   baseQuery,
+  refetchOnFocus: true,
+  refetchOnReconnect: true,
+  keepUnusedDataFor: 60,
   tagTypes: ['Project', 'Story', 'Library', 'Group', 'Topic', 'Question'],
   endpoints: () => ({}),
 });

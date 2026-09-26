@@ -37,7 +37,6 @@ import {
   useCreateQuestionMutation,
 } from '@/services/libraryApi';
 import Alert from '@mui/material/Alert';
-import { useAsyncAction } from '@/client/useAsyncAction';
 
 import type { Question } from '@/types';
 
@@ -47,14 +46,18 @@ export default function GroupPage() {
   const { data, isLoading } = useGetLibraryQuery();
   const [deleteGroup, deleteGroupState] = useDeleteGroupMutation();
   const [deleteQuestion, deleteQuestionState] = useDeleteQuestionMutation();
-  const [updateGroup] = useUpdateGroupMutation();
-  const [updateQuestion] = useUpdateQuestionMutation();
-  const [createQuestion] = useCreateQuestionMutation();
+  const [updateGroup, updateGroupState] = useUpdateGroupMutation();
+  const [updateQuestion, updateQuestionState] = useUpdateQuestionMutation();
+  const [createQuestion, createQuestionState] = useCreateQuestionMutation();
   const groups = data?.groups ?? [];
   const topics = data?.topics.filter((topic) => topic.groupId === params.groupId) ?? [];
   const allQuestions = data?.questions ?? [];
-  const pending = deleteGroupState.isLoading || deleteQuestionState.isLoading;
-  const action = useAsyncAction();
+  const pending =
+    deleteGroupState.isLoading ||
+    deleteQuestionState.isLoading ||
+    updateGroupState.isLoading ||
+    updateQuestionState.isLoading ||
+    createQuestionState.isLoading;
   const group = groups.find((item) => item.id === params.groupId);
   const [topicsOpen, setTopicsOpen] = useState(false);
   const [initialTopicId, setInitialTopicId] = useState<string | null>(null);
@@ -115,10 +118,11 @@ export default function GroupPage() {
   };
 
   const handleDeleteGroup = async () => {
-    const deleted = await action.run(() => deleteGroup(group.id).unwrap());
-
-    if (deleted) {
+    try {
+      await deleteGroup(group.id).unwrap();
       router.push('/');
+    } catch {
+      return;
     }
   };
 
@@ -127,17 +131,20 @@ export default function GroupPage() {
       return;
     }
 
-    const deleted = await action.run(() => deleteQuestion({ groupId: group.id, questionId: editingQuestion.id }).unwrap());
-
-    if (deleted) {
+    try {
+      await deleteQuestion({ groupId: group.id, questionId: editingQuestion.id }).unwrap();
       setMenuAnchor(null);
+    } catch {
+      return;
     }
   };
 
   return (
     <AppShell onCreate={() => openCreateQuestion()}>
       <Stack gap={3}>
-        {action.error && <Alert severity="error">{action.error}</Alert>}
+        {(deleteGroupState.error || deleteQuestionState.error) && (
+          <Alert severity="error">Не удалось выполнить действие.</Alert>
+        )}
         <Button
           component={Link}
           href="/"
@@ -177,7 +184,7 @@ export default function GroupPage() {
               Редактировать
             </Button>
             <Button
-              disabled={action.busy || pending}
+              disabled={pending}
               color="error"
               startIcon={<DeleteRoundedIcon />}
               onClick={handleDeleteGroup}
@@ -275,7 +282,7 @@ export default function GroupPage() {
           Редактировать / изменить тему
         </MenuItem>
         <MenuItem
-          disabled={action.busy || pending}
+          disabled={pending}
           onClick={handleDeleteQuestion}
           sx={{ color: 'error.main' }}
         >
@@ -288,6 +295,8 @@ export default function GroupPage() {
         open={groupDialogOpen}
         group={group}
         onClose={() => setGroupDialogOpen(false)}
+        busy={updateGroupState.isLoading}
+        error={updateGroupState.error ? 'Не удалось сохранить группу.' : null}
         onSave={(payload) => updateGroup({ id: group.id, input: payload }).unwrap().then(() => undefined)}
       />
       <QuestionDialog
@@ -299,6 +308,8 @@ export default function GroupPage() {
           setQuestionDialogOpen(false);
           setEditingQuestion(undefined);
         }}
+        busy={updateQuestionState.isLoading || createQuestionState.isLoading}
+        error={updateQuestionState.error || createQuestionState.error ? 'Не удалось сохранить вопрос.' : null}
         onSave={(payload) => {
           if (editingQuestion) return updateQuestion({ groupId: group.id, questionId: editingQuestion.id, input: payload }).unwrap().then(() => undefined);
           return createQuestion({ groupId: group.id, input: payload }).unwrap().then(() => undefined);

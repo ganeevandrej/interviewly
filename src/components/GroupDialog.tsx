@@ -11,7 +11,6 @@ import TextField from '@mui/material/TextField';
 import { useState } from 'react';
 import Alert from '@mui/material/Alert';
 import { useTheme } from '@mui/material/styles';
-import { useAsyncAction } from '@/client/useAsyncAction';
 
 import type { QuestionGroup } from '@/types';
 
@@ -20,13 +19,15 @@ type GroupDialogProps = {
   group?: QuestionGroup;
   onClose: () => void;
   onSave: (payload: Omit<QuestionGroup, 'id'>) => Promise<void>;
+  busy?: boolean;
+  error?: string | null;
 };
 
 export function GroupDialog(props: GroupDialogProps) {
   return props.open ? <GroupDialogForm key={props.group?.id ?? 'new'} {...props} /> : null;
 }
 
-function GroupDialogForm({ open, group, onClose, onSave }: GroupDialogProps) {
+function GroupDialogForm({ open, group, onClose, onSave, busy = false, error }: GroupDialogProps) {
   const [name, setName] = useState(group?.name ?? '');
   const theme = useTheme();
   const colors = [
@@ -39,22 +40,21 @@ function GroupDialogForm({ open, group, onClose, onSave }: GroupDialogProps) {
   ];
   const [accentColor, setAccentColor] = useState(group?.accentColor ?? colors[0]);
 
-  const action = useAsyncAction();
-
   const handleSave = async () => {
     if (!name.trim()) return;
 
-    if (await action.run(() => onSave({ name: name.trim(), accentColor }))) onClose();
+    await onSave({ name: name.trim(), accentColor });
+    onClose();
   };
 
   return (
-    <Dialog open={open} onClose={action.busy ? undefined : onClose} fullWidth maxWidth="xs">
+    <Dialog open={open} onClose={busy ? undefined : onClose} fullWidth maxWidth="xs">
       <DialogTitle>{group ? 'Редактировать группу' : 'Новая группа'}</DialogTitle>
       <DialogContent>
         <Stack gap={3} sx={{ pt: 1 }}>
-          {action.error && <Alert severity="error">{action.error}</Alert>}
+          {error && <Alert severity="error">{error}</Alert>}
           <TextField
-            disabled={action.busy}
+            disabled={busy}
             label="Название"
             value={name}
             onChange={(event) => setName(event.target.value)}
@@ -63,7 +63,7 @@ function GroupDialogForm({ open, group, onClose, onSave }: GroupDialogProps) {
           <Stack direction="row" gap={1}>
             {colors.map((color) => (
               <ButtonBase
-                disabled={action.busy}
+                disabled={busy}
                 type="button"
                 key={color}
                 aria-label={`Цвет ${color}`}
@@ -89,11 +89,11 @@ function GroupDialogForm({ open, group, onClose, onSave }: GroupDialogProps) {
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button disabled={action.busy} onClick={onClose}>
+        <Button disabled={busy} onClick={onClose}>
           Отмена
         </Button>
-        <Button disabled={action.busy || !name.trim()} onClick={handleSave} variant="contained">
-          {action.busy ? 'Сохранение…' : 'Сохранить'}
+        <Button disabled={busy || !name.trim()} onClick={handleSave} variant="contained">
+          {busy ? 'Сохранение…' : 'Сохранить'}
         </Button>
       </DialogActions>
     </Dialog>

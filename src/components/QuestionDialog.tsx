@@ -10,7 +10,6 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import { useState } from 'react';
 import Alert from '@mui/material/Alert';
-import { useAsyncAction } from '@/client/useAsyncAction';
 
 import type { Topic, Question, QuestionInput } from '@/types';
 
@@ -21,6 +20,8 @@ type QuestionDialogProps = {
   initialTopicId?: string | null;
   onClose: () => void;
   onSave: (payload: QuestionInput) => Promise<void>;
+  busy?: boolean;
+  error?: string | null;
 };
 
 export function QuestionDialog(props: QuestionDialogProps) {
@@ -34,6 +35,8 @@ function QuestionDialogForm({
   initialTopicId,
   onClose,
   onSave,
+  busy = false,
+  error,
 }: QuestionDialogProps) {
   const [questionText, setQuestionText] = useState(question?.question ?? '');
   const [topicId, setTopicId] = useState(question ? question.topicId : (initialTopicId ?? null));
@@ -44,30 +47,25 @@ function QuestionDialogForm({
     : null;
   const availableTopics = topics.filter((topic) => !topic.isDefault);
 
-  const action = useAsyncAction();
-
   const handleSave = async () => {
     if (!questionText.trim() || !answer.trim()) return;
 
-    const saved = await action.run(() =>
-      onSave({
-        question: questionText.trim(),
-        answer: answer.trim(),
-        topicId: selectedTopicId,
-      }),
-    );
-
-    if (saved) onClose();
+    await onSave({
+      question: questionText.trim(),
+      answer: answer.trim(),
+      topicId: selectedTopicId,
+    });
+    onClose();
   };
 
   return (
-    <Dialog open={open} onClose={action.busy ? undefined : onClose} fullWidth maxWidth="sm">
+    <Dialog open={open} onClose={busy ? undefined : onClose} fullWidth maxWidth="sm">
       <DialogTitle>{question ? 'Редактировать вопрос' : 'Новый вопрос'}</DialogTitle>
       <DialogContent>
         <Stack gap={2} sx={{ pt: 1 }}>
-          {action.error && <Alert severity="error">{action.error}</Alert>}
+          {error && <Alert severity="error">{error}</Alert>}
           <TextField
-            disabled={action.busy}
+            disabled={busy}
             select
             label="Тема"
             value={selectedTopicId ?? ''}
@@ -81,7 +79,7 @@ function QuestionDialogForm({
             ))}
           </TextField>
           <TextField
-            disabled={action.busy}
+            disabled={busy}
             label="Вопрос"
             value={questionText}
             onChange={(event) => setQuestionText(event.target.value)}
@@ -90,7 +88,7 @@ function QuestionDialogForm({
             autoFocus
           />
           <TextField
-            disabled={action.busy}
+            disabled={busy}
             label="Ответ"
             value={answer}
             onChange={(event) => setAnswer(event.target.value)}
@@ -100,15 +98,15 @@ function QuestionDialogForm({
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button disabled={action.busy} onClick={onClose}>
+        <Button disabled={busy} onClick={onClose}>
           Отмена
         </Button>
         <Button
-          disabled={action.busy || !questionText.trim() || !answer.trim()}
+          disabled={busy || !questionText.trim() || !answer.trim()}
           onClick={handleSave}
           variant="contained"
         >
-          {action.busy ? 'Сохранение…' : 'Сохранить'}
+          {busy ? 'Сохранение…' : 'Сохранить'}
         </Button>
       </DialogActions>
     </Dialog>
