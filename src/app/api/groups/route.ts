@@ -5,9 +5,9 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export function GET() {
-  return respond(listGroups);
+    return respond(listGroups);
 }
 
 export function POST(request: Request) {
-  return respond(async () => createGroup(await jsonBody(request)), 201);
+    return respond(async () => createGroup(await jsonBody(request)), 201);
 }

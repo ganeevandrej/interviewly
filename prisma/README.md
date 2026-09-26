@@ -45,5 +45,6 @@ Supabase migration history. Do not run migrate reset against the hosted project.
 For future changes, generate and review migrations against a separate development database.
 
 References:
+
 - https://www.prisma.io/docs/orm/v7/prisma-schema/overview/generators
 - https://supabase.com/docs/guides/database/connecting-to-postgres

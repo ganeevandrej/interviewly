@@ -7,9 +7,11 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export function PUT(request: Request, { params }: Context) {
-  return respond(async () => updateTopic(params.groupId, params.topicId, await jsonBody(request)));
+    return respond(async () =>
+        updateTopic(params.groupId, params.topicId, await jsonBody(request)),
+    );
 }
 
 export function DELETE(_request: Request, { params }: Context) {
-  return respond(() => deleteTopic(params.groupId, params.topicId), 204);
+    return respond(() => deleteTopic(params.groupId, params.topicId), 204);
 }

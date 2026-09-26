@@ -2,100 +2,100 @@
 name: Interviewly
 description: Спокойный инструмент для личной подготовки с точечными бирюзовыми и лавандовыми акцентами.
 colors:
-  canvas: "#101417"
-  surface: "#181E23"
-  surface-raised: "#20282F"
-  surface-hover: "#27323A"
-  surface-pressed: "#303D46"
-  text: "#EDF2F4"
-  text-secondary: "#B0BEC7"
-  text-muted: "#94A4AF"
-  text-disabled: "#72818B"
-  border-subtle: "#34414B"
-  border-control: "#647782"
-  primary: "#70DECF"
-  primary-hover: "#92EADC"
-  primary-active: "#52C7B8"
-  primary-subtle: "#193B38"
-  on-primary: "#102522"
-  secondary: "#BCADF0"
-  secondary-hover: "#CFC3F7"
-  secondary-active: "#AA97E5"
-  secondary-subtle: "#302A43"
-  on-secondary: "#241C38"
-  focus: "#92EADC"
-  success: "#A4D79A"
-  success-subtle: "#263725"
-  warning: "#F0CD87"
-  warning-subtle: "#3A3020"
-  error: "#FFADB4"
-  error-subtle: "#40272E"
-  info: "#A6C8F0"
-  info-subtle: "#243348"
+    canvas: '#101417'
+    surface: '#181E23'
+    surface-raised: '#20282F'
+    surface-hover: '#27323A'
+    surface-pressed: '#303D46'
+    text: '#EDF2F4'
+    text-secondary: '#B0BEC7'
+    text-muted: '#94A4AF'
+    text-disabled: '#72818B'
+    border-subtle: '#34414B'
+    border-control: '#647782'
+    primary: '#70DECF'
+    primary-hover: '#92EADC'
+    primary-active: '#52C7B8'
+    primary-subtle: '#193B38'
+    on-primary: '#102522'
+    secondary: '#BCADF0'
+    secondary-hover: '#CFC3F7'
+    secondary-active: '#AA97E5'
+    secondary-subtle: '#302A43'
+    on-secondary: '#241C38'
+    focus: '#92EADC'
+    success: '#A4D79A'
+    success-subtle: '#263725'
+    warning: '#F0CD87'
+    warning-subtle: '#3A3020'
+    error: '#FFADB4'
+    error-subtle: '#40272E'
+    info: '#A6C8F0'
+    info-subtle: '#243348'
 typography:
-  heading:
-    fontFamily: "Golos Text, Segoe UI, sans-serif"
-    fontSize: "2rem"
-    fontWeight: 600
-    lineHeight: 1.25
-    letterSpacing: "-0.02em"
-  body:
-    fontFamily: "Golos Text, Segoe UI, sans-serif"
-    fontSize: "1rem"
-    fontWeight: 400
-    lineHeight: 1.6
-    letterSpacing: "normal"
-  label:
-    fontFamily: "Golos Text, Segoe UI, sans-serif"
-    fontSize: "0.875rem"
-    fontWeight: 500
-    lineHeight: 1.4
-    letterSpacing: "normal"
-  code:
-    fontFamily: "JetBrains Mono, Consolas, monospace"
-    fontSize: "0.875rem"
-    fontWeight: 400
-    lineHeight: 1.6
-    letterSpacing: "normal"
+    heading:
+        fontFamily: 'Golos Text, Segoe UI, sans-serif'
+        fontSize: '2rem'
+        fontWeight: 600
+        lineHeight: 1.25
+        letterSpacing: '-0.02em'
+    body:
+        fontFamily: 'Golos Text, Segoe UI, sans-serif'
+        fontSize: '1rem'
+        fontWeight: 400
+        lineHeight: 1.6
+        letterSpacing: 'normal'
+    label:
+        fontFamily: 'Golos Text, Segoe UI, sans-serif'
+        fontSize: '0.875rem'
+        fontWeight: 500
+        lineHeight: 1.4
+        letterSpacing: 'normal'
+    code:
+        fontFamily: 'JetBrains Mono, Consolas, monospace'
+        fontSize: '0.875rem'
+        fontWeight: 400
+        lineHeight: 1.6
+        letterSpacing: 'normal'
 rounded:
-  xs: "4px"
-  sm: "8px"
-  md: "12px"
-  lg: "16px"
-  xl: "20px"
-  pill: "999px"
+    xs: '4px'
+    sm: '8px'
+    md: '12px'
+    lg: '16px'
+    xl: '20px'
+    pill: '999px'
 spacing:
-  s1: "4px"
-  s2: "8px"
-  s3: "12px"
-  s4: "16px"
-  s5: "20px"
-  s6: "24px"
-  s8: "32px"
-  s10: "40px"
-  s12: "48px"
-  s16: "64px"
+    s1: '4px'
+    s2: '8px'
+    s3: '12px'
+    s4: '16px'
+    s5: '20px'
+    s6: '24px'
+    s8: '32px'
+    s10: '40px'
+    s12: '48px'
+    s16: '64px'
 components:
-  button-primary:
-    backgroundColor: "{colors.primary}"
-    textColor: "{colors.on-primary}"
-    rounded: "{rounded.md}"
-    height: "44px"
-    padding: "0 16px"
-  button-primary-hover:
-    backgroundColor: "{colors.primary-hover}"
-    textColor: "{colors.on-primary}"
-  input:
-    backgroundColor: "{colors.canvas}"
-    textColor: "{colors.text}"
-    rounded: "{rounded.md}"
-    height: "48px"
-    padding: "12px 16px"
-  card:
-    backgroundColor: "{colors.surface}"
-    textColor: "{colors.text}"
-    rounded: "{rounded.lg}"
-    padding: "24px"
+    button-primary:
+        backgroundColor: '{colors.primary}'
+        textColor: '{colors.on-primary}'
+        rounded: '{rounded.md}'
+        height: '44px'
+        padding: '0 16px'
+    button-primary-hover:
+        backgroundColor: '{colors.primary-hover}'
+        textColor: '{colors.on-primary}'
+    input:
+        backgroundColor: '{colors.canvas}'
+        textColor: '{colors.text}'
+        rounded: '{rounded.md}'
+        height: '48px'
+        padding: '12px 16px'
+    card:
+        backgroundColor: '{colors.surface}'
+        textColor: '{colors.text}'
+        rounded: '{rounded.lg}'
+        padding: '24px'
 ---
 
 # Дизайн-язык Interviewly
@@ -125,21 +125,21 @@ components:
 
 ### Роли и сочетания
 
-| Роль | Применение |
-| --- | --- |
-| `canvas` | Фон страницы и утопленные области ввода |
-| `surface` | Карточки групп, блок ответа, панели |
-| `surface-raised` | Меню, диалоги, всплывающие элементы |
-| `surface-hover`, `surface-pressed` | Нейтральная обратная связь на интерактивных поверхностях |
-| `text` | Заголовки, вопросы, ответы, основной текст |
-| `text-secondary` | Описания, подписи полей, вспомогательные действия |
-| `text-muted` | Метаданные, счётчики, placeholder; не основной текст ответа |
-| `border-subtle` | Разделители и необязательные контуры карточек |
-| `border-control` | Видимая граница поля или outlined-кнопки |
-| `primary` | Главное действие, выбранная навигация, текущая позиция повторения, ссылки |
-| `secondary` | Редкий акцент focus-режима, маркер ответа, декоративная деталь |
-| `*-subtle` | Приглушённая подложка соответствующего акцента или статуса |
-| `success`, `warning`, `error`, `info` | Только действительный смысл статуса, вместе с текстом или иконкой |
+| Роль                                  | Применение                                                                |
+| ------------------------------------- | ------------------------------------------------------------------------- |
+| `canvas`                              | Фон страницы и утопленные области ввода                                   |
+| `surface`                             | Карточки групп, блок ответа, панели                                       |
+| `surface-raised`                      | Меню, диалоги, всплывающие элементы                                       |
+| `surface-hover`, `surface-pressed`    | Нейтральная обратная связь на интерактивных поверхностях                  |
+| `text`                                | Заголовки, вопросы, ответы, основной текст                                |
+| `text-secondary`                      | Описания, подписи полей, вспомогательные действия                         |
+| `text-muted`                          | Метаданные, счётчики, placeholder; не основной текст ответа               |
+| `border-subtle`                       | Разделители и необязательные контуры карточек                             |
+| `border-control`                      | Видимая граница поля или outlined-кнопки                                  |
+| `primary`                             | Главное действие, выбранная навигация, текущая позиция повторения, ссылки |
+| `secondary`                           | Редкий акцент focus-режима, маркер ответа, декоративная деталь            |
+| `*-subtle`                            | Приглушённая подложка соответствующего акцента или статуса                |
+| `success`, `warning`, `error`, `info` | Только действительный смысл статуса, вместе с текстом или иконкой         |
 
 Бирюзовый — главный акцент, лавандовый — вспомогательный. Не чередовать их произвольно между одинаковыми кнопками. Вторичная кнопка нейтральная; название `secondary` у цвета не означает обязательную лавандовую заливку вторичных действий.
 
@@ -153,25 +153,25 @@ components:
 
 Архитектура использует те же роли. Следующие значения — предварительная палитра будущего этапа, не обещание готовой светлой темы. Её надо визуально и контрастно проверить отдельно; остальные интерактивные состояния определить до выпуска.
 
-| Токен | Предварительное значение |
-| --- | --- |
-| `canvas` | `#F4F7F7` |
-| `surface` | `#FFFFFF` |
-| `surface-raised` | `#FFFFFF` |
-| `surface-hover` | `#E9F0EF` |
-| `surface-pressed` | `#DCE7E5` |
-| `text` | `#19272D` |
-| `text-secondary` | `#465D66` |
-| `text-muted` | `#596E77` |
-| `border-subtle` | `#D5DFE1` |
-| `border-control` | `#768C94` |
-| `primary` | `#176C61` |
-| `primary-subtle` | `#DDF2EC` |
-| `on-primary` | `#FFFFFF` |
-| `secondary` | `#7055A2` |
-| `secondary-subtle` | `#EEE8F8` |
-| `on-secondary` | `#FFFFFF` |
-| `focus` | `#176C61` |
+| Токен              | Предварительное значение |
+| ------------------ | ------------------------ |
+| `canvas`           | `#F4F7F7`                |
+| `surface`          | `#FFFFFF`                |
+| `surface-raised`   | `#FFFFFF`                |
+| `surface-hover`    | `#E9F0EF`                |
+| `surface-pressed`  | `#DCE7E5`                |
+| `text`             | `#19272D`                |
+| `text-secondary`   | `#465D66`                |
+| `text-muted`       | `#596E77`                |
+| `border-subtle`    | `#D5DFE1`                |
+| `border-control`   | `#768C94`                |
+| `primary`          | `#176C61`                |
+| `primary-subtle`   | `#DDF2EC`                |
+| `on-primary`       | `#FFFFFF`                |
+| `secondary`        | `#7055A2`                |
+| `secondary-subtle` | `#EEE8F8`                |
+| `on-secondary`     | `#FFFFFF`                |
+| `focus`            | `#176C61`                |
 
 Светлая тема сохраняет иерархию и геометрию, но использует более тёмные акценты; простое инвертирование цветов запрещено. Переключатель темы добавляется только вместе с полноценной поддержкой тем.
 
@@ -185,18 +185,18 @@ components:
 
 Размеры в rem, таблица показывает эквивалент при базовых 16px. Масштабирование текста пользователем сохраняется.
 
-| Роль | Компьютер | Телефон | Вес | Межстрочный интервал |
-| --- | --- | --- | --- | --- |
-| H1 / заголовок страницы | 32px / 2rem | 28px / 1.75rem | 600 | 1.25 |
-| H2 / раздел | 24px / 1.5rem | 22px / 1.375rem | 600 | 1.3 |
-| H3 / подраздел, заголовок диалога | 20px / 1.25rem | 20px / 1.25rem | 600 | 1.4 |
-| H4 / заголовок карточки | 18px / 1.125rem | 18px / 1.125rem | 600 | 1.4 |
-| Вопрос в focus-режиме | 28px / 1.75rem | 22px / 1.375rem | 500 | 1.45 |
-| Ответ в focus-режиме | 18px / 1.125rem | 17px / 1.0625rem | 400 | 1.65 |
-| Основной текст и поля | 16px / 1rem | 16px / 1rem | 400 | 1.6 |
-| Кнопки | 15px / 0.9375rem | 15px / 0.9375rem | 500 | 1.4 |
-| Подписи, метаданные | 14px / 0.875rem | 14px / 0.875rem | 400–500 | 1.4 |
-| Код | 14px / 0.875rem | 14px / 0.875rem | 400 | 1.6 |
+| Роль                              | Компьютер        | Телефон          | Вес     | Межстрочный интервал |
+| --------------------------------- | ---------------- | ---------------- | ------- | -------------------- |
+| H1 / заголовок страницы           | 32px / 2rem      | 28px / 1.75rem   | 600     | 1.25                 |
+| H2 / раздел                       | 24px / 1.5rem    | 22px / 1.375rem  | 600     | 1.3                  |
+| H3 / подраздел, заголовок диалога | 20px / 1.25rem   | 20px / 1.25rem   | 600     | 1.4                  |
+| H4 / заголовок карточки           | 18px / 1.125rem  | 18px / 1.125rem  | 600     | 1.4                  |
+| Вопрос в focus-режиме             | 28px / 1.75rem   | 22px / 1.375rem  | 500     | 1.45                 |
+| Ответ в focus-режиме              | 18px / 1.125rem  | 17px / 1.0625rem | 400     | 1.65                 |
+| Основной текст и поля             | 16px / 1rem      | 16px / 1rem      | 400     | 1.6                  |
+| Кнопки                            | 15px / 0.9375rem | 15px / 0.9375rem | 500     | 1.4                  |
+| Подписи, метаданные               | 14px / 0.875rem  | 14px / 0.875rem  | 400–500 | 1.4                  |
+| Код                               | 14px / 0.875rem  | 14px / 0.875rem  | 400     | 1.6                  |
 
 H1–H2: letter-spacing `-0.02em`; остальной текст — normal. Не использовать сверхжирные заголовки, прописные буквы для длинных подписей или моноширинный шрифт для всего UI. H5/H6 при реальной необходимости наследуют 16px/600 и 14px/600; уровни HTML определяются структурой, а не желаемым размером.
 
@@ -212,20 +212,20 @@ H1–H2: letter-spacing `-0.02em`; остальной текст — normal. Н�
 
 ### Геометрия и responsive
 
-| Токен | Значение и поведение |
-| --- | --- |
-| `layout.content-max` | 1200px, максимальная ширина основного содержимого |
-| `layout.focus-max` | 800px, область повторения без боковой навигации |
-| `layout.sidebar` | 224px, отдельна от максимальной ширины содержимого |
-| `layout.gutter-mobile` | 16px |
-| `layout.gutter-tablet` | 24px |
-| `layout.gutter-desktop` | 32px |
-| `breakpoint.sm` | 600px |
-| `breakpoint.md` | 900px |
-| `breakpoint.lg` | 1200px |
-| `size.touch` | Минимум 44×44px для интерактивной цели |
-| `size.touch-preferred` | 48×48px для основных мобильных действий |
-| `size.icon` | 20px в строках, 24px в навигации |
+| Токен                   | Значение и поведение                               |
+| ----------------------- | -------------------------------------------------- |
+| `layout.content-max`    | 1200px, максимальная ширина основного содержимого  |
+| `layout.focus-max`      | 800px, область повторения без боковой навигации    |
+| `layout.sidebar`        | 224px, отдельна от максимальной ширины содержимого |
+| `layout.gutter-mobile`  | 16px                                               |
+| `layout.gutter-tablet`  | 24px                                               |
+| `layout.gutter-desktop` | 32px                                               |
+| `breakpoint.sm`         | 600px                                              |
+| `breakpoint.md`         | 900px                                              |
+| `breakpoint.lg`         | 1200px                                             |
+| `size.touch`            | Минимум 44×44px для интерактивной цели             |
+| `size.touch-preferred`  | 48×48px для основных мобильных действий            |
+| `size.icon`             | 20px в строках, 24px в навигации                   |
 
 - До 600px: одна колонка групп; формы вертикальные; основной экран прокручивается по вертикали. Удобные нижние действия повторения с учётом safe-area.
 - 600–899px: две колонки групп, если фактическая ширина каждой не меньше 260px; иначе одна. Навигация компактная.
@@ -241,20 +241,20 @@ H1–H2: letter-spacing `-0.02em`; остальной текст — normal. Н�
 
 Глубина создаётся сменой тона поверхности, затем границей и лишь при необходимости тенью. Фон однотонный. Основные карточки матовые; размытый фон и прозрачное стекло не являются частью нового языка.
 
-| Токен | Значение | Применение |
-| --- | --- | --- |
-| `shadow.none` | `none` | Карточки, строки, обычные кнопки |
-| `shadow.popover` | `0 8px 24px rgba(0,0,0,0.24)` | Меню и всплывающие панели |
-| `shadow.dialog` | `0 20px 56px rgba(0,0,0,0.36)` | Диалог |
-| `glow.primary` | `0 0 16px rgba(112,222,207,0.10)` | Редкий акцент главного действия при hover |
+| Токен            | Значение                          | Применение                                     |
+| ---------------- | --------------------------------- | ---------------------------------------------- |
+| `shadow.none`    | `none`                            | Карточки, строки, обычные кнопки               |
+| `shadow.popover` | `0 8px 24px rgba(0,0,0,0.24)`     | Меню и всплывающие панели                      |
+| `shadow.dialog`  | `0 20px 56px rgba(0,0,0,0.36)`    | Диалог                                         |
+| `glow.primary`   | `0 0 16px rgba(112,222,207,0.10)` | Редкий акцент главного действия при hover      |
 | `glow.secondary` | `0 0 18px rgba(188,173,240,0.08)` | Необязательный краткий акцент раскрытия ответа |
-| `overlay.scrim` | `rgba(0,0,0,0.60)` | Затемнение под диалогом |
-| `layer.base` | 0 | Контент |
-| `layer.sticky` | 10 | Закреплённая навигация |
-| `layer.popover` | 20 | Меню вне модального слоя |
-| `layer.modal` | 30 | Диалог с scrim |
-| `layer.toast` | 40 | Уведомления |
-| `layer.tooltip` | 50 | Подсказки |
+| `overlay.scrim`  | `rgba(0,0,0,0.60)`                | Затемнение под диалогом                        |
+| `layer.base`     | 0                                 | Контент                                        |
+| `layer.sticky`   | 10                                | Закреплённая навигация                         |
+| `layer.popover`  | 20                                | Меню вне модального слоя                       |
+| `layer.modal`    | 30                                | Диалог с scrim                                 |
+| `layer.toast`    | 40                                | Уведомления                                    |
+| `layer.tooltip`  | 50                                | Подсказки                                      |
 
 Значения layer задают относительный порядок; при переносе в MUI согласовать со всей шкалой z-index. Меню внутри диалога располагается выше его содержимого, а не под scrim.
 
@@ -264,12 +264,12 @@ H1–H2: letter-spacing `-0.02em`; остальной текст — normal. Н�
 
 Радиусы в YAML: `xs` для небольших фрагментов кода; `sm` для компактных бейджей; `md` для кнопок и полей; `lg` для карточек; `xl` для диалогов и focus-карточки. `pill` — только для небольших статусов и индикатора прогресса, не универсальная форма кнопок.
 
-| Токен | Значение | Назначение |
-| --- | --- | --- |
-| `border.width` | 1px | Обычные границы |
-| `border.selected` | 2px | Выделенная карточка или выбор без изменения размеров |
-| `focus.width` | 2px | Контур клавиатурного фокуса |
-| `focus.offset` | 3px | Отступ контура |
+| Токен             | Значение | Назначение                                           |
+| ----------------- | -------- | ---------------------------------------------------- |
+| `border.width`    | 1px      | Обычные границы                                      |
+| `border.selected` | 2px      | Выделенная карточка или выбор без изменения размеров |
+| `focus.width`     | 2px      | Контур клавиатурного фокуса                          |
+| `focus.offset`    | 3px      | Отступ контура                                       |
 
 Граница карточки — `border-subtle`; поля и outlined-кнопки — `border-control`. Состояния не должны сдвигать соседний контент: применять outline или заранее резервировать толщину границы. Вложенные элементы имеют меньший радиус, чем внешняя панель. Не складывать несколько обводок вокруг одного смыслового блока.
 
@@ -301,17 +301,17 @@ H1–H2: letter-spacing `-0.02em`; остальной текст — normal. Н�
 
 ### Состояния
 
-| Состояние | Правило |
-| --- | --- |
-| Default | Значения соответствующего компонента, без свечения |
-| Hover | Primary → `primary-hover`; нейтральные → `surface-hover`. Применять на устройствах с hover и точным указателем |
-| Focus-visible | Контур `focus` толщиной `focus.width`, offset `focus.offset`; остаётся заметным одновременно с hover или ошибкой |
-| Active / pressed | Primary → `primary-active`; нейтральные → `surface-pressed`; короткая смена тона, без перемещения цели касания |
-| Selected / current | `primary-subtle`, акцентный маркер и обозначение выбора; не путать с кратким pressed |
-| Disabled | Фон `surface-raised`, текст `text-disabled`, граница `border-subtle`, нет glow и hover; действие действительно недоступно. Причину при необходимости объяснить рядом |
-| Loading | Размер кнопки сохранён, индикатор и ясная подпись, повторная отправка блокируется; состояние сообщается assistive technology |
-| Error | Текстовая причина и способ исправления; `error` дополняет смысл |
-| Read-only | Текст сохраняет обычную читаемость, допускает выделение; это не disabled |
+| Состояние          | Правило                                                                                                                                                              |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Default            | Значения соответствующего компонента, без свечения                                                                                                                   |
+| Hover              | Primary → `primary-hover`; нейтральные → `surface-hover`. Применять на устройствах с hover и точным указателем                                                       |
+| Focus-visible      | Контур `focus` толщиной `focus.width`, offset `focus.offset`; остаётся заметным одновременно с hover или ошибкой                                                     |
+| Active / pressed   | Primary → `primary-active`; нейтральные → `surface-pressed`; короткая смена тона, без перемещения цели касания                                                       |
+| Selected / current | `primary-subtle`, акцентный маркер и обозначение выбора; не путать с кратким pressed                                                                                 |
+| Disabled           | Фон `surface-raised`, текст `text-disabled`, граница `border-subtle`, нет glow и hover; действие действительно недоступно. Причину при необходимости объяснить рядом |
+| Loading            | Размер кнопки сохранён, индикатор и ясная подпись, повторная отправка блокируется; состояние сообщается assistive technology                                         |
+| Error              | Текстовая причина и способ исправления; `error` дополняет смысл                                                                                                      |
+| Read-only          | Текст сохраняет обычную читаемость, допускает выделение; это не disabled                                                                                             |
 
 ### Focus-режим
 
@@ -325,19 +325,19 @@ H1–H2: letter-spacing `-0.02em`; остальной текст — normal. Н�
 
 ### Animations и transitions
 
-| Токен | Значение | Назначение |
-| --- | --- | --- |
-| `motion.instant` | 0ms | Reduced motion, немедленные состояния |
-| `motion.fast` | 120ms | Цвет, граница, pressed |
-| `motion.base` | 180ms | Hover, небольшое появление |
-| `motion.reveal` | 240ms | Раскрытие категории, появление ответа |
-| `motion.dialog` | 220ms | Диалог: opacity и смещение до 8px |
-| `motion.flip` | 420ms | Один переворот карточки на 180° |
-| `ease.standard` | `cubic-bezier(0.2, 0, 0, 1)` | Обычные переходы |
-| `ease.enter` | `cubic-bezier(0.16, 1, 0.3, 1)` | Появление |
-| `ease.flip` | `cubic-bezier(0.4, 0, 0.2, 1)` | Симметричный переворот без пружины |
-| `motion.distance` | 4–8px | Максимальное смещение при появлении |
-| `motion.perspective` | 1200px | Сдержанная глубина переворота |
+| Токен                | Значение                        | Назначение                            |
+| -------------------- | ------------------------------- | ------------------------------------- |
+| `motion.instant`     | 0ms                             | Reduced motion, немедленные состояния |
+| `motion.fast`        | 120ms                           | Цвет, граница, pressed                |
+| `motion.base`        | 180ms                           | Hover, небольшое появление            |
+| `motion.reveal`      | 240ms                           | Раскрытие категории, появление ответа |
+| `motion.dialog`      | 220ms                           | Диалог: opacity и смещение до 8px     |
+| `motion.flip`        | 420ms                           | Один переворот карточки на 180°       |
+| `ease.standard`      | `cubic-bezier(0.2, 0, 0, 1)`    | Обычные переходы                      |
+| `ease.enter`         | `cubic-bezier(0.16, 1, 0.3, 1)` | Появление                             |
+| `ease.flip`          | `cubic-bezier(0.4, 0, 0.2, 1)`  | Симметричный переворот без пружины    |
+| `motion.distance`    | 4–8px                           | Максимальное смещение при появлении   |
+| `motion.perspective` | 1200px                          | Сдержанная глубина переворота         |
 
 Анимировать точные свойства, не `transition: all`. Преимущественно opacity и transform; цвет и граница — локально. Не использовать bounce, параллакс, движущийся фон, бесконечное свечение и последовательный вылет всех строк. Новое содержимое не ждёт окончания декоративного эффекта; быстрые повторные действия не ставятся в очередь анимаций.
 
