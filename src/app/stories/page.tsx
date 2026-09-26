@@ -5,22 +5,13 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
 import { AppShell } from '@/components/AppShell';
 import { GlassPanel } from '@/components/GlassPanel';
-import { storiesApi } from '@/client/stories';
-
-import type { Story } from '@/types';
+import { useGetStoriesQuery } from '@/services/storiesApi';
 
 export default function StoriesPage() {
-  const [stories, setStories] = useState<Story[]>([]);
-  const [error, setError] = useState('');
-  useEffect(() => {
-    storiesApi
-      .list()
-      .then(setStories)
-      .catch((reason: Error) => setError(reason.message));
-  }, []);
+  const { data: stories = [], error, isLoading } = useGetStoriesQuery();
+  const errorMessage = error && 'data' in error && typeof error.data === 'string' ? error.data : '';
   return (
     <AppShell>
       <Stack gap={3}>
@@ -37,8 +28,9 @@ export default function StoriesPage() {
             Новая история
           </Button>
         </Stack>
-        {error && <Typography color="error">{error}</Typography>}
-        {!stories.length && !error && (
+        {errorMessage && <Typography color="error">{errorMessage}</Typography>}
+        {isLoading && <Typography color="text.secondary">Загрузка историй…</Typography>}
+        {!isLoading && !stories.length && !errorMessage && (
           <Typography color="text.secondary">Историй пока нет.</Typography>
         )}
         <Stack gap={1.5}>

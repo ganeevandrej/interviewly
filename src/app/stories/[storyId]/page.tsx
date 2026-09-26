@@ -9,12 +9,14 @@ import Typography from '@mui/material/Typography';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-
 import type { FormEvent } from 'react';
 import { AppShell } from '@/components/AppShell';
 import { GlassPanel } from '@/components/GlassPanel';
-import { storiesApi } from '@/client/stories';
-
+import {
+  useCreateStoryMutation,
+  useGetStoryQuery,
+  useUpdateStoryMutation,
+} from '@/services/storiesApi';
 import type { StoryInput } from '@/types';
 
 const emptyStory: StoryInput = {
@@ -30,13 +32,7 @@ const emptyStory: StoryInput = {
   questionIds: [],
 };
 type StoryTextFieldName =
-  | 'context'
-  | 'problem'
-  | 'responsibility'
-  | 'solution'
-  | 'difficulties'
-  | 'learned';
-
+  'context' | 'problem' | 'responsibility' | 'solution' | 'difficulties' | 'learned';
 const fields: Array<{ name: StoryTextFieldName; label: string }> = [
   { name: 'context', label: 'Контекст' },
   { name: 'problem', label: 'Проблема' },
@@ -46,62 +42,31 @@ const fields: Array<{ name: StoryTextFieldName; label: string }> = [
   { name: 'learned', label: 'Полученные знания' },
 ];
 
-type StoryTextFieldProps = {
-  name: StoryTextFieldName;
-  label: string;
-  value: string;
-  onChange: (name: StoryTextFieldName, value: string) => void;
-};
-
-function StoryTextField({ name, label, value, onChange }: StoryTextFieldProps) {
-  return (
-    <TextField
-      label={label}
-      value={value}
-      onChange={(event) => onChange(name, event.target.value)}
-      multiline
-      minRows={4}
-      fullWidth
-    />
-  );
-}
-
 export default function StoryFormPage() {
   const params = useParams<{ storyId: string }>();
   const router = useRouter();
   const isNew = params.storyId === 'new';
   const [form, setForm] = useState<StoryInput>(emptyStory);
-  const [pending, setPending] = useState(!isNew);
-  const [error, setError] = useState('');
+  const {
+    data: story,
+    error: loadError,
+    isLoading,
+  } = useGetStoryQuery(params.storyId, { skip: isNew });
+  const [createStory, createState] = useCreateStoryMutation();
+  const [updateStory, updateState] = useUpdateStoryMutation();
+  const pending = isLoading || createState.isLoading || updateState.isLoading;
+  const error = loadError ?? createState.error ?? updateState.error;
+  const errorMessage = error && 'data' in error && typeof error.data === 'string' ? error.data : '';
 
   useEffect(() => {
-    if (isNew) return;
+    if (!story || form.title !== '') return;
 
-    let active = true;
-
-    storiesApi
-      .read(params.storyId)
-      .then((story) => {
-        if (!active) return;
-
-        setForm({
-          ...story,
-          tags: story.tags.map((tag) => tag.name),
-          questionIds: story.questions.map((question) => question.id),
-        });
-        setPending(false);
-      })
-      .catch((reason: Error) => {
-        if (!active) return;
-
-        setError(reason.message);
-        setPending(false);
-      });
-
-    return () => {
-      active = false;
-    };
-  }, [isNew, params.storyId]);
+    setForm({
+      ...story,
+      tags: story.tags.map((tag) => tag.name),
+      questionIds: story.questions.map((question) => question.id),
+    });
+  }, [form.title, story]);
 
   function update(name: keyof StoryInput, value: string) {
     setForm((current) => ({ ...current, [name]: value }));
@@ -109,17 +74,10 @@ export default function StoryFormPage() {
 
   async function submit(event: FormEvent) {
     event.preventDefault();
-    setPending(true);
-    setError('');
-    try {
-      const story = isNew
-        ? await storiesApi.create(form)
-        : await storiesApi.update(params.storyId, form);
-      router.push(`/stories/${story.id}`);
-    } catch (reason) {
-      setError(reason instanceof Error ? reason.message : 'Не удалось сохранить историю.');
-      setPending(false);
-    }
+    const result = isNew
+      ? await createStory(form)
+      : await updateStory({ storyId: params.storyId, body: form });
+    if ('data' in result && result.data) router.push(`/stories/${result.data.id}`);
   }
 
   return (
@@ -138,15 +96,10 @@ export default function StoryFormPage() {
             Сохранить
           </Button>
         </Stack>
-        <Stack gap={1}>
-          <Typography variant="h3" sx={{ fontSize: { xs: 30, md: 42 } }}>
-            {isNew ? 'Новая история' : 'Редактирование истории'}
-          </Typography>
-          <Typography color="text.secondary">
-            Заполните основные блоки опыта обычным текстом.
-          </Typography>
-        </Stack>
-        {error && <Typography color="error">{error}</Typography>}
+        <Typography variant="h3" sx={{ fontSize: { xs: 30, md: 42 } }}>
+          {isNew ? 'Новая история' : 'Редактирование истории'}
+        </Typography>
+        {errorMessage && <Typography color="error">{errorMessage}</Typography>}
         {pending && !isNew ? (
           <Typography color="text.secondary">Загрузка истории…</Typography>
         ) : (
@@ -159,12 +112,14 @@ export default function StoryFormPage() {
               fullWidth
             />
             {fields.map((field) => (
-              <StoryTextField
+              <TextField
                 key={field.name}
-                name={field.name}
                 label={field.label}
                 value={form[field.name] ?? ''}
-                onChange={update}
+                onChange={(event) => update(field.name, event.target.value)}
+                multiline
+                minRows={4}
+                fullWidth
               />
             ))}
             <GlassPanel sx={{ p: 3 }}>
