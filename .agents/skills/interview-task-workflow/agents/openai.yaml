@@ -1,0 +1,4 @@
+interface:
+  display_name: Interviewly task workflow
+  short_description: Safely prepare and implement Interviewly tasks
+  default_prompt: Read the requested task, verify branch safety, analyze the relevant code and documentation, ask about ambiguity, then implement and verify the task without inventing requirements.
