@@ -16,10 +16,20 @@ import { AppShell } from '@/components/AppShell';
 import { GlassPanel } from '@/components/GlassPanel';
 import { GroupCard } from '@/components/GroupCard';
 import { GroupDialog } from '@/components/GroupDialog';
-import { useInterviewlyStore } from '@/store/useInterviewlyStore';
+import { useCreateGroupMutation, useGetLibraryQuery } from '@/services/libraryApi';
 
 export default function HomePage() {
-  const { groups, questions, questionCountByGroup, createGroup } = useInterviewlyStore();
+  const { data, isLoading } = useGetLibraryQuery();
+  const [createGroup] = useCreateGroupMutation();
+  const groups = data?.groups ?? [];
+  const questions = data?.questions ?? [];
+  const questionCountByGroup = useMemo(
+    () => questions.reduce<Record<string, number>>((counts, question) => {
+      counts[question.groupId] = (counts[question.groupId] ?? 0) + 1;
+      return counts;
+    }, {}),
+    [questions],
+  );
   const [query, setQuery] = useState('');
   const [groupDialogOpen, setGroupDialogOpen] = useState(false);
 
@@ -41,6 +51,7 @@ export default function HomePage() {
 
   return (
     <AppShell onCreate={() => setGroupDialogOpen(true)}>
+      {isLoading && <Typography>Загрузка…</Typography>}
       <Stack gap={4}>
         <Box
           sx={{
@@ -154,7 +165,7 @@ export default function HomePage() {
       <GroupDialog
         open={groupDialogOpen}
         onClose={() => setGroupDialogOpen(false)}
-        onSave={createGroup}
+        onSave={(payload) => createGroup(payload).unwrap().then(() => undefined)}
       />
     </AppShell>
   );

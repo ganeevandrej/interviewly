@@ -28,7 +28,14 @@ import { AppShell } from '@/components/AppShell';
 import { GlassPanel } from '@/components/GlassPanel';
 import { GroupDialog } from '@/components/GroupDialog';
 import { QuestionDialog } from '@/components/QuestionDialog';
-import { useInterviewlyStore } from '@/store/useInterviewlyStore';
+import {
+  useDeleteGroupMutation,
+  useDeleteQuestionMutation,
+  useGetLibraryQuery,
+  useUpdateGroupMutation,
+  useUpdateQuestionMutation,
+  useCreateQuestionMutation,
+} from '@/services/libraryApi';
 import Alert from '@mui/material/Alert';
 import { useAsyncAction } from '@/client/useAsyncAction';
 
@@ -37,9 +44,18 @@ import type { Question } from '@/types';
 export default function GroupPage() {
   const params = useParams<{ groupId: string }>();
   const router = useRouter();
-  const store = useInterviewlyStore();
+  const { data, isLoading } = useGetLibraryQuery();
+  const [deleteGroup, deleteGroupState] = useDeleteGroupMutation();
+  const [deleteQuestion, deleteQuestionState] = useDeleteQuestionMutation();
+  const [updateGroup] = useUpdateGroupMutation();
+  const [updateQuestion] = useUpdateQuestionMutation();
+  const [createQuestion] = useCreateQuestionMutation();
+  const groups = data?.groups ?? [];
+  const topics = data?.topics.filter((topic) => topic.groupId === params.groupId) ?? [];
+  const allQuestions = data?.questions ?? [];
+  const pending = deleteGroupState.isLoading || deleteQuestionState.isLoading;
   const action = useAsyncAction();
-  const group = store.groups.find((item) => item.id === params.groupId);
+  const group = groups.find((item) => item.id === params.groupId);
   const [topicsOpen, setTopicsOpen] = useState(false);
   const [initialTopicId, setInitialTopicId] = useState<string | null>(null);
   const [query, setQuery] = useState('');
@@ -49,8 +65,8 @@ export default function GroupPage() {
   const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null);
 
   const groupQuestions = useMemo(
-    () => store.questions.filter((question) => question.groupId === params.groupId),
-    [params.groupId, store.questions],
+    () => allQuestions.filter((question) => question.groupId === params.groupId),
+    [params.groupId, allQuestions],
   );
   const filteredQuestions = useMemo(() => {
     const normalized = query.trim().toLowerCase();
@@ -59,8 +75,6 @@ export default function GroupPage() {
       : groupQuestions;
   }, [groupQuestions, query]);
 
-  const topics = store.topics.filter((topic) => topic.groupId === params.groupId);
-
   const questionsByTopic = new Map<string | null, Question[]>();
   for (const question of filteredQuestions) {
     const list = questionsByTopic.get(question.topicId) ?? [];
@@ -68,7 +82,7 @@ export default function GroupPage() {
     questionsByTopic.set(question.topicId, list);
   }
 
-  if (!store.hydrated) {
+  if (isLoading) {
     return (
       <AppShell>
         <Typography>Загрузка…</Typography>
@@ -101,7 +115,7 @@ export default function GroupPage() {
   };
 
   const handleDeleteGroup = async () => {
-    const deleted = await action.run(() => store.deleteGroup(group.id));
+    const deleted = await action.run(() => deleteGroup(group.id).unwrap());
 
     if (deleted) {
       router.push('/');
@@ -113,7 +127,7 @@ export default function GroupPage() {
       return;
     }
 
-    const deleted = await action.run(() => store.deleteQuestion(group.id, editingQuestion.id));
+    const deleted = await action.run(() => deleteQuestion({ groupId: group.id, questionId: editingQuestion.id }).unwrap());
 
     if (deleted) {
       setMenuAnchor(null);
@@ -163,7 +177,7 @@ export default function GroupPage() {
               Редактировать
             </Button>
             <Button
-              disabled={action.busy || store.pending}
+              disabled={action.busy || pending}
               color="error"
               startIcon={<DeleteRoundedIcon />}
               onClick={handleDeleteGroup}
@@ -261,7 +275,7 @@ export default function GroupPage() {
           Редактировать / изменить тему
         </MenuItem>
         <MenuItem
-          disabled={action.busy || store.pending}
+          disabled={action.busy || pending}
           onClick={handleDeleteQuestion}
           sx={{ color: 'error.main' }}
         >
@@ -274,7 +288,7 @@ export default function GroupPage() {
         open={groupDialogOpen}
         group={group}
         onClose={() => setGroupDialogOpen(false)}
-        onSave={(payload) => store.updateGroup(group.id, payload)}
+        onSave={(payload) => updateGroup({ id: group.id, input: payload }).unwrap().then(() => undefined)}
       />
       <QuestionDialog
         open={questionDialogOpen}
@@ -286,8 +300,8 @@ export default function GroupPage() {
           setEditingQuestion(undefined);
         }}
         onSave={(payload) => {
-          if (editingQuestion) return store.updateQuestion(group.id, editingQuestion.id, payload);
-          return store.createQuestion({ ...payload, groupId: group.id });
+          if (editingQuestion) return updateQuestion({ groupId: group.id, questionId: editingQuestion.id, input: payload }).unwrap().then(() => undefined);
+          return createQuestion({ groupId: group.id, input: payload }).unwrap().then(() => undefined);
         }}
       />
     </AppShell>

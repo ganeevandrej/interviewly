@@ -15,7 +15,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { GlassPanel } from '@/components/GlassPanel';
 import { QuestionDialog } from '@/components/QuestionDialog';
-import { useInterviewlyStore } from '@/store/useInterviewlyStore';
+import { useGetLibraryQuery, useUpdateQuestionMutation } from '@/services/libraryApi';
 
 export default function FocusPage() {
   const params = useParams<{ groupId: string; questionId: string }>();
@@ -30,17 +30,21 @@ export default function FocusPage() {
 
 function FocusQuestion({ groupId, questionId }: { groupId: string; questionId: string }) {
   const router = useRouter();
-  const store = useInterviewlyStore();
+  const { data } = useGetLibraryQuery();
+  const [updateQuestion] = useUpdateQuestionMutation();
+  const groups = data?.groups ?? [];
+  const allQuestions = data?.questions ?? [];
+  const topics = data?.topics ?? [];
   const [flipped, setFlipped] = useState(false);
   const [editing, setEditing] = useState(false);
-  const group = store.groups.find((item) => item.id === groupId);
+  const group = groups.find((item) => item.id === groupId);
   const questions = useMemo(
-    () => store.questions.filter((question) => question.groupId === groupId),
-    [groupId, store.questions],
+    () => allQuestions.filter((question) => question.groupId === groupId),
+    [groupId, allQuestions],
   );
   const currentIndex = questions.findIndex((question) => question.id === questionId);
   const current = questions[currentIndex];
-  const topic = store.topics.find((item) => item.id === current?.topicId);
+  const topic = topics.find((item) => item.id === current?.topicId);
 
   if (!group || !current) {
     return (
@@ -208,9 +212,9 @@ function FocusQuestion({ groupId, questionId }: { groupId: string; questionId: s
       <QuestionDialog
         open={editing}
         question={current}
-        topics={store.topics.filter((topic) => topic.groupId === groupId)}
+        topics={topics.filter((topic) => topic.groupId === groupId)}
         onClose={() => setEditing(false)}
-        onSave={(payload) => store.updateQuestion(groupId, current.id, payload)}
+        onSave={(payload) => updateQuestion({ groupId, questionId: current.id, input: payload }).unwrap().then(() => undefined)}
       />
     </Box>
   );

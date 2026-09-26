@@ -9,29 +9,33 @@ import DialogActions from '@mui/material/DialogActions';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { useInterviewlyStore } from '@/store/useInterviewlyStore';
-import { useAsyncAction } from '@/client/useAsyncAction';
+import {
+  useCreateTopicMutation,
+  useDeleteTopicMutation,
+  useGetLibraryQuery,
+  useUpdateTopicMutation,
+} from '@/services/libraryApi';
 
 import type { Topic } from '@/types';
 
 export function TopicManager({ onClose, groupId }: { onClose: () => void; groupId: string }) {
-  const store = useInterviewlyStore();
-  const action = useAsyncAction();
+  const { data } = useGetLibraryQuery();
+  const [createTopic, createState] = useCreateTopicMutation();
+  const [updateTopic, updateState] = useUpdateTopicMutation();
+  const [deleteTopic, deleteState] = useDeleteTopicMutation();
   const [name, setName] = useState('');
   const [editing, setEditing] = useState<Topic | null>(null);
   const [deleting, setDeleting] = useState<Topic | null>(null);
 
-  const topics = store.topics.filter((topic) => topic.groupId === groupId);
-  const busy = action.busy || store.pending;
+  const topics = data?.topics.filter((topic) => topic.groupId === groupId) ?? [];
+  const busy = createState.isLoading || updateState.isLoading || deleteState.isLoading;
 
   async function save() {
     if (!name.trim()) return;
 
-    const saved = await action.run(() =>
-      editing
-        ? store.renameTopic(groupId, editing.id, name.trim())
-        : store.createTopic(groupId, name.trim()),
-    );
+    const saved = await (editing
+      ? updateTopic({ groupId, topicId: editing.id, name: name.trim() })
+      : createTopic({ groupId, name: name.trim() })).unwrap().then(() => true).catch(() => false);
 
     if (saved) {
       setName('');
@@ -41,7 +45,7 @@ export function TopicManager({ onClose, groupId }: { onClose: () => void; groupI
 
   async function remove() {
     if (!deleting) return;
-    const removed = await action.run(() => store.deleteTopic(groupId, deleting.id));
+    const removed = await deleteTopic({ groupId, topicId: deleting.id }).unwrap().then(() => true).catch(() => false);
 
     if (removed) {
       if (editing?.id === deleting.id) {
@@ -64,7 +68,6 @@ export function TopicManager({ onClose, groupId }: { onClose: () => void; groupI
         <DialogTitle id="topics-title">Темы группы</DialogTitle>
         <DialogContent>
           <Stack gap={2} sx={{ pt: 1 }}>
-            {action.error && !deleting && <Alert severity="error">{action.error}</Alert>}
             <TextField
               label={editing ? 'Новое название темы' : 'Название новой темы'}
               value={name}
@@ -83,7 +86,7 @@ export function TopicManager({ onClose, groupId }: { onClose: () => void; groupI
                 disabled={busy || !name.trim()}
                 onClick={() => void save()}
               >
-                {action.busy ? 'Сохранение…' : editing ? 'Сохранить название' : 'Создать тему'}
+                {busy ? 'Сохранение…' : editing ? 'Сохранить название' : 'Создать тему'}
               </Button>
               {editing && (
                 <Button
@@ -91,7 +94,6 @@ export function TopicManager({ onClose, groupId }: { onClose: () => void; groupI
                   onClick={() => {
                     setEditing(null);
                     setName('');
-                    action.clearError();
                   }}
                 >
                   Отмена
@@ -116,7 +118,6 @@ export function TopicManager({ onClose, groupId }: { onClose: () => void; groupI
                       onClick={() => {
                         setEditing(topic);
                         setName(topic.name);
-                        action.clearError();
                       }}
                     >
                       Переименовать
@@ -126,7 +127,6 @@ export function TopicManager({ onClose, groupId }: { onClose: () => void; groupI
                       color="error"
                       onClick={() => {
                         setDeleting(topic);
-                        action.clearError();
                       }}
                     >
                       Удалить тему
@@ -151,20 +151,18 @@ export function TopicManager({ onClose, groupId }: { onClose: () => void; groupI
         <DialogTitle id="delete-topic-title">Удалить тему «{deleting?.name}»?</DialogTitle>
         <DialogContent>
           <Typography>Вопросы останутся в этой группе в теме «Без темы».</Typography>
-          {action.error && <Alert severity="error">{action.error}</Alert>}
         </DialogContent>
         <DialogActions>
           <Button
             disabled={busy}
             onClick={() => {
               setDeleting(null);
-              action.clearError();
             }}
           >
             Отмена
           </Button>
           <Button disabled={busy} color="error" onClick={() => void remove()}>
-            {action.busy ? 'Удаление…' : 'Подтвердить'}
+            {busy ? 'Удаление…' : 'Подтвердить'}
           </Button>
         </DialogActions>
       </Dialog>
