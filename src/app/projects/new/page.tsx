@@ -10,7 +10,7 @@ import Typography from '@mui/material/Typography';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import { projectsApi } from '@/client/projects';
+import { useCreateProjectMutation, useUpdateProjectMutation } from '@/services/projectsApi';
 import { AppShell } from '@/components/AppShell';
 import { ProjectTechnologyWidget } from '@/components/projects/ProjectTechnologyWidget';
 import type { ProjectInput, ProjectStep, ProjectTeamItem, ProjectTechnology } from '@/types';
@@ -41,8 +41,12 @@ export default function NewProjectPage() {
   const [form, setForm] = useState<ProjectInput>(initialForm);
   const [projectId, setProjectId] = useState('');
   const [stepIndex, setStepIndex] = useState(0);
-  const [error, setError] = useState('');
-  const [pending, setPending] = useState(false);
+  const [createProject, { isLoading: isCreating, error: createError }] =
+    useCreateProjectMutation();
+  const [updateProject, { isLoading: isUpdating, error: updateError }] =
+    useUpdateProjectMutation();
+  const pending = isCreating || isUpdating;
+  const error = createError || updateError;
   const step = steps[stepIndex];
 
   function update<K extends keyof ProjectInput>(key: K, value: ProjectInput[K]) {
@@ -51,21 +55,17 @@ export default function NewProjectPage() {
 
   async function next() {
     if (step.id === 'title-color' && !form.title.trim()) return;
-    setPending(true);
-    setError('');
     try {
       const saved = projectId
-        ? await projectsApi.update(projectId, form)
-        : await projectsApi.create(form);
+        ? await updateProject({ id: projectId, input: form }).unwrap()
+        : await createProject(form).unwrap();
       setProjectId(saved.id);
       if (stepIndex === steps.length - 1) {
-        await projectsApi.update(saved.id, { ...form, status: 'READY' });
+        await updateProject({ id: saved.id, input: { ...form, status: 'READY' } }).unwrap();
         router.push(`/projects/${saved.id}`);
       } else setStepIndex((index) => index + 1);
     } catch {
-      setError('Не удалось сохранить проект.');
-    } finally {
-      setPending(false);
+      return;
     }
   }
 
@@ -95,10 +95,10 @@ export default function NewProjectPage() {
             Шаг {stepIndex + 1} из {steps.length}: {step.title}
           </Typography>
         </Stack>
-        {error && <Typography color="error">{error}</Typography>}
+        {error && <Typography color="error">Не удалось сохранить проект.</Typography>}
         <StepContent step={step.id} form={form} update={update} />
         <Stack direction="row" justifyContent="space-between" gap={2}>
-          <Button startIcon={<RestartAltRoundedIcon />} onClick={resetStep}>
+          <Button disabled={pending} startIcon={<RestartAltRoundedIcon />} onClick={resetStep}>
             Сбросить
           </Button>
           <Stack direction="row" gap={1}>

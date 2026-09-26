@@ -10,7 +10,7 @@ import { GlassPanel } from './GlassPanel';
 
 type GroupCardProps = {
   group: QuestionGroup;
-  count: number;
+  count?: number;
 };
 
 export function GroupCard({ group, count }: GroupCardProps) {
@@ -55,9 +55,7 @@ export function GroupCard({ group, count }: GroupCardProps) {
           <Typography variant="h6" noWrap>
             {group.name}
           </Typography>
-          <Typography color="text.secondary">
-            {count} {questionLabel}
-          </Typography>
+          {count !== undefined && <Typography color="text.secondary">{count} {questionLabel}</Typography>}
         </Box>
         <ArrowForwardRoundedIcon color="primary" aria-hidden="true" />
       </Stack>

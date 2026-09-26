@@ -14,7 +14,7 @@ const groupInclude = {
 export function listGroups() {
   return getDb().questionGroup.findMany({
     orderBy: [{ name: 'asc' }, { id: 'asc' }],
-    include: groupInclude,
+    select: { id: true, name: true, accentColor: true },
   });
 }
 export async function readGroup(groupId: string) {
