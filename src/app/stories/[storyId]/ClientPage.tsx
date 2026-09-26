@@ -72,7 +72,7 @@ export default function StoryFormPage({ initialStory }: { initialStory?: Story }
     <AppShell>
       <Stack component="form" onSubmit={submit} gap={3} sx={{ maxWidth: 820, mx: 'auto' }}>
         <Stack direction="row" alignItems="center" justifyContent="space-between" gap={2}>
-          <Button component={Link} href="/stories" startIcon={<ArrowBackRoundedIcon />}>
+          <Button disabled={pending} component={Link} href="/stories" startIcon={<ArrowBackRoundedIcon />}>
             Истории
           </Button>
           <Button

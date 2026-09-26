@@ -15,7 +15,7 @@ import type { QuestionGroup } from '@/types';
 
 export default function HomePage({ initialGroups }: { initialGroups: QuestionGroup[] }) {
   const [groups, setGroups] = useState(initialGroups);
-  const [createGroup] = useCreateGroupMutation();
+  const [createGroup, createState] = useCreateGroupMutation();
   const [groupDialogOpen, setGroupDialogOpen] = useState(false);
 
   return (
@@ -50,6 +50,8 @@ export default function HomePage({ initialGroups }: { initialGroups: QuestionGro
       <GroupDialog
         open={groupDialogOpen}
         onClose={() => setGroupDialogOpen(false)}
+        busy={createState.isLoading}
+        error={createState.error ? 'Не удалось создать группу.' : null}
         onSave={(payload) =>
           createGroup(payload).unwrap().then((created) => {
             setGroups((current) => [...current, created]);

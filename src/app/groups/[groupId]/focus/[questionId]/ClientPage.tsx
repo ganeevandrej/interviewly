@@ -31,7 +31,7 @@ export default function FocusPage({ initialGroup, questionId }: { initialGroup: 
 
 function FocusQuestion({ initialGroup, groupId, questionId }: { initialGroup: LibraryGroup; groupId: string; questionId: string }) {
   const router = useRouter();
-  const [updateQuestion] = useUpdateQuestionMutation();
+  const [updateQuestion, updateState] = useUpdateQuestionMutation();
   const groups = [initialGroup];
   const allQuestions = initialGroup.topics.flatMap((topic) => topic.questions.map((question) => ({ ...question, groupId: initialGroup.id })));
   const topics = initialGroup.topics;
@@ -214,6 +214,8 @@ function FocusQuestion({ initialGroup, groupId, questionId }: { initialGroup: Li
         question={current}
         topics={topics.filter((topic) => topic.groupId === groupId)}
         onClose={() => setEditing(false)}
+        busy={updateState.isLoading}
+        error={updateState.error ? 'Не удалось сохранить вопрос.' : null}
         onSave={(payload) => updateQuestion({ groupId, questionId: current.id, input: payload }).unwrap().then(() => undefined)}
       />
     </Box>

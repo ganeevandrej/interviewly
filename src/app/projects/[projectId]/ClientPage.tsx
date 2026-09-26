@@ -34,10 +34,11 @@ export default function ProjectPage({ initialProject }: { initialProject: Projec
   const [editing, setEditing] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   
-  const [updateProject, { error: updateError }] = useUpdateProjectMutation();
-  const [deleteProject, { error: deleteError }] = useDeleteProjectMutation();
+  const [updateProject, { error: updateError, isLoading: isUpdating }] = useUpdateProjectMutation();
+  const [deleteProject, { error: deleteError, isLoading: isDeleting }] = useDeleteProjectMutation();
   const queryError = null;
   const isLoading = false;
+  const pending = isUpdating || isDeleting;
 
   if (queryError)
     return (
@@ -101,6 +102,7 @@ export default function ProjectPage({ initialProject }: { initialProject: Projec
             {editing ? (
               <>
                 <Button
+                  disabled={pending}
                   onClick={() => {
                     setDraft(null);
                     setEditing(false);
@@ -108,17 +110,18 @@ export default function ProjectPage({ initialProject }: { initialProject: Projec
                 >
                   Отмена
                 </Button>
-                <Button variant="contained" onClick={save}>
+                <Button variant="contained" onClick={save} disabled={pending}>
                   Сохранить
                 </Button>
               </>
             ) : (
-              <Button startIcon={<EditRoundedIcon />} variant="outlined" onClick={startEdit}>
+              <Button disabled={pending} startIcon={<EditRoundedIcon />} variant="outlined" onClick={startEdit}>
                 Редактировать
               </Button>
             )}
             <Button
               color="error"
+              disabled={pending}
               startIcon={<DeleteOutlineRoundedIcon />}
               onClick={() => setConfirmDelete(true)}
             >
@@ -144,7 +147,7 @@ export default function ProjectPage({ initialProject }: { initialProject: Projec
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setConfirmDelete(false)}>Отмена</Button>
-          <Button color="error" variant="contained" onClick={remove}>
+          <Button color="error" variant="contained" onClick={remove} disabled={isDeleting}>
             Удалить
           </Button>
         </DialogActions>

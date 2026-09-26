@@ -98,7 +98,7 @@ export default function NewProjectPage() {
         {error && <Typography color="error">Не удалось сохранить проект.</Typography>}
         <StepContent step={step.id} form={form} update={update} />
         <Stack direction="row" justifyContent="space-between" gap={2}>
-          <Button startIcon={<RestartAltRoundedIcon />} onClick={resetStep}>
+          <Button disabled={pending} startIcon={<RestartAltRoundedIcon />} onClick={resetStep}>
             Сбросить
           </Button>
           <Stack direction="row" gap={1}>
