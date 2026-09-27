@@ -5,6 +5,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { GlassPanel } from '@/shared/ui/glass-panel';
+
 import type { Project } from '@/entities/project';
 
 export function ProjectReadView({

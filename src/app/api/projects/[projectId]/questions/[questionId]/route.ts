@@ -1,12 +1,13 @@
-import { removeProjectQuestion } from '@/server/projects';
 import { respond } from '@/server/http';
+import { removeProjectQuestion } from '@/server/projects';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-export function DELETE(
+export async function DELETE(
     _request: Request,
-    { params }: { params: { projectId: string; questionId: string } },
+    props: { params: Promise<{ projectId: string; questionId: string }> }
 ) {
+    const params = await props.params;
     return respond(() => removeProjectQuestion(params.projectId, params.questionId), 204);
 }

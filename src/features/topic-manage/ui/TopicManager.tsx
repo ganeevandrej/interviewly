@@ -13,11 +13,13 @@ import {
     useDeleteTopicMutation,
     useUpdateTopicMutation,
 } from '@/entities/topic';
-import type { Topic } from '@/entities/topic';
+
 
 import { TopicDeleteDialog } from './TopicDeleteDialog';
 import { TopicForm } from './TopicForm';
 import { TopicList } from './TopicList';
+
+import type { Topic } from '@/entities/topic';
 
 export function TopicManager({
     onClose,

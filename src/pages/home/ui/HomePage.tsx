@@ -7,9 +7,10 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { GroupCard } from '@/entities/group';
-import type { QuestionGroup } from '@/entities/group';
 import { GroupCreateFeature } from '@/features/group-create';
 import { AppShell } from '@/widgets/app-shell';
+
+import type { QuestionGroup } from '@/entities/group';
 
 export default function HomePage({ initialGroups }: { initialGroups: QuestionGroup[] }) {
     return (

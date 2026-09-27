@@ -1,19 +1,22 @@
-import { readGroup, updateGroup, deleteGroup } from '@/server/library';
 import { respond, jsonBody } from '@/server/http';
+import { readGroup, updateGroup, deleteGroup } from '@/server/library';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-type Context = { params: { groupId: string } };
+type Context = { params: Promise<{ groupId: string }> };
 
-export function GET(_request: Request, { params }: Context) {
+export async function GET(_request: Request, props: Context) {
+    const params = await props.params;
     return respond(() => readGroup(params.groupId));
 }
 
-export function PUT(request: Request, { params }: Context) {
+export async function PUT(request: Request, props: Context) {
+    const params = await props.params;
     return respond(async () => updateGroup(params.groupId, await jsonBody(request)));
 }
 
-export function DELETE(_request: Request, { params }: Context) {
+export async function DELETE(_request: Request, props: Context) {
+    const params = await props.params;
     return respond(() => deleteGroup(params.groupId), 204);
 }

@@ -2,20 +2,18 @@
 
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
+import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import Button from '@mui/material/Button';
 import InputAdornment from '@mui/material/InputAdornment';
-import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { useEffect, useMemo, useState } from 'react';
 
-import type { Question } from '@/entities/question';
 import { QuestionList } from '@/entities/question';
-import type { Topic } from '@/entities/topic';
 import { QuestionCreateFeature } from '@/features/question-create';
 import { QuestionDeleteFeature } from '@/features/question-delete';
 import { QuestionDialog, QuestionEditFeature } from '@/features/question-edit';
@@ -23,6 +21,9 @@ import { TopicManager } from '@/features/topic-manage';
 import { GlassPanel } from '@/shared/ui/glass-panel';
 
 import { filterQuestions, groupQuestionsByTopic } from '../model/groupQuestions';
+
+import type { Question } from '@/entities/question';
+import type { Topic } from '@/entities/topic';
 
 export function QuestionTopics({
     groupId,

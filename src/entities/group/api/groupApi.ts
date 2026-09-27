@@ -1,4 +1,5 @@
 import { baseApi } from '@/shared/api/baseApi';
+
 import type { QuestionGroup } from '@/entities/group/model/types';
 
 export const groupApi = baseApi.injectEndpoints({

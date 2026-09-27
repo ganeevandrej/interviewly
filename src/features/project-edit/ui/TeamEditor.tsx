@@ -4,9 +4,10 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 
+import { FieldGroup } from './FieldGroup';
+
 import type { ProjectTeamItem } from '@/entities/project';
 
-import { FieldGroup } from './FieldGroup';
 
 export function TeamEditor({
     value,

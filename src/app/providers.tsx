@@ -2,8 +2,9 @@
 
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from '@mui/material/styles';
-import { Provider } from 'react-redux';
 import { ReactNode } from 'react';
+import { Provider } from 'react-redux';
+
 import { store } from '@/app/store/store';
 import { theme } from '@/app/theme/theme';
 

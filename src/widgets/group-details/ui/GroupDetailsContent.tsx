@@ -2,17 +2,18 @@
 
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import Button from '@mui/material/Button';
-import Link from 'next/link';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import Link from 'next/link';
 import { useState } from 'react';
 
-import type { Question } from '@/entities/question';
-import type { QuestionGroup } from '@/entities/group';
-import type { LibraryData, LibraryGroup } from '@/shared/types/library';
 
 import { GroupHeader } from './GroupHeader';
 import { QuestionTopics } from './QuestionTopics';
+
+import type { QuestionGroup } from '@/entities/group';
+import type { Question } from '@/entities/question';
+import type { LibraryData, LibraryGroup } from '@/shared/types/library';
 
 export function GroupDetailsContent({
     initialGroup,

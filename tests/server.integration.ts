@@ -1,13 +1,15 @@
-import { config } from 'dotenv';
 import assert from 'node:assert/strict';
-import test from 'node:test';
 import { randomUUID } from 'node:crypto';
-import * as groups from '../src/app/api/groups/route';
-import * as group from '../src/app/api/groups/[groupId]/route';
-import * as topics from '../src/app/api/groups/[groupId]/topics/route';
-import * as topic from '../src/app/api/groups/[groupId]/topics/[topicId]/route';
-import * as questions from '../src/app/api/groups/[groupId]/questions/route';
+import test from 'node:test';
+
+import { config } from 'dotenv';
+
 import * as question from '../src/app/api/groups/[groupId]/questions/[questionId]/route';
+import * as questions from '../src/app/api/groups/[groupId]/questions/route';
+import * as group from '../src/app/api/groups/[groupId]/route';
+import * as topic from '../src/app/api/groups/[groupId]/topics/[topicId]/route';
+import * as topics from '../src/app/api/groups/[groupId]/topics/route';
+import * as groups from '../src/app/api/groups/route';
 import { getDb } from '../src/server/db';
 import { respond } from '../src/server/http';
 

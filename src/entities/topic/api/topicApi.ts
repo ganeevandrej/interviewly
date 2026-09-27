@@ -1,4 +1,5 @@
 import { baseApi } from '@/shared/api/baseApi';
+
 import type { Topic } from '@/entities/topic/model/types';
 
 export const topicApi = baseApi.injectEndpoints({

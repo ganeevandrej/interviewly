@@ -10,10 +10,12 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { useCreateProjectMutation, useUpdateProjectMutation } from '@/entities/project';
+
+import { StepContent } from './StepContent';
+
 import type { ProjectInput, ProjectStep } from '@/entities/project';
 import type { ProjectTechnologyEditorRenderer } from '@/shared/types/project-technology-editor';
 
-import { StepContent } from './StepContent';
 
 const steps: Array<{ id: ProjectStep; title: string }> = [
     { id: 'title-color', title: 'Название и цвет' },

@@ -6,12 +6,15 @@ import TextField from '@mui/material/TextField';
 import { useState } from 'react';
 
 import { useUpdateProjectMutation } from '@/entities/project';
-import type { Project, ProjectInput } from '@/entities/project';
-import type { ProjectTechnologyEditorRenderer } from '@/shared/types/project-technology-editor';
+
 
 import { toProjectInput } from '../model/projectInput';
+
 import { EditableList } from './EditableList';
 import { TeamEditor } from './TeamEditor';
+
+import type { Project, ProjectInput } from '@/entities/project';
+import type { ProjectTechnologyEditorRenderer } from '@/shared/types/project-technology-editor';
 
 type Props = {
     project: Project;

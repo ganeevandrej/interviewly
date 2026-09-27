@@ -5,8 +5,10 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Link from 'next/link';
-import { AppShell } from '@/widgets/app-shell';
+
 import { GlassPanel } from '@/shared/ui/glass-panel';
+import { AppShell } from '@/widgets/app-shell';
+
 import type { Story } from '@/entities/story';
 
 export default function StoriesPage({ initialStories }: { initialStories: Story[] }) {

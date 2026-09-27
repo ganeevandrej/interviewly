@@ -1,10 +1,11 @@
 'use client';
 
-import TextField from '@mui/material/TextField';
-import { GlassPanel } from '@/shared/ui/glass-panel';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+
+import { GlassPanel } from '@/shared/ui/glass-panel';
 
 import type { StoryInput } from '@/entities/story';
 

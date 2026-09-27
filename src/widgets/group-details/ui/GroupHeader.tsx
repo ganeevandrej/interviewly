@@ -4,10 +4,11 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import type { QuestionGroup } from '@/entities/group';
 import { GroupDialog } from '@/features/group-create';
 import { GroupDeleteFeature } from '@/features/group-delete';
 import { GroupEditFeature } from '@/features/group-edit';
+
+import type { QuestionGroup } from '@/entities/group';
 
 export function GroupHeader({
     group,

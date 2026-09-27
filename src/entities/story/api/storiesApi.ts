@@ -1,4 +1,5 @@
 import { baseApi } from '@/shared/api/baseApi';
+
 import type { Story, StoryInput } from '@/entities/story/model/types';
 
 export const storiesApi = baseApi.injectEndpoints({

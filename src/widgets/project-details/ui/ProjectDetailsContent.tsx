@@ -7,12 +7,13 @@ import Stack from '@mui/material/Stack';
 import Link from 'next/link';
 import { useState } from 'react';
 
-import type { Project } from '@/entities/project';
-import type { ProjectTechnologyEditorRenderer } from '@/shared/types/project-technology-editor';
 import { ProjectDeleteFeature } from '@/features/project-delete';
 import { ProjectEditFeature } from '@/features/project-edit';
 
 import { ProjectReadView } from './ProjectReadView';
+
+import type { Project } from '@/entities/project';
+import type { ProjectTechnologyEditorRenderer } from '@/shared/types/project-technology-editor';
 
 export function ProjectDetailsContent({
     initialProject,

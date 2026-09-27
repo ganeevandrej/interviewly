@@ -1,17 +1,19 @@
-import { updateTopic, deleteTopic } from '@/server/library';
 import { respond, jsonBody } from '@/server/http';
+import { updateTopic, deleteTopic } from '@/server/library';
 
-type Context = { params: { groupId: string; topicId: string } };
+type Context = { params: Promise<{ groupId: string; topicId: string }> };
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-export function PUT(request: Request, { params }: Context) {
+export async function PUT(request: Request, props: Context) {
+    const params = await props.params;
     return respond(async () =>
         updateTopic(params.groupId, params.topicId, await jsonBody(request)),
     );
 }
 
-export function DELETE(_request: Request, { params }: Context) {
+export async function DELETE(_request: Request, props: Context) {
+    const params = await props.params;
     return respond(() => deleteTopic(params.groupId, params.topicId), 204);
 }

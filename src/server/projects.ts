@@ -1,9 +1,10 @@
 import 'server-only';
 import { randomUUID } from 'node:crypto';
 
-import type { Prisma } from '../generated/prisma/client';
 import { getDb } from './db';
 import { InputError, projectCreateInput, projectUpdateInput, text } from './validation';
+
+import type { Prisma } from '../generated/prisma/client';
 import type { Project } from '@/entities/project';
 
 const projectInclude = {

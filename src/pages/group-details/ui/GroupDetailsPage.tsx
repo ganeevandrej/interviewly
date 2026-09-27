@@ -1,7 +1,7 @@
 'use client';
 
-import { GroupDetailsContent } from '@/widgets/group-details';
 import { AppShell } from '@/widgets/app-shell';
+import { GroupDetailsContent } from '@/widgets/group-details';
 
 export default function GroupDetailsPage(
     props: Omit<React.ComponentProps<typeof GroupDetailsContent>, 'shell'>,

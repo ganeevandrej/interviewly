@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
 import { GlassPanel } from '@/shared/ui/glass-panel';
+
 import type { Question } from '@/entities/question';
 import type { Topic } from '@/entities/topic';
 

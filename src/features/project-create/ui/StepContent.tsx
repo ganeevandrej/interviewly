@@ -3,11 +3,12 @@
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 
+import { ListEditor } from './ListEditor';
+import { TeamEditor } from './TeamEditor';
+
 import type { ProjectInput, ProjectStep, ProjectTechnology } from '@/entities/project';
 import type { ProjectTechnologyEditorRenderer } from '@/shared/types/project-technology-editor';
 
-import { ListEditor } from './ListEditor';
-import { TeamEditor } from './TeamEditor';
 
 export function StepContent({
     step,

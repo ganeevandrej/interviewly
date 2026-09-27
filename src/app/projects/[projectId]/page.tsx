@@ -1,9 +1,11 @@
+import { notFound } from 'next/navigation';
+
+import { ProjectDetailsPage } from '@/pages/project-details';
 import { readProject } from '@/server/projects';
 import { InputError } from '@/server/validation';
-import { notFound } from 'next/navigation';
-import { ProjectDetailsPage } from '@/pages/project-details';
 
-export default async function ProjectPage({ params }: { params: { projectId: string } }) {
+export default async function ProjectPage(props: { params: Promise<{ projectId: string }> }) {
+    const params = await props.params;
     let project;
     try {
         project = await readProject(params.projectId);

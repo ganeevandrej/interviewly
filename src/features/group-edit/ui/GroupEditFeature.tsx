@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
 import Button from '@mui/material/Button';
+import { useState } from 'react';
 
 import { useUpdateGroupMutation } from '@/entities/group';
+
 import type { QuestionGroup } from '@/entities/group';
 type GroupDialogProps = {
     open: boolean;

@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { useDeleteProjectMutation } from '@/entities/project';
+
 import type { Project } from '@/entities/project';
 
 export function ProjectDeleteFeature({ project }: { project: Project }) {

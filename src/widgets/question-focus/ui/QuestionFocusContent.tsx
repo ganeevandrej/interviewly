@@ -14,11 +14,13 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 
-import type { Question } from '@/entities/question';
-import type { LibraryGroup } from '@/shared/types/library';
 import { QuestionEditFeature } from '@/features/question-edit';
 
 import { QuestionCard } from './QuestionCard';
+
+import type { Question } from '@/entities/question';
+import type { LibraryGroup } from '@/shared/types/library';
+
 
 export function QuestionFocusContent({
     initialGroup,

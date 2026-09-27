@@ -4,10 +4,12 @@ import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { useState } from 'react';
-import type { MouseEvent } from 'react';
+
 
 import { useDeleteQuestionMutation } from '@/entities/question';
+
 import type { Question } from '@/entities/question';
+import type { MouseEvent } from 'react';
 
 export function QuestionDeleteFeature({
     groupId,

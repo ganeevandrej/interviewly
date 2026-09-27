@@ -3,9 +3,11 @@
 import { useState } from 'react';
 
 import { useCreateGroupMutation } from '@/entities/group';
-import type { QuestionGroup } from '@/entities/group';
 
 import { GroupDialog } from './GroupDialog';
+
+import type { QuestionGroup } from '@/entities/group';
+
 
 export function GroupCreateFeature({
     initialGroups,
