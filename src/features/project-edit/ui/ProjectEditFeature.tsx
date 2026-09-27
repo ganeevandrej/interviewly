@@ -6,8 +6,12 @@ import TextField from '@mui/material/TextField';
 import { useState } from 'react';
 
 import { useUpdateProjectMutation } from '@/entities/project';
-import type { Project, ProjectInput, ProjectTeamItem } from '@/entities/project';
+import type { Project, ProjectInput } from '@/entities/project';
 import type { ProjectTechnologyEditorRenderer } from '@/shared/types/project-technology-editor';
+
+import { toProjectInput } from '../model/projectInput';
+import { EditableList } from './EditableList';
+import { TeamEditor } from './TeamEditor';
 
 type Props = {
     project: Project;
@@ -45,20 +49,6 @@ export function ProjectEditFeature({ project, onSaved, onCancel, technologyEdito
     );
 }
 
-function toProjectInput(project: Project): ProjectInput {
-    return {
-        title: project.title,
-        color: project.color,
-        description: project.description,
-        team: project.team,
-        tasks: project.tasks,
-        responsibilities: project.responsibilities,
-        achievements: project.achievements,
-        technologies: project.technologies.map((item) => ({ ...item })),
-        status: project.status,
-    };
-}
-
 function ProjectEditForm({
     value,
     onChange,
@@ -66,7 +56,7 @@ function ProjectEditForm({
 }: {
     value: ProjectInput;
     onChange: (value: ProjectInput) => void;
-    technologyEditor: Props['technologyEditor'];
+    technologyEditor: ProjectTechnologyEditorRenderer;
 }) {
     return (
         <Stack gap={2}>
@@ -108,94 +98,6 @@ function ProjectEditForm({
                 value={value.achievements}
                 onChange={(achievements) => onChange({ ...value, achievements })}
             />
-        </Stack>
-    );
-}
-
-function TeamEditor({
-    value,
-    onChange,
-}: {
-    value: ProjectTeamItem[];
-    onChange: (value: ProjectTeamItem[]) => void;
-}) {
-    return (
-        <FieldGroup title="Команда">
-            {value.map((item, index) => (
-                <Stack key={index} direction="row" gap={1}>
-                    <TextField
-                        label="Роль"
-                        value={item.name}
-                        onChange={(event) =>
-                            onChange(
-                                value.map((current, itemIndex) =>
-                                    itemIndex === index
-                                        ? { ...current, name: event.target.value }
-                                        : current,
-                                ),
-                            )
-                        }
-                    />
-                    <TextField
-                        label="Количество"
-                        type="number"
-                        value={item.count}
-                        onChange={(event) =>
-                            onChange(
-                                value.map((current, itemIndex) =>
-                                    itemIndex === index
-                                        ? { ...current, count: Number(event.target.value) }
-                                        : current,
-                                ),
-                            )
-                        }
-                    />
-                </Stack>
-            ))}
-            <Button variant="outlined" onClick={() => onChange([...value, { name: '', count: 1 }])}>
-                Добавить участника
-            </Button>
-        </FieldGroup>
-    );
-}
-
-function EditableList({
-    label,
-    value,
-    onChange,
-}: {
-    label: string;
-    value: string[];
-    onChange: (value: string[]) => void;
-}) {
-    return (
-        <FieldGroup title={label}>
-            {value.map((item, index) => (
-                <TextField
-                    key={index}
-                    label={`${label} ${index + 1}`}
-                    value={item}
-                    onChange={(event) =>
-                        onChange(
-                            value.map((current, itemIndex) =>
-                                itemIndex === index ? event.target.value : current,
-                            ),
-                        )
-                    }
-                />
-            ))}
-            <Button variant="outlined" onClick={() => onChange([...value, ''])}>
-                Добавить пункт
-            </Button>
-        </FieldGroup>
-    );
-}
-
-function FieldGroup({ title, children }: { title: string; children: React.ReactNode }) {
-    return (
-        <Stack gap={1}>
-            <strong>{title}</strong>
-            {children}
         </Stack>
     );
 }

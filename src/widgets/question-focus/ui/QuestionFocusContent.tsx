@@ -13,13 +13,12 @@ import Typography from '@mui/material/Typography';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
-import { GlassPanel } from '@/shared/ui/glass-panel';
-import type { LibraryGroup } from '@/shared/types/library';
-import { QuestionDialog } from '@/features/question-edit';
-import { useUpdateQuestionMutation } from '@/entities/question';
+
 import type { Question } from '@/entities/question';
-import type { QuestionGroup } from '@/entities/group';
-import type { Topic } from '@/entities/topic';
+import type { LibraryGroup } from '@/shared/types/library';
+import { QuestionEditFeature } from '@/features/question-edit';
+
+import { QuestionCard } from './QuestionCard';
 
 export function QuestionFocusContent({
     initialGroup,
@@ -48,21 +47,21 @@ function FocusQuestion({
     questionId: string;
 }) {
     const router = useRouter();
-    const [updateQuestion, updateState] = useUpdateQuestionMutation();
-    const groups = [initialGroup];
-    const allQuestions = initialGroup.topics.flatMap((topic) =>
-        topic.questions.map((question) => ({ ...question, groupId: initialGroup.id })),
+    const [flipped, setFlipped] = useState(false);
+    const [editingQuestion, setEditingQuestion] = useState<Question>();
+    const [questions, setQuestions] = useState<Question[]>(() =>
+        initialGroup.topics.flatMap((topic) =>
+            topic.questions.map((question) => ({ ...question, groupId: initialGroup.id })),
+        ),
     );
     const topics = initialGroup.topics;
-    const [flipped, setFlipped] = useState(false);
-    const [editing, setEditing] = useState(false);
-    const group = groups.find((item) => item.id === groupId);
-    const questions = useMemo(
-        () => allQuestions.filter((question) => question.groupId === groupId),
-        [groupId, allQuestions],
+    const group = groupId === initialGroup.id ? initialGroup : undefined;
+    const currentQuestions = useMemo(
+        () => questions.filter((question) => question.groupId === groupId),
+        [groupId, questions],
     );
-    const currentIndex = questions.findIndex((question) => question.id === questionId);
-    const current = questions[currentIndex];
+    const currentIndex = currentQuestions.findIndex((question) => question.id === questionId);
+    const current = currentQuestions[currentIndex];
     const topic = topics.find((item) => item.id === current?.topicId);
 
     if (!group || !current) {
@@ -78,37 +77,18 @@ function FocusQuestion({
         );
     }
 
-    const goToQuestion = (index: number) => {
-        const next = questions[index];
+    function goToQuestion(index: number) {
+        const next = currentQuestions[index];
 
-        if (!next) return;
-
-        router.push(`/groups/${group.id}/focus/${next.id}`);
-    };
+        if (next) router.push(`/groups/${groupId}/focus/${next.id}`);
+    }
 
     return (
-        <Box
-            sx={{
-                minHeight: '100vh',
-                display: 'grid',
-                placeItems: 'center',
-                px: { xs: 2, md: 4 },
-                py: { xs: 2, md: 4 },
-            }}
-        >
+        <Box sx={{ minHeight: '100vh', display: 'grid', placeItems: 'center', px: { xs: 2, md: 4 }, py: { xs: 2, md: 4 } }}>
             <Box sx={{ width: 'min(940px, 100%)' }}>
                 <Stack gap={3}>
-                    <Stack
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                        gap={2}
-                    >
-                        <Button
-                            component={Link}
-                            href={`/groups/${group.id}`}
-                            startIcon={<ArrowBackRoundedIcon />}
-                        >
+                    <Stack direction="row" justifyContent="space-between" alignItems="center" gap={2}>
+                        <Button component={Link} href={`/groups/${group.id}`} startIcon={<ArrowBackRoundedIcon />}>
                             Выйти
                         </Button>
                         <Stack alignItems="center">
@@ -116,138 +96,51 @@ function FocusQuestion({
                                 {group.name}
                             </Typography>
                             <Typography color="text.secondary">
-                                {currentIndex + 1} / {questions.length}
+                                {currentIndex + 1} / {currentQuestions.length}
                             </Typography>
                         </Stack>
-                        <Button endIcon={<EditRoundedIcon />} onClick={() => setEditing(true)}>
+                        <Button endIcon={<EditRoundedIcon />} onClick={() => setEditingQuestion(current)}>
                             Редактировать
                         </Button>
                     </Stack>
-
                     <LinearProgress
                         variant="determinate"
-                        value={((currentIndex + 1) / questions.length) * 100}
-                        sx={{
-                            maxWidth: 320,
-                            alignSelf: 'center',
-                            width: '100%',
-                            borderRadius: 999,
-                            height: 6,
-                            backgroundColor: '#27323A',
-                            '& .MuiLinearProgress-bar': { backgroundColor: 'primary.main' },
-                        }}
+                        value={((currentIndex + 1) / currentQuestions.length) * 100}
+                        sx={{ maxWidth: 320, alignSelf: 'center', width: '100%', borderRadius: 999, height: 6, backgroundColor: '#27323A', '& .MuiLinearProgress-bar': { backgroundColor: 'primary.main' } }}
                     />
-
-                    <Box sx={{ perspective: '1400px' }}>
-                        <Box
-                            onClick={() => setFlipped((value) => !value)}
-                            sx={{
-                                position: 'relative',
-                                minHeight: { xs: 420, md: 480 },
-                                transformStyle: 'preserve-3d',
-                                transition: 'transform 420ms cubic-bezier(0.4, 0, 0.2, 1)',
-                                transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-                                cursor: 'pointer',
-                            }}
-                        >
-                            {[
-                                {
-                                    title: current.question,
-                                    hint: 'Нажмите, чтобы показать ответ',
-                                    rotate: 'rotateY(0deg)',
-                                },
-                                { title: current.answer, hint: 'Ответ', rotate: 'rotateY(180deg)' },
-                            ].map((side) => (
-                                <GlassPanel
-                                    key={side.rotate}
-                                    sx={{
-                                        position: 'absolute',
-                                        inset: 0,
-                                        p: { xs: 3, md: 6 },
-                                        borderColor: 'divider',
-                                        boxShadow: '0 12px 32px rgba(0, 0, 0, 0.2)',
-                                        backfaceVisibility: 'hidden',
-                                        transform: side.rotate,
-                                        overflow: 'hidden',
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        justifyContent: 'center',
-                                    }}
-                                >
-                                    <Typography
-                                        variant="body2"
-                                        color="text.secondary"
-                                        sx={{
-                                            mb: 2,
-                                            overflowWrap: 'anywhere',
-                                            maxHeight: 80,
-                                            overflow: 'auto',
-                                            flexShrink: 0,
-                                        }}
-                                    >
-                                        {topic?.name ?? 'Без темы'}
-                                    </Typography>
-                                    <Typography color="text.secondary" sx={{ mb: 2 }}>
-                                        {side.hint}
-                                    </Typography>
-                                    <Typography
-                                        variant={flipped ? 'h6' : 'h4'}
-                                        sx={{
-                                            whiteSpace: 'pre-wrap',
-                                            overflow: 'auto',
-                                            maxHeight: '100%',
-                                            lineHeight: 1.6,
-                                            pr: 1,
-                                        }}
-                                    >
-                                        {side.title}
-                                    </Typography>
-                                </GlassPanel>
-                            ))}
-                        </Box>
-                    </Box>
-
+                    <QuestionCard
+                        question={current}
+                        topic={topic}
+                        flipped={flipped}
+                        onFlip={() => setFlipped((value) => !value)}
+                    />
                     <Stack direction="row" justifyContent="space-between" alignItems="center">
-                        <IconButton
-                            disabled={currentIndex === 0}
-                            onClick={() => goToQuestion(currentIndex - 1)}
-                            aria-label="Предыдущий"
-                        >
+                        <IconButton disabled={currentIndex === 0} onClick={() => goToQuestion(currentIndex - 1)} aria-label="Предыдущий">
                             <ArrowBackRoundedIcon />
                         </IconButton>
-                        <Button
-                            component={Link}
-                            href={`/groups/${group.id}`}
-                            endIcon={<ArrowOutwardRoundedIcon />}
-                        >
+                        <Button component={Link} href={`/groups/${group.id}`} endIcon={<ArrowOutwardRoundedIcon />}>
                             К группе
                         </Button>
-                        <IconButton
-                            disabled={currentIndex === questions.length - 1}
-                            onClick={() => goToQuestion(currentIndex + 1)}
-                            aria-label="Следующий"
-                        >
+                        <IconButton disabled={currentIndex === currentQuestions.length - 1} onClick={() => goToQuestion(currentIndex + 1)} aria-label="Следующий">
                             <ArrowForwardRoundedIcon />
                         </IconButton>
                     </Stack>
                 </Stack>
             </Box>
-
-            <QuestionDialog
-                open={editing}
-                question={current}
-                topics={topics.filter((topic) => topic.groupId === groupId)}
-                onClose={() => setEditing(false)}
-                busy={updateState.isLoading}
-                error={updateState.error ? 'Не удалось сохранить вопрос.' : null}
-                onSave={(payload) =>
-                    updateQuestion({ groupId, questionId: current.id, input: payload })
-                        .unwrap()
-                        .then(() => undefined)
-                }
+            <QuestionEditFeature
+                groupId={group.id}
+                question={editingQuestion}
+                topics={topics}
+                onClose={() => setEditingQuestion(undefined)}
+                onUpdated={(updated) => {
+                    setQuestions((currentQuestions) =>
+                        currentQuestions.map((question) =>
+                            question.id === updated.id ? { ...updated, groupId: group.id } : question,
+                        ),
+                    );
+                    setEditingQuestion(undefined);
+                }}
             />
         </Box>
     );
 }
-
-

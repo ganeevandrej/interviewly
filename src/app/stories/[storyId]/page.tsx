@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import { StoryDetailsPage } from '@/pages/story-details';
 
 export default async function StoryPage({ params }: { params: { storyId: string } }) {
-    if (params.storyId === 'new') return <StoryDetailsPage />;
+    if (params.storyId === 'new') return <StoryDetailsPage storyId="new" />;
 
     let story;
     try {
@@ -14,5 +14,5 @@ export default async function StoryPage({ params }: { params: { storyId: string 
         throw error;
     }
 
-    return <StoryDetailsPage initialStory={story} />;
+    return <StoryDetailsPage storyId={params.storyId} initialStory={story} />;
 }
