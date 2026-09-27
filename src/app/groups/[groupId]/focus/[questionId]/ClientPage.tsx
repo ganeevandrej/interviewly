@@ -14,8 +14,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { GlassPanel } from '@/shared/ui/glass-panel/GlassPanel';
-import { QuestionDialog } from '@/components/QuestionDialog';
-import { useUpdateQuestionMutation } from '@/services/libraryApi';
+import { QuestionDialog } from '@/features/manage-question/ui/QuestionDialog';
+import { useUpdateQuestionMutation } from '@/entities/question/api/questionApi';
 import type { LibraryGroup } from '@/shared/types/library';
 
 export default function FocusPage({

@@ -12,7 +12,7 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { AppShell } from '@/shared/ui/app-shell/AppShell';
 import { GlassPanel } from '@/shared/ui/glass-panel/GlassPanel';
-import { useCreateStoryMutation, useUpdateStoryMutation } from '@/services/storiesApi';
+import { useCreateStoryMutation, useUpdateStoryMutation } from '@/entities/story/api/storiesApi';
 import type { Story, StoryInput } from '@/shared/types/library';
 
 const emptyStory: StoryInput = {

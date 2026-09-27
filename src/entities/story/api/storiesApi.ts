@@ -1,4 +1,4 @@
-import { api } from '@/services/api';
+import { api } from '@/shared/api/api';
 import type { Story, StoryInput } from '@/shared/types/library';
 
 export const storiesApi = api.injectEndpoints({

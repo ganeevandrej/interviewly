@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography';
 import Link from 'next/link';
 
 import { AppShell } from '@/shared/ui/app-shell/AppShell';
-import { ProjectCard } from '@/components/ProjectCard';
+import { ProjectCard } from '@/entities/project/ui/ProjectCard';
 import type { ProjectListItem } from '@/shared/types/library';
 
 export default function ProjectsPage({ initialProjects }: { initialProjects: ProjectListItem[] }) {

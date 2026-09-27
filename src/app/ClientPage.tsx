@@ -8,9 +8,9 @@ import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 
 import { AppShell } from '@/shared/ui/app-shell/AppShell';
-import { GroupCard } from '@/components/GroupCard';
-import { GroupDialog } from '@/components/GroupDialog';
-import { useCreateGroupMutation } from '@/services/libraryApi';
+import { GroupCard } from '@/entities/group/ui/GroupCard';
+import { GroupDialog } from '@/features/manage-group/ui/GroupDialog';
+import { useCreateGroupMutation } from '@/entities/group/api/libraryApi';
 import type { QuestionGroup } from '@/shared/types/library';
 
 export default function HomePage({ initialGroups }: { initialGroups: QuestionGroup[] }) {

@@ -10,9 +10,9 @@ import Typography from '@mui/material/Typography';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import { useCreateProjectMutation, useUpdateProjectMutation } from '@/services/projectsApi';
+import { useCreateProjectMutation, useUpdateProjectMutation } from '@/entities/project/api/projectsApi';
 import { AppShell } from '@/shared/ui/app-shell/AppShell';
-import { ProjectTechnologyWidget } from '@/components/projects/ProjectTechnologyWidget';
+import { ProjectTechnologyWidget } from '@/widgets/project-technologies/ProjectTechnologyWidget';
 import type {
     ProjectInput,
     ProjectStep,

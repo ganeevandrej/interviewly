@@ -18,9 +18,9 @@ import { useState } from 'react';
 
 import { AppShell } from '@/shared/ui/app-shell/AppShell';
 import { GlassPanel } from '@/shared/ui/glass-panel/GlassPanel';
-import { ProjectQuestionsWidget } from '@/components/projects/ProjectQuestionsWidget';
-import { ProjectTechnologyWidget } from '@/components/projects/ProjectTechnologyWidget';
-import { useDeleteProjectMutation, useUpdateProjectMutation } from '@/services/projectsApi';
+import { ProjectQuestionsWidget } from '@/widgets/project-questions/ProjectQuestionsWidget';
+import { ProjectTechnologyWidget } from '@/widgets/project-technologies/ProjectTechnologyWidget';
+import { useDeleteProjectMutation, useUpdateProjectMutation } from '@/entities/project/api/projectsApi';
 import type { Project, ProjectInput, ProjectTeamItem } from '@/shared/types/library';
 
 export default function ProjectPage({ initialProject }: { initialProject: Project }) {

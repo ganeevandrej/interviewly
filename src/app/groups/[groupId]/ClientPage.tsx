@@ -4,8 +4,8 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
-import { TopicManager } from '@/components/TopicManager';
-import { QuestionList } from '@/components/QuestionList';
+import { TopicManager } from '@/features/manage-topic/ui/TopicManager';
+import { QuestionList } from '@/entities/question/ui/QuestionList';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
@@ -26,15 +26,17 @@ import { useMemo, useState } from 'react';
 import type { MouseEvent } from 'react';
 import { AppShell } from '@/shared/ui/app-shell/AppShell';
 import { GlassPanel } from '@/shared/ui/glass-panel/GlassPanel';
-import { GroupDialog } from '@/components/GroupDialog';
-import { QuestionDialog } from '@/components/QuestionDialog';
+import { GroupDialog } from '@/features/manage-group/ui/GroupDialog';
+import { QuestionDialog } from '@/features/manage-question/ui/QuestionDialog';
 import {
     useDeleteGroupMutation,
-    useDeleteQuestionMutation,
     useUpdateGroupMutation,
+} from '@/entities/group/api/libraryApi';
+import {
+    useDeleteQuestionMutation,
     useUpdateQuestionMutation,
     useCreateQuestionMutation,
-} from '@/services/libraryApi';
+} from '@/entities/question/api/questionApi';
 import Alert from '@mui/material/Alert';
 
 import type { InterviewlyData, LibraryGroup, Question } from '@/shared/types/library';

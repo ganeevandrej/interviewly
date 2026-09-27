@@ -13,7 +13,7 @@ import {
     useCreateTopicMutation,
     useDeleteTopicMutation,
     useUpdateTopicMutation,
-} from '@/services/libraryApi';
+} from '@/entities/topic/api/topicApi';
 
 import type { Topic } from '@/shared/types/library';
 
