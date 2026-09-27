@@ -1,4 +1,4 @@
-import { ProjectCreatePage } from '@/pages/project-create';
+import { ProjectCreatePage } from '@/views/project-create';
 
 export default function NewProjectRoute() {
     return <ProjectCreatePage />;
