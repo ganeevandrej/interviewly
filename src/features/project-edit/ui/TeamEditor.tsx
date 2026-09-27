@@ -23,11 +23,13 @@ export function TeamEditor({
                         label="Роль"
                         value={item.name}
                         onChange={(event) =>
-                            onChange(value.map((current, itemIndex) =>
-                                itemIndex === index
-                                    ? { ...current, name: event.target.value }
-                                    : current,
-                            ))
+                            onChange(
+                                value.map((current, itemIndex) =>
+                                    itemIndex === index
+                                        ? { ...current, name: event.target.value }
+                                        : current,
+                                ),
+                            )
                         }
                     />
                     <TextField
@@ -35,11 +37,13 @@ export function TeamEditor({
                         type="number"
                         value={item.count}
                         onChange={(event) =>
-                            onChange(value.map((current, itemIndex) =>
-                                itemIndex === index
-                                    ? { ...current, count: Number(event.target.value) }
-                                    : current,
-                            ))
+                            onChange(
+                                value.map((current, itemIndex) =>
+                                    itemIndex === index
+                                        ? { ...current, count: Number(event.target.value) }
+                                        : current,
+                                ),
+                            )
                         }
                     />
                 </Stack>

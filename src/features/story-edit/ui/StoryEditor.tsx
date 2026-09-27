@@ -60,9 +60,7 @@ export function StoryEditor({
     async function submit(event: FormEvent) {
         event.preventDefault();
 
-        const result = isNew
-            ? await createStory(form)
-            : await updateStory({ storyId, body: form });
+        const result = isNew ? await createStory(form) : await updateStory({ storyId, body: form });
 
         if ('data' in result && result.data) router.push(`/stories/${result.data.id}`);
     }

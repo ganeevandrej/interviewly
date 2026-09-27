@@ -60,7 +60,13 @@ export function QuestionCard({
                         <Typography
                             variant="body2"
                             color="text.secondary"
-                            sx={{ mb: 2, overflowWrap: 'anywhere', maxHeight: 80, overflow: 'auto', flexShrink: 0 }}
+                            sx={{
+                                mb: 2,
+                                overflowWrap: 'anywhere',
+                                maxHeight: 80,
+                                overflow: 'auto',
+                                flexShrink: 0,
+                            }}
                         >
                             {topic?.name ?? 'Без темы'}
                         </Typography>
@@ -69,7 +75,13 @@ export function QuestionCard({
                         </Typography>
                         <Typography
                             variant={flipped ? 'h6' : 'h4'}
-                            sx={{ whiteSpace: 'pre-wrap', overflow: 'auto', maxHeight: '100%', lineHeight: 1.6, pr: 1 }}
+                            sx={{
+                                whiteSpace: 'pre-wrap',
+                                overflow: 'auto',
+                                maxHeight: '100%',
+                                lineHeight: 1.6,
+                                pr: 1,
+                            }}
                         >
                             {side.title}
                         </Typography>

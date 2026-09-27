@@ -5,9 +5,7 @@ export function filterQuestions(questions: Question[], query: string) {
 
     if (!normalized) return questions;
 
-    return questions.filter((question) =>
-        question.question.toLowerCase().includes(normalized),
-    );
+    return questions.filter((question) => question.question.toLowerCase().includes(normalized));
 }
 
 export function groupQuestionsByTopic(questions: Question[]) {

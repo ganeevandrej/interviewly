@@ -91,7 +91,16 @@ export function QuestionTopics({
                 if (query.trim() && !topicQuestions.length) return null;
 
                 return (
-                    <Accordion key={topic.id} defaultExpanded sx={{ backgroundColor: 'background.paper', border: '1px solid', borderColor: 'divider', '&:before': { display: 'none' } }}>
+                    <Accordion
+                        key={topic.id}
+                        defaultExpanded
+                        sx={{
+                            backgroundColor: 'background.paper',
+                            border: '1px solid',
+                            borderColor: 'divider',
+                            '&:before': { display: 'none' },
+                        }}
+                    >
                         <AccordionSummary
                             expandIcon={<ExpandMoreRoundedIcon />}
                             id={`topic-${topic.id}-header`}
@@ -105,7 +114,9 @@ export function QuestionTopics({
                             <Stack gap={2}>
                                 <QuestionList
                                     questions={topicQuestions}
-                                    onQuestionMenu={(_event, question) => setEditingQuestion(question)}
+                                    onQuestionMenu={(_event, question) =>
+                                        setEditingQuestion(question)
+                                    }
                                 />
                                 {!topicQuestions.length && (
                                     <Typography color="text.secondary">
@@ -135,7 +146,13 @@ export function QuestionTopics({
                 </GlassPanel>
             )}
 
-            {topicsOpen && <TopicManager groupId={groupId} topics={topics} onClose={() => setTopicsOpen(false)} />}
+            {topicsOpen && (
+                <TopicManager
+                    groupId={groupId}
+                    topics={topics}
+                    onClose={() => setTopicsOpen(false)}
+                />
+            )}
             <QuestionCreateFeature
                 groupId={groupId}
                 topics={topics}
@@ -154,7 +171,11 @@ export function QuestionTopics({
                 topics={topics}
                 onClose={() => setEditingQuestion(undefined)}
                 onUpdated={(updated) => {
-                    onQuestionsChange(questions.map((question) => question.id === updated.id ? { ...updated, groupId } : question));
+                    onQuestionsChange(
+                        questions.map((question) =>
+                            question.id === updated.id ? { ...updated, groupId } : question,
+                        ),
+                    );
                     setEditingQuestion(undefined);
                 }}
             />
@@ -164,7 +185,9 @@ export function QuestionTopics({
                     question={editingQuestion}
                     onEdit={() => setQuestionDialogOpen(true)}
                     onDeleted={(questionId) => {
-                        onQuestionsChange(questions.filter((question) => question.id !== questionId));
+                        onQuestionsChange(
+                            questions.filter((question) => question.id !== questionId),
+                        );
                         setEditingQuestion(undefined);
                     }}
                 />

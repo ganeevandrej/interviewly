@@ -11,7 +11,10 @@ export const questionApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: ['Library', 'Question'],
         }),
-        updateQuestion: build.mutation<Question, { groupId: string; questionId: string; input: QuestionInput }>({
+        updateQuestion: build.mutation<
+            Question,
+            { groupId: string; questionId: string; input: QuestionInput }
+        >({
             query: ({ groupId, questionId, input }) => ({
                 url: `groups/${encodeURIComponent(groupId)}/questions/${encodeURIComponent(questionId)}`,
                 method: 'PUT',
@@ -29,8 +32,5 @@ export const questionApi = baseApi.injectEndpoints({
     }),
 });
 
-export const {
-    useCreateQuestionMutation,
-    useUpdateQuestionMutation,
-    useDeleteQuestionMutation,
-} = questionApi;
+export const { useCreateQuestionMutation, useUpdateQuestionMutation, useDeleteQuestionMutation } =
+    questionApi;

@@ -47,4 +47,3 @@ export async function respond(operation: () => Promise<unknown>, status = 200): 
     }
 }
 import 'server-only';
-

@@ -25,8 +25,4 @@ export const groupApi = baseApi.injectEndpoints({
     }),
 });
 
-export const {
-    useCreateGroupMutation,
-    useUpdateGroupMutation,
-    useDeleteGroupMutation,
-} = groupApi;
+export const { useCreateGroupMutation, useUpdateGroupMutation, useDeleteGroupMutation } = groupApi;

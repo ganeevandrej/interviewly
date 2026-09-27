@@ -41,7 +41,7 @@ export function GroupEditFeature({
                         .then((updated) => {
                             onSaved(updated);
                             setOpen(false);
-                        })
+                        }),
             })}
         </>
     );

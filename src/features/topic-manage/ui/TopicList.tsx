@@ -20,7 +20,11 @@ export function TopicList({
     return (
         <>
             {topics.map((topic) => (
-                <Stack key={topic.id} gap={1} sx={{ py: 2, borderTop: '1px solid', borderColor: 'divider' }}>
+                <Stack
+                    key={topic.id}
+                    gap={1}
+                    sx={{ py: 2, borderTop: '1px solid', borderColor: 'divider' }}
+                >
                     <Typography sx={{ overflowWrap: 'anywhere' }}>{topic.name}</Typography>
                     {topic.isDefault ? (
                         <Typography color="text.secondary">

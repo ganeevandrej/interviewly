@@ -21,9 +21,11 @@ export function ListEditor({
                     label={`${label} ${index + 1}`}
                     value={item}
                     onChange={(event) =>
-                        onChange(value.map((current, itemIndex) =>
-                            itemIndex === index ? event.target.value : current,
-                        ))
+                        onChange(
+                            value.map((current, itemIndex) =>
+                                itemIndex === index ? event.target.value : current,
+                            ),
+                        )
                     }
                 />
             ))}

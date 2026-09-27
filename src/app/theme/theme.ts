@@ -59,12 +59,19 @@ export const theme = createTheme({
                 body: { minHeight: '100vh', backgroundColor: theme.palette.background.default },
             }),
         },
-        MuiButton: { styleOverrides: { root: { borderRadius: 14, boxShadow: 'none', minHeight: 44 } } },
+        MuiButton: {
+            styleOverrides: { root: { borderRadius: 14, boxShadow: 'none', minHeight: 44 } },
+        },
         MuiPaper: { styleOverrides: { root: { backgroundImage: 'none', borderRadius: 16 } } },
         MuiTextField: {
             defaultProps: { variant: 'outlined' },
             styleOverrides: {
-                root: { '& .MuiOutlinedInput-root': { borderRadius: 12, backgroundColor: 'background.default' } },
+                root: {
+                    '& .MuiOutlinedInput-root': {
+                        borderRadius: 12,
+                        backgroundColor: 'background.default',
+                    },
+                },
             },
         },
     },

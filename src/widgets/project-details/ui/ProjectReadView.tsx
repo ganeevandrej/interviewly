@@ -7,7 +7,13 @@ import Typography from '@mui/material/Typography';
 import { GlassPanel } from '@/shared/ui/glass-panel';
 import type { Project } from '@/entities/project';
 
-export function ProjectReadView({ project, questionsWidget }: { project: Project; questionsWidget: React.ReactNode }) {
+export function ProjectReadView({
+    project,
+    questionsWidget,
+}: {
+    project: Project;
+    questionsWidget: React.ReactNode;
+}) {
     return (
         <Stack gap={2.5}>
             <Stack direction="row" alignItems="center" gap={1}>
@@ -48,9 +54,7 @@ export function ProjectReadView({ project, questionsWidget }: { project: Project
             <InfoBlock title="Достижения">
                 <BulletList items={project.achievements} />
             </InfoBlock>
-            <InfoBlock title="Вопросы">
-                {questionsWidget}
-            </InfoBlock>
+            <InfoBlock title="Вопросы">{questionsWidget}</InfoBlock>
         </Stack>
     );
 }

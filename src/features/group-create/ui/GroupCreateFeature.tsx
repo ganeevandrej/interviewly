@@ -12,10 +12,7 @@ export function GroupCreateFeature({
     children,
 }: {
     initialGroups: QuestionGroup[];
-    children: (props: {
-        groups: QuestionGroup[];
-        openCreateDialog: () => void;
-    }) => React.ReactNode;
+    children: (props: { groups: QuestionGroup[]; openCreateDialog: () => void }) => React.ReactNode;
 }) {
     const [groups, setGroups] = useState(initialGroups);
     const [isDialogOpen, setIsDialogOpen] = useState(false);

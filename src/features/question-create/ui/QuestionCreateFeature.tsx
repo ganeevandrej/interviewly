@@ -41,11 +41,11 @@ export function QuestionCreateFeature({
         busy: state.isLoading,
         error: state.error ? 'Не удалось создать вопрос.' : null,
         onSave: (input: QuestionInput) =>
-                createQuestion({ groupId, input })
-                    .unwrap()
-                    .then((question) => {
-                        onCreated({ ...question, groupId });
-                        onClose();
-                    })
+            createQuestion({ groupId, input })
+                .unwrap()
+                .then((question) => {
+                    onCreated({ ...question, groupId });
+                    onClose();
+                }),
     });
 }

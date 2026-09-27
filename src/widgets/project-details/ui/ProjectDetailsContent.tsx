@@ -14,7 +14,15 @@ import { ProjectEditFeature } from '@/features/project-edit';
 
 import { ProjectReadView } from './ProjectReadView';
 
-export function ProjectDetailsContent({ initialProject, technologyEditor, questionsWidget }: { initialProject: Project; technologyEditor: ProjectTechnologyEditorRenderer; questionsWidget: (questions: Project['questions']) => React.ReactNode }) {
+export function ProjectDetailsContent({
+    initialProject,
+    technologyEditor,
+    questionsWidget,
+}: {
+    initialProject: Project;
+    technologyEditor: ProjectTechnologyEditorRenderer;
+    questionsWidget: (questions: Project['questions']) => React.ReactNode;
+}) {
     const [project, setProject] = useState(initialProject);
     const [editing, setEditing] = useState(false);
 
@@ -49,7 +57,10 @@ export function ProjectDetailsContent({ initialProject, technologyEditor, questi
                         technologyEditor={technologyEditor}
                     />
                 ) : (
-                    <ProjectReadView project={project} questionsWidget={questionsWidget(project.questions)} />
+                    <ProjectReadView
+                        project={project}
+                        questionsWidget={questionsWidget(project.questions)}
+                    />
                 )}
             </Stack>
         </>

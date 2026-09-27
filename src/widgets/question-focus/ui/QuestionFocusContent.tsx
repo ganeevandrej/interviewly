@@ -84,11 +84,28 @@ function FocusQuestion({
     }
 
     return (
-        <Box sx={{ minHeight: '100vh', display: 'grid', placeItems: 'center', px: { xs: 2, md: 4 }, py: { xs: 2, md: 4 } }}>
+        <Box
+            sx={{
+                minHeight: '100vh',
+                display: 'grid',
+                placeItems: 'center',
+                px: { xs: 2, md: 4 },
+                py: { xs: 2, md: 4 },
+            }}
+        >
             <Box sx={{ width: 'min(940px, 100%)' }}>
                 <Stack gap={3}>
-                    <Stack direction="row" justifyContent="space-between" alignItems="center" gap={2}>
-                        <Button component={Link} href={`/groups/${group.id}`} startIcon={<ArrowBackRoundedIcon />}>
+                    <Stack
+                        direction="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                        gap={2}
+                    >
+                        <Button
+                            component={Link}
+                            href={`/groups/${group.id}`}
+                            startIcon={<ArrowBackRoundedIcon />}
+                        >
                             Выйти
                         </Button>
                         <Stack alignItems="center">
@@ -99,14 +116,25 @@ function FocusQuestion({
                                 {currentIndex + 1} / {currentQuestions.length}
                             </Typography>
                         </Stack>
-                        <Button endIcon={<EditRoundedIcon />} onClick={() => setEditingQuestion(current)}>
+                        <Button
+                            endIcon={<EditRoundedIcon />}
+                            onClick={() => setEditingQuestion(current)}
+                        >
                             Редактировать
                         </Button>
                     </Stack>
                     <LinearProgress
                         variant="determinate"
                         value={((currentIndex + 1) / currentQuestions.length) * 100}
-                        sx={{ maxWidth: 320, alignSelf: 'center', width: '100%', borderRadius: 999, height: 6, backgroundColor: '#27323A', '& .MuiLinearProgress-bar': { backgroundColor: 'primary.main' } }}
+                        sx={{
+                            maxWidth: 320,
+                            alignSelf: 'center',
+                            width: '100%',
+                            borderRadius: 999,
+                            height: 6,
+                            backgroundColor: '#27323A',
+                            '& .MuiLinearProgress-bar': { backgroundColor: 'primary.main' },
+                        }}
                     />
                     <QuestionCard
                         question={current}
@@ -115,13 +143,25 @@ function FocusQuestion({
                         onFlip={() => setFlipped((value) => !value)}
                     />
                     <Stack direction="row" justifyContent="space-between" alignItems="center">
-                        <IconButton disabled={currentIndex === 0} onClick={() => goToQuestion(currentIndex - 1)} aria-label="Предыдущий">
+                        <IconButton
+                            disabled={currentIndex === 0}
+                            onClick={() => goToQuestion(currentIndex - 1)}
+                            aria-label="Предыдущий"
+                        >
                             <ArrowBackRoundedIcon />
                         </IconButton>
-                        <Button component={Link} href={`/groups/${group.id}`} endIcon={<ArrowOutwardRoundedIcon />}>
+                        <Button
+                            component={Link}
+                            href={`/groups/${group.id}`}
+                            endIcon={<ArrowOutwardRoundedIcon />}
+                        >
                             К группе
                         </Button>
-                        <IconButton disabled={currentIndex === currentQuestions.length - 1} onClick={() => goToQuestion(currentIndex + 1)} aria-label="Следующий">
+                        <IconButton
+                            disabled={currentIndex === currentQuestions.length - 1}
+                            onClick={() => goToQuestion(currentIndex + 1)}
+                            aria-label="Следующий"
+                        >
                             <ArrowForwardRoundedIcon />
                         </IconButton>
                     </Stack>
@@ -135,7 +175,9 @@ function FocusQuestion({
                 onUpdated={(updated) => {
                     setQuestions((currentQuestions) =>
                         currentQuestions.map((question) =>
-                            question.id === updated.id ? { ...updated, groupId: group.id } : question,
+                            question.id === updated.id
+                                ? { ...updated, groupId: group.id }
+                                : question,
                         ),
                     );
                     setEditingQuestion(undefined);

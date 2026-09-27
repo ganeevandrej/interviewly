@@ -6,5 +6,11 @@ import { ProjectQuestionsWidget } from '@/widgets/project-questions';
 import type { Project } from '@/entities/project';
 
 export default function ProjectDetailsPage({ initialProject }: { initialProject: Project }) {
-    return <ProjectDetailsContent initialProject={initialProject} technologyEditor={(editorProps) => <ProjectTechnologyEditor {...editorProps} />} questionsWidget={(questions) => <ProjectQuestionsWidget questions={questions} />} />;
+    return (
+        <ProjectDetailsContent
+            initialProject={initialProject}
+            technologyEditor={(editorProps) => <ProjectTechnologyEditor {...editorProps} />}
+            questionsWidget={(questions) => <ProjectQuestionsWidget questions={questions} />}
+        />
+    );
 }

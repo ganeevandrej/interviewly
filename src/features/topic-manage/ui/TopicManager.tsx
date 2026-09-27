@@ -83,7 +83,13 @@ export function TopicManager({
 
     return (
         <>
-            <Dialog open onClose={busy ? undefined : onClose} fullWidth maxWidth="sm" aria-labelledby="topics-title">
+            <Dialog
+                open
+                onClose={busy ? undefined : onClose}
+                fullWidth
+                maxWidth="sm"
+                aria-labelledby="topics-title"
+            >
                 <DialogTitle id="topics-title">Темы группы</DialogTitle>
                 <DialogContent>
                     <Stack gap={2} sx={{ pt: 1 }}>
@@ -104,7 +110,9 @@ export function TopicManager({
                     </Stack>
                 </DialogContent>
                 <DialogActions>
-                    <Button disabled={busy} onClick={onClose}>Закрыть</Button>
+                    <Button disabled={busy} onClick={onClose}>
+                        Закрыть
+                    </Button>
                 </DialogActions>
             </Dialog>
             <TopicDeleteDialog

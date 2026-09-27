@@ -36,7 +36,11 @@ export function ProjectEditFeature({ project, onSaved, onCancel, technologyEdito
     return (
         <Stack gap={2}>
             {error && <div>Не удалось сохранить проект.</div>}
-            <ProjectEditForm value={value} onChange={setValue} technologyEditor={technologyEditor} />
+            <ProjectEditForm
+                value={value}
+                onChange={setValue}
+                technologyEditor={technologyEditor}
+            />
             <Stack direction="row" gap={1}>
                 <Button disabled={isLoading} onClick={onCancel}>
                     Отмена

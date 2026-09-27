@@ -9,12 +9,7 @@ import Typography from '@mui/material/Typography';
 import type { StoryInput } from '@/entities/story';
 
 type StoryTextFieldName =
-    | 'context'
-    | 'problem'
-    | 'responsibility'
-    | 'solution'
-    | 'difficulties'
-    | 'learned';
+    'context' | 'problem' | 'responsibility' | 'solution' | 'difficulties' | 'learned';
 
 const fields: Array<{ name: StoryTextFieldName; label: string }> = [
     { name: 'context', label: 'Контекст' },

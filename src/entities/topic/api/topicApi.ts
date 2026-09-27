@@ -29,8 +29,4 @@ export const topicApi = baseApi.injectEndpoints({
     }),
 });
 
-export const {
-    useCreateTopicMutation,
-    useUpdateTopicMutation,
-    useDeleteTopicMutation,
-} = topicApi;
+export const { useCreateTopicMutation, useUpdateTopicMutation, useDeleteTopicMutation } = topicApi;

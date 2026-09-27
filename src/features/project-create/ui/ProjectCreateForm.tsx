@@ -118,7 +118,11 @@ export function ProjectCreateForm({
                 technologyEditor={technologyEditor}
             />
             <Stack direction="row" justifyContent="space-between" gap={2}>
-                <Button disabled={pending} startIcon={<RestartAltRoundedIcon />} onClick={resetStep}>
+                <Button
+                    disabled={pending}
+                    startIcon={<RestartAltRoundedIcon />}
+                    onClick={resetStep}
+                >
                     Сбросить
                 </Button>
                 <Stack direction="row" gap={1}>

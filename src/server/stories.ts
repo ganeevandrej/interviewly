@@ -132,4 +132,3 @@ export async function deleteStory(storyId: string) {
     await getDb().story.delete({ where: { id: text(storyId, 'История') } });
 }
 import 'server-only';
-
