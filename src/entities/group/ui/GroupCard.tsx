@@ -6,7 +6,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Link from 'next/link';
 import type { QuestionGroup } from '@/entities/group';
-import { GlassPanel } from '@/shared/ui/glass-panel/GlassPanel';
+import { GlassPanel } from '@/shared/ui/glass-panel';
 
 type GroupCardProps = {
     group: QuestionGroup;
