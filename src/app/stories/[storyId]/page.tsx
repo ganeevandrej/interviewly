@@ -4,15 +4,15 @@ import { notFound } from 'next/navigation';
 import ClientPage from './ClientPage';
 
 export default async function StoryPage({ params }: { params: { storyId: string } }) {
-  if (params.storyId === 'new') return <ClientPage />;
+    if (params.storyId === 'new') return <ClientPage />;
 
-  let story;
-  try {
-    story = await readStory(params.storyId);
-  } catch (error) {
-    if (error instanceof InputError && error.status === 404) notFound();
-    throw error;
-  }
+    let story;
+    try {
+        story = await readStory(params.storyId);
+    } catch (error) {
+        if (error instanceof InputError && error.status === 404) notFound();
+        throw error;
+    }
 
-  return <ClientPage initialStory={story} />;
+    return <ClientPage initialStory={story} />;
 }

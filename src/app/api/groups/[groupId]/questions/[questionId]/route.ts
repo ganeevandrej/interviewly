@@ -7,11 +7,11 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export function PUT(request: Request, { params }: Context) {
-  return respond(async () =>
-    updateQuestion(params.groupId, params.questionId, await jsonBody(request)),
-  );
+    return respond(async () =>
+        updateQuestion(params.groupId, params.questionId, await jsonBody(request)),
+    );
 }
 
 export function DELETE(_request: Request, { params }: Context) {
-  return respond(() => deleteQuestion(params.groupId, params.questionId), 204);
+    return respond(() => deleteQuestion(params.groupId, params.questionId), 204);
 }

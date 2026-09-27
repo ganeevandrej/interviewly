@@ -8,12 +8,12 @@ import { store } from '@/store/store';
 import { theme } from '@/theme/theme';
 
 export function Providers({ children }: { children: ReactNode }) {
-  return (
-    <Provider store={store}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline enableColorScheme />
-        {children}
-      </ThemeProvider>
-    </Provider>
-  );
+    return (
+        <Provider store={store}>
+            <ThemeProvider theme={theme}>
+                <CssBaseline enableColorScheme />
+                {children}
+            </ThemeProvider>
+        </Provider>
+    );
 }

@@ -5,5 +5,5 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export function POST(request: Request, { params }: { params: { groupId: string } }) {
-  return respond(async () => createQuestion(params.groupId, await jsonBody(request)), 201);
+    return respond(async () => createQuestion(params.groupId, await jsonBody(request)), 201);
 }

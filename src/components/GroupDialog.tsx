@@ -15,87 +15,87 @@ import { useTheme } from '@mui/material/styles';
 import type { QuestionGroup } from '@/types';
 
 type GroupDialogProps = {
-  open: boolean;
-  group?: QuestionGroup;
-  onClose: () => void;
-  onSave: (payload: Omit<QuestionGroup, 'id'>) => Promise<void>;
-  busy?: boolean;
-  error?: string | null;
+    open: boolean;
+    group?: QuestionGroup;
+    onClose: () => void;
+    onSave: (payload: Omit<QuestionGroup, 'id'>) => Promise<void>;
+    busy?: boolean;
+    error?: string | null;
 };
 
 export function GroupDialog(props: GroupDialogProps) {
-  return props.open ? <GroupDialogForm key={props.group?.id ?? 'new'} {...props} /> : null;
+    return props.open ? <GroupDialogForm key={props.group?.id ?? 'new'} {...props} /> : null;
 }
 
 function GroupDialogForm({ open, group, onClose, onSave, busy = false, error }: GroupDialogProps) {
-  const [name, setName] = useState(group?.name ?? '');
-  const theme = useTheme();
-  const colors = [
-    theme.palette.primary.main,
-    theme.palette.secondary.main,
-    theme.palette.success.main,
-    theme.palette.warning.main,
-    theme.palette.info.main,
-    theme.palette.error.main,
-  ];
-  const [accentColor, setAccentColor] = useState(group?.accentColor ?? colors[0]);
+    const [name, setName] = useState(group?.name ?? '');
+    const theme = useTheme();
+    const colors = [
+        theme.palette.primary.main,
+        theme.palette.secondary.main,
+        theme.palette.success.main,
+        theme.palette.warning.main,
+        theme.palette.info.main,
+        theme.palette.error.main,
+    ];
+    const [accentColor, setAccentColor] = useState(group?.accentColor ?? colors[0]);
 
-  const handleSave = async () => {
-    if (!name.trim()) return;
+    const handleSave = async () => {
+        if (!name.trim()) return;
 
-    await onSave({ name: name.trim(), accentColor });
-    onClose();
-  };
+        await onSave({ name: name.trim(), accentColor });
+        onClose();
+    };
 
-  return (
-    <Dialog open={open} onClose={busy ? undefined : onClose} fullWidth maxWidth="xs">
-      <DialogTitle>{group ? 'Редактировать группу' : 'Новая группа'}</DialogTitle>
-      <DialogContent>
-        <Stack gap={3} sx={{ pt: 1 }}>
-          {error && <Alert severity="error">{error}</Alert>}
-          <TextField
-            disabled={busy}
-            label="Название"
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            autoFocus
-          />
-          <Stack direction="row" gap={1}>
-            {colors.map((color) => (
-              <ButtonBase
-                disabled={busy}
-                type="button"
-                key={color}
-                aria-label={`Цвет ${color}`}
-                aria-pressed={color === accentColor}
-                onClick={() => setAccentColor(color)}
-                sx={{
-                  width: 34,
-                  height: 34,
-                  borderRadius: '50%',
-                  border: color === accentColor ? '2px solid' : '1px solid',
-                  borderColor: color === accentColor ? 'common.white' : 'divider',
-                  '&.Mui-focusVisible': {
-                    outline: '2px solid',
-                    outlineColor: 'primary.main',
-                    outlineOffset: 3,
-                  },
-                  background: color,
-                  cursor: 'pointer',
-                }}
-              />
-            ))}
-          </Stack>
-        </Stack>
-      </DialogContent>
-      <DialogActions>
-        <Button disabled={busy} onClick={onClose}>
-          Отмена
-        </Button>
-        <Button disabled={busy || !name.trim()} onClick={handleSave} variant="contained">
-          {busy ? 'Сохранение…' : 'Сохранить'}
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
+    return (
+        <Dialog open={open} onClose={busy ? undefined : onClose} fullWidth maxWidth="xs">
+            <DialogTitle>{group ? 'Редактировать группу' : 'Новая группа'}</DialogTitle>
+            <DialogContent>
+                <Stack gap={3} sx={{ pt: 1 }}>
+                    {error && <Alert severity="error">{error}</Alert>}
+                    <TextField
+                        disabled={busy}
+                        label="Название"
+                        value={name}
+                        onChange={(event) => setName(event.target.value)}
+                        autoFocus
+                    />
+                    <Stack direction="row" gap={1}>
+                        {colors.map((color) => (
+                            <ButtonBase
+                                disabled={busy}
+                                type="button"
+                                key={color}
+                                aria-label={`Цвет ${color}`}
+                                aria-pressed={color === accentColor}
+                                onClick={() => setAccentColor(color)}
+                                sx={{
+                                    width: 34,
+                                    height: 34,
+                                    borderRadius: '50%',
+                                    border: color === accentColor ? '2px solid' : '1px solid',
+                                    borderColor: color === accentColor ? 'common.white' : 'divider',
+                                    '&.Mui-focusVisible': {
+                                        outline: '2px solid',
+                                        outlineColor: 'primary.main',
+                                        outlineOffset: 3,
+                                    },
+                                    background: color,
+                                    cursor: 'pointer',
+                                }}
+                            />
+                        ))}
+                    </Stack>
+                </Stack>
+            </DialogContent>
+            <DialogActions>
+                <Button disabled={busy} onClick={onClose}>
+                    Отмена
+                </Button>
+                <Button disabled={busy || !name.trim()} onClick={handleSave} variant="contained">
+                    {busy ? 'Сохранение…' : 'Сохранить'}
+                </Button>
+            </DialogActions>
+        </Dialog>
+    );
 }

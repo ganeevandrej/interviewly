@@ -6,15 +6,15 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export function POST(request: Request, { params }: { params: { projectId: string } }) {
-  return respond(async () => {
-    const body = await jsonBody(request);
+    return respond(async () => {
+        const body = await jsonBody(request);
 
-    if (!body || typeof body !== 'object' || Array.isArray(body) || !('questionId' in body))
-      throw new InputError('Поле «Вопрос» обязательно.');
+        if (!body || typeof body !== 'object' || Array.isArray(body) || !('questionId' in body))
+            throw new InputError('Поле «Вопрос» обязательно.');
 
-    return addProjectQuestion(
-      params.projectId,
-      String((body as { questionId: unknown }).questionId),
-    );
-  }, 201);
+        return addProjectQuestion(
+            params.projectId,
+            String((body as { questionId: unknown }).questionId),
+        );
+    }, 201);
 }
