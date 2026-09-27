@@ -18,10 +18,10 @@ import { useState } from 'react';
 
 import { AppShell } from '@/widgets/app-shell';
 import { GlassPanel } from '@/shared/ui/glass-panel/GlassPanel';
-import { ProjectQuestionsWidget } from '@/widgets/project-questions/ProjectQuestionsWidget';
-import { ProjectTechnologyWidget } from '@/widgets/project-technologies/ProjectTechnologyWidget';
-import { useDeleteProjectMutation, useUpdateProjectMutation } from '@/entities/project/api/projectsApi';
-import type { Project, ProjectInput, ProjectTeamItem } from '@/shared/types/library';
+import { ProjectQuestionsWidget } from '@/widgets/project-questions';
+import { ProjectTechnologyWidget } from '@/widgets/project-technologies';
+import { useDeleteProjectMutation, useUpdateProjectMutation } from '@/entities/project';
+import type { Project, ProjectInput, ProjectTeamItem } from '@/entities/project';
 
 export default function ProjectPage({ initialProject }: { initialProject: Project }) {
     const { projectId } = useParams<{ projectId: string }>();

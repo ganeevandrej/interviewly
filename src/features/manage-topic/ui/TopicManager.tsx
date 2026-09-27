@@ -13,9 +13,9 @@ import {
     useCreateTopicMutation,
     useDeleteTopicMutation,
     useUpdateTopicMutation,
-} from '@/entities/topic/api/topicApi';
+} from '@/entities/topic';
 
-import type { Topic } from '@/shared/types/library';
+import type { Topic } from '@/entities/topic';
 
 export function TopicManager({
     onClose,

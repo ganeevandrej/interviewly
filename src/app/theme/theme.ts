@@ -28,14 +28,8 @@ export const theme = createTheme({
         success: { main: '#A4D79A' },
         warning: { main: '#F0CD87' },
         info: { main: '#A6C8F0' },
-        background: {
-            default: '#101417',
-            paper: '#181E23',
-        },
-        text: {
-            primary: '#EDF2F4',
-            secondary: '#B0BEC7',
-        },
+        background: { default: '#101417', paper: '#181E23' },
+        text: { primary: '#EDF2F4', secondary: '#B0BEC7' },
     },
     typography: {
         fontFamily: 'Golos Text, Segoe UI, sans-serif',
@@ -62,40 +56,15 @@ export const theme = createTheme({
                     color: '#EDF2F4',
                 },
                 a: { color: 'inherit', textDecoration: 'none' },
-                body: {
-                    minHeight: '100vh',
-                    backgroundColor: theme.palette.background.default,
-                },
+                body: { minHeight: '100vh', backgroundColor: theme.palette.background.default },
             }),
         },
-        MuiButton: {
-            styleOverrides: {
-                root: {
-                    borderRadius: 14,
-                    boxShadow: 'none',
-                    minHeight: 44,
-                },
-            },
-        },
-        MuiPaper: {
-            styleOverrides: {
-                root: {
-                    backgroundImage: 'none',
-                    borderRadius: 16,
-                },
-            },
-        },
+        MuiButton: { styleOverrides: { root: { borderRadius: 14, boxShadow: 'none', minHeight: 44 } } },
+        MuiPaper: { styleOverrides: { root: { backgroundImage: 'none', borderRadius: 16 } } },
         MuiTextField: {
-            defaultProps: {
-                variant: 'outlined',
-            },
+            defaultProps: { variant: 'outlined' },
             styleOverrides: {
-                root: {
-                    '& .MuiOutlinedInput-root': {
-                        borderRadius: 12,
-                        backgroundColor: 'background.default',
-                    },
-                },
+                root: { '& .MuiOutlinedInput-root': { borderRadius: 12, backgroundColor: 'background.default' } },
             },
         },
     },

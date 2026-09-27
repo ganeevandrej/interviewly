@@ -14,9 +14,15 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { GlassPanel } from '@/shared/ui/glass-panel/GlassPanel';
-import { QuestionDialog } from '@/features/manage-question/ui/QuestionDialog';
-import { useUpdateQuestionMutation } from '@/entities/question/api/questionApi';
-import type { LibraryGroup } from '@/shared/types/library';
+import { QuestionDialog } from '@/features/manage-question';
+import { useUpdateQuestionMutation } from '@/entities/question';
+import type { Question } from '@/entities/question';
+import type { QuestionGroup } from '@/entities/group';
+import type { Topic } from '@/entities/topic';
+
+type LibraryGroup = QuestionGroup & {
+    topics: (Topic & { questions: Omit<Question, 'groupId'>[] })[];
+};
 
 export default function FocusPage({
     initialGroup,

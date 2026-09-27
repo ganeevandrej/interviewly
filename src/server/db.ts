@@ -18,3 +18,5 @@ export function getDb(): PrismaClient {
 
     return client;
 }
+import 'server-only';
+

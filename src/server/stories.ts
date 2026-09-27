@@ -131,3 +131,5 @@ export async function updateStory(storyId: string, input: unknown) {
 export async function deleteStory(storyId: string) {
     await getDb().story.delete({ where: { id: text(storyId, 'История') } });
 }
+import 'server-only';
+

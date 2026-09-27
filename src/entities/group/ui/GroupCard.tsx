@@ -5,7 +5,7 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Link from 'next/link';
-import { QuestionGroup } from '@/shared/types/library';
+import type { QuestionGroup } from '@/entities/group';
 import { GlassPanel } from '@/shared/ui/glass-panel/GlassPanel';
 
 type GroupCardProps = {

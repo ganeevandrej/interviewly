@@ -7,8 +7,8 @@ import Typography from '@mui/material/Typography';
 import Link from 'next/link';
 
 import { AppShell } from '@/widgets/app-shell';
-import { ProjectCard } from '@/entities/project/ui/ProjectCard';
-import type { ProjectListItem } from '@/shared/types/library';
+import { ProjectCard } from '@/entities/project';
+import type { ProjectListItem } from '@/entities/project';
 
 export default function ProjectsPage({ initialProjects }: { initialProjects: ProjectListItem[] }) {
     const projects = initialProjects;

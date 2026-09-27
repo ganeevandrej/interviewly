@@ -10,15 +10,15 @@ import Typography from '@mui/material/Typography';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import { useCreateProjectMutation, useUpdateProjectMutation } from '@/entities/project/api/projectsApi';
+import { useCreateProjectMutation, useUpdateProjectMutation } from '@/entities/project';
 import { AppShell } from '@/widgets/app-shell';
-import { ProjectTechnologyWidget } from '@/widgets/project-technologies/ProjectTechnologyWidget';
+import { ProjectTechnologyWidget } from '@/widgets/project-technologies';
 import type {
     ProjectInput,
     ProjectStep,
     ProjectTeamItem,
     ProjectTechnology,
-} from '@/shared/types/library';
+} from '@/entities/project';
 
 const steps: Array<{ id: ProjectStep; title: string }> = [
     { id: 'title-color', title: 'РќР°Р·РІР°РЅРёРµ Рё С†РІРµС‚' },

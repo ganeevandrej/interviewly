@@ -11,7 +11,8 @@ import TextField from '@mui/material/TextField';
 import { useState } from 'react';
 import Alert from '@mui/material/Alert';
 
-import type { Topic, Question, QuestionInput } from '@/shared/types/library';
+import type { Topic } from '@/entities/topic';
+import type { Question, QuestionInput } from '@/entities/question';
 
 type QuestionDialogProps = {
     open: boolean;

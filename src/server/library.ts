@@ -203,3 +203,5 @@ export function deleteQuestion(groupId: string, questionId: string) {
         await tx.question.delete({ where: { id: question.id } });
     });
 }
+import 'server-only';
+

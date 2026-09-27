@@ -12,8 +12,8 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { AppShell } from '@/widgets/app-shell';
 import { GlassPanel } from '@/shared/ui/glass-panel/GlassPanel';
-import { useCreateStoryMutation, useUpdateStoryMutation } from '@/entities/story/api/storiesApi';
-import type { Story, StoryInput } from '@/shared/types/library';
+import { useCreateStoryMutation, useUpdateStoryMutation } from '@/entities/story';
+import type { Story, StoryInput } from '@/entities/story';
 
 const emptyStory: StoryInput = {
     title: '',
