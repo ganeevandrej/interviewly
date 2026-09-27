@@ -4,7 +4,7 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
-import { TopicManager } from '@/features/manage-topic';
+import { TopicManager } from '@/features/topic-manage';
 import { QuestionList } from '@/entities/question';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
@@ -18,23 +18,29 @@ import Typography from '@mui/material/Typography';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 
-import { AppShell } from '@/widgets/app-shell';
 import { GlassPanel } from '@/shared/ui/glass-panel';
 import type { LibraryData, LibraryGroup } from '@/shared/types/library';
 import {
     QuestionCreateFeature,
-    QuestionDeleteFeature,
-    QuestionEditFeature,
-} from '@/features/manage-question';
+} from '@/features/question-create';
+import { QuestionDeleteFeature } from '@/features/question-delete';
+import { QuestionEditFeature } from '@/features/question-edit';
+import { QuestionDialog } from '@/features/question-edit';
 import { GroupDeleteFeature } from '@/features/group-delete';
 import { GroupEditFeature } from '@/features/group-edit';
-import {} from '@/entities/group';
+import { GroupDialog } from '@/features/group-create';
 
 import type { Question } from '@/entities/question';
 import type { QuestionGroup } from '@/entities/group';
 import type { Topic } from '@/entities/topic';
 
-export function GroupDetailsContent({ initialGroup }: { initialGroup: LibraryGroup }) {
+export function GroupDetailsContent({
+    initialGroup,
+    shell,
+}: {
+    initialGroup: LibraryGroup;
+    shell: (children: React.ReactNode, onCreate: () => void) => React.ReactNode;
+}) {
     const params = { groupId: initialGroup.id };
     const [data, setData] = useState<LibraryData>(() => ({
         groups: [initialGroup],
@@ -74,15 +80,14 @@ export function GroupDetailsContent({ initialGroup }: { initialGroup: LibraryGro
     }
 
     if (!group) {
-        return (
-            <AppShell>
-                <Stack gap={2}>
+        return shell(
+            <Stack gap={2}>
                     <Typography variant="h4">Группа не найдена</Typography>
                     <Button component={Link} href="/" startIcon={<ArrowBackRoundedIcon />}>
                         Вернуться на главную
                     </Button>
-                </Stack>
-            </AppShell>
+            </Stack>,
+            () => undefined,
         );
     }
 
@@ -96,8 +101,8 @@ export function GroupDetailsContent({ initialGroup }: { initialGroup: LibraryGro
         setQuestionDialogOpen(true);
     };
 
-    return (
-        <AppShell onCreate={() => openCreateQuestion()}>
+    return shell(
+        <>
             <Stack gap={3}>
                 <Button
                     component={Link}
@@ -142,6 +147,7 @@ export function GroupDetailsContent({ initialGroup }: { initialGroup: LibraryGro
                     <Stack direction="row" gap={1}>
                         <GroupEditFeature
                             group={group}
+                            dialog={GroupDialog}
                             onSaved={(updated) =>
                                 setData((current) => ({ ...current, groups: [updated] }))
                             }
@@ -246,6 +252,7 @@ export function GroupDetailsContent({ initialGroup }: { initialGroup: LibraryGro
                 initialTopicId={initialTopicId}
                 open={questionDialogOpen && !editingQuestion}
                 onClose={() => setQuestionDialogOpen(false)}
+                dialog={QuestionDialog}
                 onCreated={(created) =>
                     setData((current) => ({
                         ...current,
@@ -285,6 +292,7 @@ export function GroupDetailsContent({ initialGroup }: { initialGroup: LibraryGro
                     }}
                 />
             )}
-        </AppShell>
+        </>,
+        () => openCreateQuestion(),
     );
 }

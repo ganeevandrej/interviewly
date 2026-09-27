@@ -14,7 +14,7 @@ import { useTheme } from '@mui/material/styles';
 
 import type { QuestionGroup } from '@/entities/group';
 
-type GroupDialogProps = {
+export type GroupDialogProps = {
     open: boolean;
     group?: QuestionGroup;
     onClose: () => void;

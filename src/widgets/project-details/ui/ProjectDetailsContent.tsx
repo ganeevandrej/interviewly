@@ -8,18 +8,18 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 import type { Project } from '@/entities/project';
+import type { ProjectTechnologyEditorRenderer } from '@/shared/types/project-technology-editor';
 import { ProjectDeleteFeature } from '@/features/project-delete';
 import { ProjectEditFeature } from '@/features/project-edit';
-import { AppShell } from '@/widgets/app-shell';
 
 import { ProjectReadView } from './ProjectReadView';
 
-export function ProjectDetailsContent({ initialProject }: { initialProject: Project }) {
+export function ProjectDetailsContent({ initialProject, technologyEditor, questionsWidget }: { initialProject: Project; technologyEditor: ProjectTechnologyEditorRenderer; questionsWidget: (questions: Project['questions']) => React.ReactNode }) {
     const [project, setProject] = useState(initialProject);
     const [editing, setEditing] = useState(false);
 
     return (
-        <AppShell>
+        <>
             <Stack gap={3}>
                 <Stack direction="row" justifyContent="space-between" alignItems="center" gap={2}>
                     <Button component={Link} href="/projects" startIcon={<ArrowBackRoundedIcon />}>
@@ -46,11 +46,12 @@ export function ProjectDetailsContent({ initialProject }: { initialProject: Proj
                             setEditing(false);
                         }}
                         onCancel={() => setEditing(false)}
+                        technologyEditor={technologyEditor}
                     />
                 ) : (
-                    <ProjectReadView project={project} />
+                    <ProjectReadView project={project} questionsWidget={questionsWidget(project.questions)} />
                 )}
             </Stack>
-        </AppShell>
+        </>
     );
 }

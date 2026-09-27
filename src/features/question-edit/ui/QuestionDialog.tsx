@@ -14,7 +14,7 @@ import Alert from '@mui/material/Alert';
 import type { Topic } from '@/entities/topic';
 import type { Question, QuestionInput } from '@/entities/question';
 
-type QuestionDialogProps = {
+export type QuestionDialogProps = {
     open: boolean;
     question?: Question;
     topics: Topic[];

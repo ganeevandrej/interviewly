@@ -7,15 +7,16 @@ import { useState } from 'react';
 
 import { useUpdateProjectMutation } from '@/entities/project';
 import type { Project, ProjectInput, ProjectTeamItem } from '@/entities/project';
-import { ProjectTechnologyEditor } from '@/features/project-technology-edit';
+import type { ProjectTechnologyEditorRenderer } from '@/shared/types/project-technology-editor';
 
 type Props = {
     project: Project;
     onSaved: (project: Project) => void;
     onCancel: () => void;
+    technologyEditor: ProjectTechnologyEditorRenderer;
 };
 
-export function ProjectEditFeature({ project, onSaved, onCancel }: Props) {
+export function ProjectEditFeature({ project, onSaved, onCancel, technologyEditor }: Props) {
     const [value, setValue] = useState<ProjectInput>(() => toProjectInput(project));
     const [updateProject, { error, isLoading }] = useUpdateProjectMutation();
 
@@ -31,7 +32,7 @@ export function ProjectEditFeature({ project, onSaved, onCancel }: Props) {
     return (
         <Stack gap={2}>
             {error && <div>Не удалось сохранить проект.</div>}
-            <ProjectEditForm value={value} onChange={setValue} />
+            <ProjectEditForm value={value} onChange={setValue} technologyEditor={technologyEditor} />
             <Stack direction="row" gap={1}>
                 <Button disabled={isLoading} onClick={onCancel}>
                     Отмена
@@ -61,9 +62,11 @@ function toProjectInput(project: Project): ProjectInput {
 function ProjectEditForm({
     value,
     onChange,
+    technologyEditor,
 }: {
     value: ProjectInput;
     onChange: (value: ProjectInput) => void;
+    technologyEditor: Props['technologyEditor'];
 }) {
     return (
         <Stack gap={2}>
@@ -86,10 +89,10 @@ function ProjectEditForm({
                 minRows={5}
             />
             <TeamEditor value={value.team} onChange={(team) => onChange({ ...value, team })} />
-            <ProjectTechnologyEditor
-                value={value.technologies ?? []}
-                onChange={(technologies) => onChange({ ...value, technologies })}
-            />
+            {technologyEditor({
+                value: value.technologies ?? [],
+                onChange: (technologies) => onChange({ ...value, technologies }),
+            })}
             <EditableList
                 label="Задачи"
                 value={value.tasks}

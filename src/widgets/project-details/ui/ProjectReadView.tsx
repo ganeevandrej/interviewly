@@ -4,11 +4,10 @@ import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { ProjectQuestionsWidget } from '@/widgets/project-questions';
 import { GlassPanel } from '@/shared/ui/glass-panel';
 import type { Project } from '@/entities/project';
 
-export function ProjectReadView({ project }: { project: Project }) {
+export function ProjectReadView({ project, questionsWidget }: { project: Project; questionsWidget: React.ReactNode }) {
     return (
         <Stack gap={2.5}>
             <Stack direction="row" alignItems="center" gap={1}>
@@ -50,7 +49,7 @@ export function ProjectReadView({ project }: { project: Project }) {
                 <BulletList items={project.achievements} />
             </InfoBlock>
             <InfoBlock title="Вопросы">
-                <ProjectQuestionsWidget questions={project.questions} />
+                {questionsWidget}
             </InfoBlock>
         </Stack>
     );

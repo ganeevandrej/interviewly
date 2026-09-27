@@ -15,7 +15,7 @@ import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { GlassPanel } from '@/shared/ui/glass-panel';
 import type { LibraryGroup } from '@/shared/types/library';
-import { QuestionDialog } from '@/features/manage-question';
+import { QuestionDialog } from '@/features/question-edit';
 import { useUpdateQuestionMutation } from '@/entities/question';
 import type { Question } from '@/entities/question';
 import type { QuestionGroup } from '@/entities/group';

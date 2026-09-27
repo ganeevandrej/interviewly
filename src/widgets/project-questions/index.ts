@@ -1,2 +1,1 @@
-export { ProjectQuestionsWidget } from './ProjectQuestionsWidget';
-export type { ProjectQuestion } from '@/entities/project';
+export { ProjectQuestionsWidget } from './ui/ProjectQuestionsWidget';

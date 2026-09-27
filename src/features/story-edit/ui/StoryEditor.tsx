@@ -10,7 +10,6 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import type { FormEvent } from 'react';
-import { AppShell } from '@/widgets/app-shell';
 import { GlassPanel } from '@/shared/ui/glass-panel';
 import { useCreateStoryMutation, useUpdateStoryMutation } from '@/entities/story';
 import type { Story, StoryInput } from '@/entities/story';
@@ -72,7 +71,7 @@ export function StoryEditor({ initialStory }: { initialStory?: Story }) {
     }
 
     return (
-        <AppShell>
+        <>
             <Stack component="form" onSubmit={submit} gap={3} sx={{ maxWidth: 820, mx: 'auto' }}>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" gap={2}>
                     <Button
@@ -139,7 +138,7 @@ export function StoryEditor({ initialStory }: { initialStory?: Story }) {
                     </>
                 )}
             </Stack>
-        </AppShell>
+        </>
     );
 }
 

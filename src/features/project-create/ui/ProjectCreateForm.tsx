@@ -11,14 +11,13 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { useCreateProjectMutation, useUpdateProjectMutation } from '@/entities/project';
-import { AppShell } from '@/widgets/app-shell';
-import { ProjectTechnologyEditor } from '@/features/project-technology-edit';
 import type {
     ProjectInput,
     ProjectStep,
     ProjectTeamItem,
     ProjectTechnology,
 } from '@/entities/project';
+import type { ProjectTechnologyEditorRenderer } from '@/shared/types/project-technology-editor';
 
 const steps: Array<{ id: ProjectStep; title: string }> = [
     { id: 'title-color', title: 'РќР°Р·РІР°РЅРёРµ Рё С†РІРµС‚' },
@@ -41,7 +40,7 @@ const initialForm: ProjectInput = {
     technologies: [],
 };
 
-export function ProjectCreateForm() {
+export function ProjectCreateForm({ technologyEditor }: { technologyEditor: ProjectTechnologyEditorRenderer }) {
     const router = useRouter();
     const [form, setForm] = useState<ProjectInput>(initialForm);
     const [projectId, setProjectId] = useState('');
@@ -83,7 +82,7 @@ export function ProjectCreateForm() {
     }
 
     return (
-        <AppShell>
+        <>
             <Stack gap={3} sx={{ maxWidth: 820, mx: 'auto' }}>
                 <Button
                     href="/projects"
@@ -101,7 +100,7 @@ export function ProjectCreateForm() {
                     </Typography>
                 </Stack>
                 {error && <Typography color="error">Не удалось сохранить проект.</Typography>}
-                <StepContent step={step.id} form={form} update={update} />
+                <StepContent step={step.id} form={form} update={update} technologyEditor={technologyEditor} />
                 <Stack direction="row" justifyContent="space-between" gap={2}>
                     <Button
                         disabled={pending}
@@ -128,7 +127,7 @@ export function ProjectCreateForm() {
                     </Stack>
                 </Stack>
             </Stack>
-        </AppShell>
+        </>
     );
 }
 
@@ -136,10 +135,12 @@ function StepContent({
     step,
     form,
     update,
+    technologyEditor,
 }: {
     step: ProjectStep;
     form: ProjectInput;
     update: <K extends keyof ProjectInput>(key: K, value: ProjectInput[K]) => void;
+    technologyEditor: ProjectTechnologyEditorRenderer;
 }) {
     if (step === 'title-color')
         return (
@@ -173,10 +174,10 @@ function StepContent({
         return <TeamEditor value={form.team} onChange={(value) => update('team', value)} />;
     if (step === 'technologies')
         return (
-            <ProjectTechnologyEditor
-                value={(form.technologies ?? []) as ProjectTechnology[]}
-                onChange={(value) => update('technologies', value)}
-            />
+            technologyEditor({
+                value: (form.technologies ?? []) as ProjectTechnology[],
+                onChange: (value) => update('technologies', value),
+            })
         );
     return (
         <ListEditor

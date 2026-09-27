@@ -9,7 +9,7 @@ import { useState } from 'react';
 
 import { AppShell } from '@/widgets/app-shell';
 import { GroupCard, useCreateGroupMutation } from '@/entities/group';
-import { GroupDialog } from '@/features/manage-group';
+import { GroupDialog } from '@/features/group-create';
 import type { QuestionGroup } from '@/entities/group';
 
 export default function HomePage({ initialGroups }: { initialGroups: QuestionGroup[] }) {
