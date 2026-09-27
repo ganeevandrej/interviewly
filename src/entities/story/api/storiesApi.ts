@@ -1,7 +1,7 @@
-import { api } from '@/shared/api/api';
-import type { Story, StoryInput } from '@/shared/types/library';
+import { baseApi } from '@/shared/api/baseApi';
+import type { Story, StoryInput } from '@/entities/story/model/types';
 
-export const storiesApi = api.injectEndpoints({
+export const storiesApi = baseApi.injectEndpoints({
     endpoints: (build) => ({
         createStory: build.mutation<Story, StoryInput>({
             query: (body) => ({ url: 'stories', method: 'POST', body }),

@@ -1,9 +1,9 @@
 import {
-    BaseQueryFn,
-    FetchArgs,
-    FetchBaseQueryError,
     createApi,
     fetchBaseQuery,
+    type BaseQueryFn,
+    type FetchArgs,
+    type FetchBaseQueryError,
 } from '@reduxjs/toolkit/query/react';
 
 type ApiEnvelope<T> = { data: T };
@@ -45,7 +45,7 @@ const baseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> =
     };
 };
 
-export const api = createApi({
+export const baseApi = createApi({
     reducerPath: 'api',
     baseQuery,
     refetchOnFocus: true,

@@ -10,7 +10,7 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import type { FormEvent } from 'react';
-import { AppShell } from '@/shared/ui/app-shell/AppShell';
+import { AppShell } from '@/widgets/app-shell';
 import { GlassPanel } from '@/shared/ui/glass-panel/GlassPanel';
 import { useCreateStoryMutation, useUpdateStoryMutation } from '@/entities/story/api/storiesApi';
 import type { Story, StoryInput } from '@/shared/types/library';

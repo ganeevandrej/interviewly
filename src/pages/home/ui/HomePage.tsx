@@ -7,10 +7,10 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 
-import { AppShell } from '@/shared/ui/app-shell/AppShell';
+import { AppShell } from '@/widgets/app-shell';
 import { GroupCard } from '@/entities/group/ui/GroupCard';
 import { GroupDialog } from '@/features/manage-group/ui/GroupDialog';
-import { useCreateGroupMutation } from '@/entities/group/api/libraryApi';
+import { useCreateGroupMutation } from '@/entities/group/api/groupApi';
 import type { QuestionGroup } from '@/shared/types/library';
 
 export default function HomePage({ initialGroups }: { initialGroups: QuestionGroup[] }) {

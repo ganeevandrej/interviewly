@@ -24,5 +24,6 @@ export type {
     ProjectTechnology,
     ProjectTechnologyInput,
     Technology,
+    ProjectTag,
 } from '@/entities/project/model/types';
 export type { Story, StoryInput, StoryQuestion, StoryTag } from '@/entities/story/model/types';

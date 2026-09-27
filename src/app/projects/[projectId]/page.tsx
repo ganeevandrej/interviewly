@@ -1,7 +1,7 @@
 import { readProject } from '@/server/projects';
 import { InputError } from '@/server/validation';
 import { notFound } from 'next/navigation';
-import ClientPage from './ClientPage';
+import { ProjectDetailsPage } from '@/pages/project-details';
 
 export default async function ProjectPage({ params }: { params: { projectId: string } }) {
     let project;
@@ -12,5 +12,5 @@ export default async function ProjectPage({ params }: { params: { projectId: str
         throw error;
     }
 
-    return <ClientPage initialProject={project} />;
+    return <ProjectDetailsPage initialProject={project} />;
 }

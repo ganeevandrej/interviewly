@@ -24,14 +24,14 @@ import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 
 import type { MouseEvent } from 'react';
-import { AppShell } from '@/shared/ui/app-shell/AppShell';
+import { AppShell } from '@/widgets/app-shell';
 import { GlassPanel } from '@/shared/ui/glass-panel/GlassPanel';
 import { GroupDialog } from '@/features/manage-group/ui/GroupDialog';
 import { QuestionDialog } from '@/features/manage-question/ui/QuestionDialog';
 import {
     useDeleteGroupMutation,
     useUpdateGroupMutation,
-} from '@/entities/group/api/libraryApi';
+} from '@/entities/group/api/groupApi';
 import {
     useDeleteQuestionMutation,
     useUpdateQuestionMutation,

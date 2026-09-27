@@ -1,10 +1,10 @@
 import { readStory } from '@/server/stories';
 import { InputError } from '@/server/validation';
 import { notFound } from 'next/navigation';
-import ClientPage from './ClientPage';
+import { StoryDetailsPage } from '@/pages/story-details';
 
 export default async function StoryPage({ params }: { params: { storyId: string } }) {
-    if (params.storyId === 'new') return <ClientPage />;
+    if (params.storyId === 'new') return <StoryDetailsPage />;
 
     let story;
     try {
@@ -14,5 +14,5 @@ export default async function StoryPage({ params }: { params: { storyId: string 
         throw error;
     }
 
-    return <ClientPage initialStory={story} />;
+    return <StoryDetailsPage initialStory={story} />;
 }

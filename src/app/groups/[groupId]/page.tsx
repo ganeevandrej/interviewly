@@ -1,7 +1,7 @@
 import { readGroup } from '@/server/library';
 import { InputError } from '@/server/validation';
 import { notFound } from 'next/navigation';
-import ClientPage from './ClientPage';
+import { GroupDetailsPage } from '@/pages/group-details';
 
 export default async function GroupPage({ params }: { params: { groupId: string } }) {
     let group;
@@ -12,5 +12,5 @@ export default async function GroupPage({ params }: { params: { groupId: string 
         throw error;
     }
 
-    return <ClientPage initialGroup={group} />;
+    return <GroupDetailsPage initialGroup={group} />;
 }

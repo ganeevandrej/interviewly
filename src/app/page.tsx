@@ -1,8 +1,8 @@
 import { listGroups } from '@/server/library';
-import ClientPage from './ClientPage';
+import { HomePage as HomePageView } from '@/pages/home';
 
 export default async function HomePage() {
     const groups = await listGroups();
 
-    return <ClientPage initialGroups={groups} />;
+    return <HomePageView initialGroups={groups} />;
 }

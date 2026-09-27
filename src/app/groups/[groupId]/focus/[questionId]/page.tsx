@@ -1,7 +1,7 @@
 import { readGroup } from '@/server/library';
 import { InputError } from '@/server/validation';
 import { notFound } from 'next/navigation';
-import ClientPage from './ClientPage';
+import { QuestionFocusPage } from '@/pages/question-focus';
 
 export default async function FocusPage({
     params,
@@ -16,5 +16,5 @@ export default async function FocusPage({
         throw error;
     }
 
-    return <ClientPage initialGroup={group} questionId={params.questionId} />;
+    return <QuestionFocusPage initialGroup={group} questionId={params.questionId} />;
 }

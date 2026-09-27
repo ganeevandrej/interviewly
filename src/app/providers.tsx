@@ -4,7 +4,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from '@mui/material/styles';
 import { Provider } from 'react-redux';
 import { ReactNode } from 'react';
-import { store } from '@/store/store';
+import { store } from '@/app/store/store';
 import { theme } from '@/theme/theme';
 
 export function Providers({ children }: { children: ReactNode }) {

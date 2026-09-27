@@ -1,6 +1,5 @@
-import type { Story, StoryTag } from '@/entities/story/model/types';
-
 export type ProjectStatus = 'DRAFT' | 'READY';
+export type ProjectTag = { id: string; name: string };
 export type ProjectTeamItem = { name: string; count: number };
 export type Technology = { id: string; name: string };
 export type ProjectTechnology = Technology & { isFeatured: boolean };
@@ -19,8 +18,13 @@ export type Project = {
     status: ProjectStatus;
     technologies: ProjectTechnology[];
     questions: ProjectQuestion[];
-    tag: StoryTag | null;
-    histories: Story[];
+    tag: ProjectTag | null;
+    histories: ProjectHistory[];
+};
+
+export type ProjectHistory = {
+    id: string;
+    title: string;
 };
 
 export type ProjectListItem = Pick<Project, 'id' | 'title' | 'color' | 'status' | 'technologies'>;

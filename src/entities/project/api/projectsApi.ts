@@ -1,7 +1,7 @@
-import { api } from '@/shared/api/api';
-import type { Project, ProjectInput } from '@/shared/types/library';
+import { baseApi } from '@/shared/api/baseApi';
+import type { Project, ProjectInput } from '@/entities/project/model/types';
 
-export const projectsApi = api.injectEndpoints({
+export const projectsApi = baseApi.injectEndpoints({
     endpoints: (build) => ({
         createProject: build.mutation<Project, ProjectInput>({
             query: (body) => ({ url: 'projects', method: 'POST', body }),
