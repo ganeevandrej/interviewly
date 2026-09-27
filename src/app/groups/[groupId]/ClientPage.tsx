@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -24,8 +24,8 @@ import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 
 import type { MouseEvent } from 'react';
-import { AppShell } from '@/components/AppShell';
-import { GlassPanel } from '@/components/GlassPanel';
+import { AppShell } from '@/shared/ui/app-shell/AppShell';
+import { GlassPanel } from '@/shared/ui/glass-panel/GlassPanel';
 import { GroupDialog } from '@/components/GroupDialog';
 import { QuestionDialog } from '@/components/QuestionDialog';
 import {
@@ -37,7 +37,7 @@ import {
 } from '@/services/libraryApi';
 import Alert from '@mui/material/Alert';
 
-import type { InterviewlyData, LibraryGroup, Question } from '@/types';
+import type { InterviewlyData, LibraryGroup, Question } from '@/shared/types/library';
 
 export default function GroupPage({ initialGroup }: { initialGroup: LibraryGroup }) {
     const params = { groupId: initialGroup.id };

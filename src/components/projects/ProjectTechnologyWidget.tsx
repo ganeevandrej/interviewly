@@ -8,7 +8,7 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
-import type { ProjectTechnologyInput } from '@/types';
+import type { ProjectTechnologyInput } from '@/shared/types/library';
 
 type Props = {
     value: ProjectTechnologyInput[];

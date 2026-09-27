@@ -7,11 +7,11 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 
-import { AppShell } from '@/components/AppShell';
+import { AppShell } from '@/shared/ui/app-shell/AppShell';
 import { GroupCard } from '@/components/GroupCard';
 import { GroupDialog } from '@/components/GroupDialog';
 import { useCreateGroupMutation } from '@/services/libraryApi';
-import type { QuestionGroup } from '@/types';
+import type { QuestionGroup } from '@/shared/types/library';
 
 export default function HomePage({ initialGroups }: { initialGroups: QuestionGroup[] }) {
     const [groups, setGroups] = useState(initialGroups);

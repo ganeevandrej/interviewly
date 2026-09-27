@@ -1,5 +1,5 @@
 import { api } from '@/services/api';
-import type { Story, StoryInput } from '@/types';
+import type { Story, StoryInput } from '@/shared/types/library';
 
 export const storiesApi = api.injectEndpoints({
     endpoints: (build) => ({

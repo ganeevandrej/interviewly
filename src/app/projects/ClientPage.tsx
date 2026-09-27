@@ -6,9 +6,9 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Link from 'next/link';
 
-import { AppShell } from '@/components/AppShell';
+import { AppShell } from '@/shared/ui/app-shell/AppShell';
 import { ProjectCard } from '@/components/ProjectCard';
-import type { ProjectListItem } from '@/types';
+import type { ProjectListItem } from '@/shared/types/library';
 
 export default function ProjectsPage({ initialProjects }: { initialProjects: ProjectListItem[] }) {
     const projects = initialProjects;

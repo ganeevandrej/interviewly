@@ -6,7 +6,7 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
-import type { ProjectQuestion } from '@/types';
+import type { ProjectQuestion } from '@/shared/types/library';
 
 export function ProjectQuestionsWidget({ questions }: { questions: ProjectQuestion[] }) {
     return (

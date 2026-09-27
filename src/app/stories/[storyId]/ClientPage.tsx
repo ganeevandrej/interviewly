@@ -10,10 +10,10 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import type { FormEvent } from 'react';
-import { AppShell } from '@/components/AppShell';
-import { GlassPanel } from '@/components/GlassPanel';
+import { AppShell } from '@/shared/ui/app-shell/AppShell';
+import { GlassPanel } from '@/shared/ui/glass-panel/GlassPanel';
 import { useCreateStoryMutation, useUpdateStoryMutation } from '@/services/storiesApi';
-import type { Story, StoryInput } from '@/types';
+import type { Story, StoryInput } from '@/shared/types/library';
 
 const emptyStory: StoryInput = {
     title: '',

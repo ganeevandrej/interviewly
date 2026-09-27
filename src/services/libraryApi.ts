@@ -1,5 +1,5 @@
 import { api } from '@/services/api';
-import type { Question, QuestionGroup, QuestionInput, Topic } from '@/types';
+import type { Question, QuestionGroup, QuestionInput, Topic } from '@/shared/types/library';
 
 export const libraryApi = api.injectEndpoints({
     endpoints: (build) => ({

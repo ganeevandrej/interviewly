@@ -8,8 +8,8 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Link from 'next/link';
 
-import { GlassPanel } from '@/components/GlassPanel';
-import type { ProjectListItem } from '@/types';
+import { GlassPanel } from '@/shared/ui/glass-panel/GlassPanel';
+import type { ProjectListItem } from '@/shared/types/library';
 
 export function ProjectCard({ project }: { project: ProjectListItem }) {
     return (

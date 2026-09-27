@@ -5,9 +5,9 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Link from 'next/link';
-import { AppShell } from '@/components/AppShell';
-import { GlassPanel } from '@/components/GlassPanel';
-import type { Story } from '@/types';
+import { AppShell } from '@/shared/ui/app-shell/AppShell';
+import { GlassPanel } from '@/shared/ui/glass-panel/GlassPanel';
+import type { Story } from '@/shared/types/library';
 
 export default function StoriesPage({ initialStories }: { initialStories: Story[] }) {
     const stories = initialStories;

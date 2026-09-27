@@ -3,7 +3,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Link from 'next/link';
 
-import { AppShell } from '@/components/AppShell';
+import { AppShell } from '@/shared/ui/app-shell/AppShell';
 
 export default function NotFound() {
     return (

@@ -16,12 +16,12 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import { AppShell } from '@/components/AppShell';
-import { GlassPanel } from '@/components/GlassPanel';
+import { AppShell } from '@/shared/ui/app-shell/AppShell';
+import { GlassPanel } from '@/shared/ui/glass-panel/GlassPanel';
 import { ProjectQuestionsWidget } from '@/components/projects/ProjectQuestionsWidget';
 import { ProjectTechnologyWidget } from '@/components/projects/ProjectTechnologyWidget';
 import { useDeleteProjectMutation, useUpdateProjectMutation } from '@/services/projectsApi';
-import type { Project, ProjectInput, ProjectTeamItem } from '@/types';
+import type { Project, ProjectInput, ProjectTeamItem } from '@/shared/types/library';
 
 export default function ProjectPage({ initialProject }: { initialProject: Project }) {
     const { projectId } = useParams<{ projectId: string }>();

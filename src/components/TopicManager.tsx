@@ -15,7 +15,7 @@ import {
     useUpdateTopicMutation,
 } from '@/services/libraryApi';
 
-import type { Topic } from '@/types';
+import type { Topic } from '@/shared/types/library';
 
 export function TopicManager({
     onClose,

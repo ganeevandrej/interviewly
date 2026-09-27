@@ -4,7 +4,7 @@ import { randomUUID } from 'node:crypto';
 import type { Prisma } from '../generated/prisma/client';
 import { getDb } from './db';
 import { InputError, projectCreateInput, projectUpdateInput, text } from './validation';
-import type { Project } from '@/types';
+import type { Project } from '@/shared/types/library';
 
 const projectInclude = {
     technologies: { include: { technology: true }, orderBy: { technology: { name: 'asc' } } },

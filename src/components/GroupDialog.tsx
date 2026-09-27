@@ -12,7 +12,7 @@ import { useState } from 'react';
 import Alert from '@mui/material/Alert';
 import { useTheme } from '@mui/material/styles';
 
-import type { QuestionGroup } from '@/types';
+import type { QuestionGroup } from '@/shared/types/library';
 
 type GroupDialogProps = {
     open: boolean;

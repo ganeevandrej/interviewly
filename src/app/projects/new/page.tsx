@@ -11,18 +11,23 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { useCreateProjectMutation, useUpdateProjectMutation } from '@/services/projectsApi';
-import { AppShell } from '@/components/AppShell';
+import { AppShell } from '@/shared/ui/app-shell/AppShell';
 import { ProjectTechnologyWidget } from '@/components/projects/ProjectTechnologyWidget';
-import type { ProjectInput, ProjectStep, ProjectTeamItem, ProjectTechnology } from '@/types';
+import type {
+    ProjectInput,
+    ProjectStep,
+    ProjectTeamItem,
+    ProjectTechnology,
+} from '@/shared/types/library';
 
 const steps: Array<{ id: ProjectStep; title: string }> = [
-    { id: 'title-color', title: 'Название и цвет' },
-    { id: 'description', title: 'Описание' },
-    { id: 'team', title: 'Команда' },
-    { id: 'technologies', title: 'Стек' },
-    { id: 'tasks', title: 'Задачи' },
-    { id: 'responsibilities', title: 'Обязанности' },
-    { id: 'achievements', title: 'Достижения' },
+    { id: 'title-color', title: 'РќР°Р·РІР°РЅРёРµ Рё С†РІРµС‚' },
+    { id: 'description', title: 'РћРїРёСЃР°РЅРёРµ' },
+    { id: 'team', title: 'РљРѕРјР°РЅРґР°' },
+    { id: 'technologies', title: 'РЎС‚РµРє' },
+    { id: 'tasks', title: 'Р—Р°РґР°С‡Рё' },
+    { id: 'responsibilities', title: 'РћР±СЏР·Р°РЅРЅРѕСЃС‚Рё' },
+    { id: 'achievements', title: 'Р”РѕСЃС‚РёР¶РµРЅРёСЏ' },
 ];
 
 const initialForm: ProjectInput = {

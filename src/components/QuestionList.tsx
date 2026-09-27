@@ -7,8 +7,8 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Link from 'next/link';
 import { MouseEvent } from 'react';
-import { GlassPanel } from '@/components/GlassPanel';
-import { Question } from '@/types';
+import { GlassPanel } from '@/shared/ui/glass-panel/GlassPanel';
+import { Question } from '@/shared/types/library';
 
 export function QuestionList({
     questions,
