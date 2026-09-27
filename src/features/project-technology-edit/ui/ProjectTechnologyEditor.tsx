@@ -10,12 +10,12 @@ import Typography from '@mui/material/Typography';
 
 import type { ProjectTechnologyInput } from '@/entities/project';
 
-type Props = {
+export type ProjectTechnologyEditorProps = {
     value: ProjectTechnologyInput[];
     onChange: (value: ProjectTechnologyInput[]) => void;
 };
 
-export function ProjectTechnologyWidget({ value, onChange }: Props) {
+export function ProjectTechnologyEditor({ value, onChange }: ProjectTechnologyEditorProps) {
     function addTechnology() {
         const name = window.prompt('Название технологии');
         if (!name?.trim()) return;
@@ -24,9 +24,7 @@ export function ProjectTechnologyWidget({ value, onChange }: Props) {
 
     return (
         <Stack gap={2}>
-            <Typography color="text.secondary">
-                Поиск и подключение технологий будет добавлено отдельным API.
-            </Typography>
+            <Typography color="text.secondary">Выберите технологии проекта.</Typography>
             <TextField label="Поиск технологий" placeholder="Например, React" disabled fullWidth />
             <Button
                 variant="outlined"

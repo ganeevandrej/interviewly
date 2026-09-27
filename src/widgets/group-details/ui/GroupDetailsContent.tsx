@@ -8,37 +8,27 @@ import { TopicManager } from '@/features/manage-topic';
 import { QuestionList } from '@/entities/question';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
-import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
-import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import InputAdornment from '@mui/material/InputAdornment';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 
-import type { MouseEvent } from 'react';
 import { AppShell } from '@/widgets/app-shell';
 import { GlassPanel } from '@/shared/ui/glass-panel';
 import type { LibraryData, LibraryGroup } from '@/shared/types/library';
-import { GroupDialog } from '@/features/manage-group';
-import { QuestionDialog } from '@/features/manage-question';
 import {
-    useDeleteGroupMutation,
-    useUpdateGroupMutation,
-} from '@/entities/group';
-import {
-    useDeleteQuestionMutation,
-    useUpdateQuestionMutation,
-    useCreateQuestionMutation,
-} from '@/entities/question';
-import Alert from '@mui/material/Alert';
+    QuestionCreateFeature,
+    QuestionDeleteFeature,
+    QuestionEditFeature,
+} from '@/features/manage-question';
+import { GroupDeleteFeature } from '@/features/group-delete';
+import { GroupEditFeature } from '@/features/group-edit';
+import {} from '@/entities/group';
 
 import type { Question } from '@/entities/question';
 import type { QuestionGroup } from '@/entities/group';
@@ -46,7 +36,6 @@ import type { Topic } from '@/entities/topic';
 
 export function GroupDetailsContent({ initialGroup }: { initialGroup: LibraryGroup }) {
     const params = { groupId: initialGroup.id };
-    const router = useRouter();
     const [data, setData] = useState<LibraryData>(() => ({
         groups: [initialGroup],
         topics: initialGroup.topics,
@@ -54,28 +43,15 @@ export function GroupDetailsContent({ initialGroup }: { initialGroup: LibraryGro
             topic.questions.map((question) => ({ ...question, groupId: initialGroup.id })),
         ),
     }));
-    const [deleteGroup, deleteGroupState] = useDeleteGroupMutation();
-    const [deleteQuestion, deleteQuestionState] = useDeleteQuestionMutation();
-    const [updateGroup, updateGroupState] = useUpdateGroupMutation();
-    const [updateQuestion, updateQuestionState] = useUpdateQuestionMutation();
-    const [createQuestion, createQuestionState] = useCreateQuestionMutation();
     const groups = data.groups;
     const topics = data.topics.filter((topic) => topic.groupId === params.groupId);
     const allQuestions = data.questions;
-    const pending =
-        deleteGroupState.isLoading ||
-        deleteQuestionState.isLoading ||
-        updateGroupState.isLoading ||
-        updateQuestionState.isLoading ||
-        createQuestionState.isLoading;
     const group = groups.find((item) => item.id === params.groupId);
     const [topicsOpen, setTopicsOpen] = useState(false);
     const [initialTopicId, setInitialTopicId] = useState<string | null>(null);
     const [query, setQuery] = useState('');
-    const [groupDialogOpen, setGroupDialogOpen] = useState(false);
     const [questionDialogOpen, setQuestionDialogOpen] = useState(false);
     const [editingQuestion, setEditingQuestion] = useState<Question | undefined>();
-    const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null);
 
     const groupQuestions = useMemo(
         () => allQuestions.filter((question) => question.groupId === params.groupId),
@@ -110,9 +86,8 @@ export function GroupDetailsContent({ initialGroup }: { initialGroup: LibraryGro
         );
     }
 
-    const openQuestionMenu = (event: MouseEvent<HTMLElement>, question: Question) => {
+    const openQuestionMenu = (_event: unknown, question: Question) => {
         setEditingQuestion(question);
-        setMenuAnchor(event.currentTarget);
     };
 
     const openCreateQuestion = (topicId: string | null = null) => {
@@ -121,40 +96,9 @@ export function GroupDetailsContent({ initialGroup }: { initialGroup: LibraryGro
         setQuestionDialogOpen(true);
     };
 
-    const handleDeleteGroup = async () => {
-        try {
-            await deleteGroup(group.id).unwrap();
-            router.push('/');
-        } catch {
-            return;
-        }
-    };
-
-    const handleDeleteQuestion = async () => {
-        if (!editingQuestion) {
-            return;
-        }
-
-        try {
-            await deleteQuestion({ groupId: group.id, questionId: editingQuestion.id }).unwrap();
-            setData((current) => ({
-                ...current,
-                questions: current.questions.filter(
-                    (question) => question.id !== editingQuestion.id,
-                ),
-            }));
-            setMenuAnchor(null);
-        } catch {
-            return;
-        }
-    };
-
     return (
         <AppShell onCreate={() => openCreateQuestion()}>
             <Stack gap={3}>
-                {(deleteGroupState.error || deleteQuestionState.error) && (
-                    <Alert severity="error">Не удалось выполнить действие.</Alert>
-                )}
                 <Button
                     component={Link}
                     href="/"
@@ -196,20 +140,13 @@ export function GroupDetailsContent({ initialGroup }: { initialGroup: LibraryGro
                         </Box>
                     </Stack>
                     <Stack direction="row" gap={1}>
-                        <Button
-                            startIcon={<EditRoundedIcon />}
-                            onClick={() => setGroupDialogOpen(true)}
-                        >
-                            Редактировать
-                        </Button>
-                        <Button
-                            disabled={pending}
-                            color="error"
-                            startIcon={<DeleteRoundedIcon />}
-                            onClick={handleDeleteGroup}
-                        >
-                            Удалить
-                        </Button>
+                        <GroupEditFeature
+                            group={group}
+                            onSaved={(updated) =>
+                                setData((current) => ({ ...current, groups: [updated] }))
+                            }
+                        />
+                        <GroupDeleteFeature groupId={group.id} />
                     </Stack>
                 </Stack>
 
@@ -296,28 +233,6 @@ export function GroupDetailsContent({ initialGroup }: { initialGroup: LibraryGro
                 )}
             </Stack>
 
-            <Menu
-                open={Boolean(menuAnchor)}
-                anchorEl={menuAnchor}
-                onClose={() => setMenuAnchor(null)}
-            >
-                <MenuItem
-                    onClick={() => {
-                        setMenuAnchor(null);
-                        setQuestionDialogOpen(true);
-                    }}
-                >
-                    Редактировать / изменить тему
-                </MenuItem>
-                <MenuItem
-                    disabled={pending}
-                    onClick={handleDeleteQuestion}
-                    sx={{ color: 'error.main' }}
-                >
-                    Удалить
-                </MenuItem>
-            </Menu>
-
             {topicsOpen && (
                 <TopicManager
                     groupId={group.id}
@@ -325,69 +240,51 @@ export function GroupDetailsContent({ initialGroup }: { initialGroup: LibraryGro
                     onClose={() => setTopicsOpen(false)}
                 />
             )}
-            <GroupDialog
-                open={groupDialogOpen}
-                group={group}
-                onClose={() => setGroupDialogOpen(false)}
-                busy={updateGroupState.isLoading}
-                error={updateGroupState.error ? 'Не удалось сохранить группу.' : null}
-                onSave={(payload) =>
-                    updateGroup({ id: group.id, input: payload })
-                        .unwrap()
-                        .then((updated) => {
-                            setData((current) => ({ ...current, groups: [updated] }));
-                        })
-                }
-            />
-            <QuestionDialog
-                open={questionDialogOpen}
-                question={editingQuestion}
+            <QuestionCreateFeature
+                groupId={group.id}
                 topics={topics}
                 initialTopicId={initialTopicId}
-                onClose={() => {
-                    setQuestionDialogOpen(false);
-                    setEditingQuestion(undefined);
-                }}
-                busy={updateQuestionState.isLoading || createQuestionState.isLoading}
-                error={
-                    updateQuestionState.error || createQuestionState.error
-                        ? 'Не удалось сохранить вопрос.'
-                        : null
+                open={questionDialogOpen && !editingQuestion}
+                onClose={() => setQuestionDialogOpen(false)}
+                onCreated={(created) =>
+                    setData((current) => ({
+                        ...current,
+                        questions: [...current.questions, created],
+                    }))
                 }
-                onSave={(payload) => {
-                    if (editingQuestion) {
-                        return updateQuestion({
-                            groupId: group.id,
-                            questionId: editingQuestion.id,
-                            input: payload,
-                        })
-                            .unwrap()
-                            .then((updated) => {
-                                setData((current) => ({
-                                    ...current,
-                                    questions: current.questions.map((question) =>
-                                        question.id === updated.id
-                                            ? { ...updated, groupId: group.id }
-                                            : question,
-                                    ),
-                                }));
-                            });
-                    }
-                    return createQuestion({ groupId: group.id, input: payload })
-                        .unwrap()
-                        .then((created) => {
-                            setData((current) => ({
-                                ...current,
-                                questions: [
-                                    ...current.questions,
-                                    { ...created, groupId: group.id },
-                                ],
-                            }));
-                        });
-                }}
             />
+            <QuestionEditFeature
+                groupId={group.id}
+                question={editingQuestion}
+                topics={topics}
+                onClose={() => setEditingQuestion(undefined)}
+                onUpdated={(updated) =>
+                    setData((current) => ({
+                        ...current,
+                        questions: current.questions.map((question) =>
+                            question.id === updated.id
+                                ? { ...updated, groupId: group.id }
+                                : question,
+                        ),
+                    }))
+                }
+            />
+            {editingQuestion && (
+                <QuestionDeleteFeature
+                    groupId={group.id}
+                    question={editingQuestion}
+                    onEdit={() => setQuestionDialogOpen(true)}
+                    onDeleted={(questionId) => {
+                        setData((current) => ({
+                            ...current,
+                            questions: current.questions.filter(
+                                (question) => question.id !== questionId,
+                            ),
+                        }));
+                        setEditingQuestion(undefined);
+                    }}
+                />
+            )}
         </AppShell>
     );
 }
-
-

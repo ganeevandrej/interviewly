@@ -12,7 +12,7 @@ import { useState } from 'react';
 
 import { useCreateProjectMutation, useUpdateProjectMutation } from '@/entities/project';
 import { AppShell } from '@/widgets/app-shell';
-import { ProjectTechnologyWidget } from '@/widgets/project-technologies';
+import { ProjectTechnologyEditor } from '@/features/project-technology-edit';
 import type {
     ProjectInput,
     ProjectStep,
@@ -173,7 +173,7 @@ function StepContent({
         return <TeamEditor value={form.team} onChange={(value) => update('team', value)} />;
     if (step === 'technologies')
         return (
-            <ProjectTechnologyWidget
+            <ProjectTechnologyEditor
                 value={(form.technologies ?? []) as ProjectTechnology[]}
                 onChange={(value) => update('technologies', value)}
             />
@@ -271,5 +271,3 @@ function TeamEditor({
         </Stack>
     );
 }
-
-
