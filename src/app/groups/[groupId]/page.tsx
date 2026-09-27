@@ -1,8 +1,8 @@
 import { notFound } from 'next/navigation';
 
-import { GroupDetailsPage } from '@/pages/group-details';
 import { readGroup } from '@/server/library';
 import { InputError } from '@/server/validation';
+import { GroupDetailsPage } from '@/views/group-details';
 
 export default async function GroupPage(props: { params: Promise<{ groupId: string }> }) {
     const params = await props.params;

@@ -1,8 +1,8 @@
 import { notFound } from 'next/navigation';
 
-import { QuestionFocusPage } from '@/pages/question-focus';
 import { readGroup } from '@/server/library';
 import { InputError } from '@/server/validation';
+import { QuestionFocusPage } from '@/views/question-focus';
 
 export default async function FocusPage(
     props: {
