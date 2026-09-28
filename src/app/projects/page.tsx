@@ -1,8 +1,8 @@
 import { listProjects } from '@/server/projects';
-import ClientPage from './ClientPage';
+import { ProjectListPage } from '@/views/project-list';
 
 export default async function ProjectsPage() {
     const projects = await listProjects();
 
-    return <ClientPage initialProjects={projects} />;
+    return <ProjectListPage initialProjects={projects} />;
 }

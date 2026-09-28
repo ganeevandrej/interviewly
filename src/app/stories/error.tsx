@@ -5,7 +5,7 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { AppShell } from '@/components/AppShell';
+import { AppShell } from '@/widgets/app-shell';
 
 export default function Error({
     reset,

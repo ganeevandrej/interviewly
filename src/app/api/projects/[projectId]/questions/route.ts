@@ -1,11 +1,12 @@
-import { addProjectQuestion } from '@/server/projects';
 import { jsonBody, respond } from '@/server/http';
+import { addProjectQuestion } from '@/server/projects';
 import { InputError } from '@/server/validation';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-export function POST(request: Request, { params }: { params: { projectId: string } }) {
+export async function POST(request: Request, props: { params: Promise<{ projectId: string }> }) {
+    const params = await props.params;
     return respond(async () => {
         const body = await jsonBody(request);
 

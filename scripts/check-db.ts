@@ -1,6 +1,8 @@
-import { config } from 'dotenv';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
+
+import { config } from 'dotenv';
+
 import { getDb } from '../src/server/db';
 
 config({ path: '.env.local', quiet: true });

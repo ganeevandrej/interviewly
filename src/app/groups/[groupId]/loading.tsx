@@ -1,7 +1,7 @@
 import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 
-import { AppShell } from '@/components/AppShell';
+import { AppShell } from '@/widgets/app-shell';
 
 export default function Loading() {
     return (

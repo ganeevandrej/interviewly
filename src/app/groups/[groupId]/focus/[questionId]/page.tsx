@@ -1,13 +1,15 @@
+import { notFound } from 'next/navigation';
+
 import { readGroup } from '@/server/library';
 import { InputError } from '@/server/validation';
-import { notFound } from 'next/navigation';
-import ClientPage from './ClientPage';
+import { QuestionFocusPage } from '@/views/question-focus';
 
-export default async function FocusPage({
-    params,
-}: {
-    params: { groupId: string; questionId: string };
-}) {
+export default async function FocusPage(
+    props: {
+        params: Promise<{ groupId: string; questionId: string }>;
+    }
+) {
+    const params = await props.params;
     let group;
     try {
         group = await readGroup(params.groupId);
@@ -16,5 +18,5 @@ export default async function FocusPage({
         throw error;
     }
 
-    return <ClientPage initialGroup={group} questionId={params.questionId} />;
+    return <QuestionFocusPage initialGroup={group} questionId={params.questionId} />;
 }

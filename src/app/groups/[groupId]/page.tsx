@@ -1,9 +1,11 @@
+import { notFound } from 'next/navigation';
+
 import { readGroup } from '@/server/library';
 import { InputError } from '@/server/validation';
-import { notFound } from 'next/navigation';
-import ClientPage from './ClientPage';
+import { GroupDetailsPage } from '@/views/group-details';
 
-export default async function GroupPage({ params }: { params: { groupId: string } }) {
+export default async function GroupPage(props: { params: Promise<{ groupId: string }> }) {
+    const params = await props.params;
     let group;
     try {
         group = await readGroup(params.groupId);
@@ -12,5 +14,5 @@ export default async function GroupPage({ params }: { params: { groupId: string 
         throw error;
     }
 
-    return <ClientPage initialGroup={group} />;
+    return <GroupDetailsPage initialGroup={group} />;
 }

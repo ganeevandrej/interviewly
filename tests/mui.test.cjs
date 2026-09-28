@@ -1,13 +1,17 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
-const vm = require('node:vm');
 const { test } = require('node:test');
-const ts = require('typescript');
+const vm = require('node:vm');
+
+const { ThemeProvider, createTheme } = require('@mui/material/styles');
 const React = require('react');
 const { renderToStaticMarkup } = require('react-dom/server');
-const { ThemeProvider, createTheme } = require('@mui/material/styles');
+const ts = require('typescript');
 
-const source = fs.readFileSync(require.resolve('../src/components/GlassPanel.tsx'), 'utf8');
+const source = fs.readFileSync(
+    require.resolve('../src/shared/ui/glass-panel/GlassPanel.tsx'),
+    'utf8',
+);
 const { outputText } = ts.transpileModule(source, {
     compilerOptions: {
         module: ts.ModuleKind.CommonJS,

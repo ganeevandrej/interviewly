@@ -1,9 +1,10 @@
 import 'server-only';
 import { randomUUID } from 'node:crypto';
 
-import type { Prisma } from '../generated/prisma/client';
 import { getDb } from './db';
 import { InputError, storyCreateInput, storyUpdateInput, text } from './validation';
+
+import type { Prisma } from '../generated/prisma/client';
 
 const storyInclude = {
     tags: { include: { tag: true }, orderBy: { tag: { name: 'asc' } } },
@@ -131,3 +132,4 @@ export async function updateStory(storyId: string, input: unknown) {
 export async function deleteStory(storyId: string) {
     await getDb().story.delete({ where: { id: text(storyId, 'История') } });
 }
+import 'server-only';

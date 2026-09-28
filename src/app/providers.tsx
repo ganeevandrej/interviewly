@@ -2,10 +2,11 @@
 
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from '@mui/material/styles';
-import { Provider } from 'react-redux';
 import { ReactNode } from 'react';
-import { store } from '@/store/store';
-import { theme } from '@/theme/theme';
+import { Provider } from 'react-redux';
+
+import { store } from '@/app/store/store';
+import { theme } from '@/app/theme/theme';
 
 export function Providers({ children }: { children: ReactNode }) {
     return (

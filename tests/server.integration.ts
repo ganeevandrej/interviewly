@@ -1,13 +1,15 @@
-import { config } from 'dotenv';
 import assert from 'node:assert/strict';
-import test from 'node:test';
 import { randomUUID } from 'node:crypto';
-import * as groups from '../src/app/api/groups/route';
-import * as group from '../src/app/api/groups/[groupId]/route';
-import * as topics from '../src/app/api/groups/[groupId]/topics/route';
-import * as topic from '../src/app/api/groups/[groupId]/topics/[topicId]/route';
-import * as questions from '../src/app/api/groups/[groupId]/questions/route';
+import test from 'node:test';
+
+import { config } from 'dotenv';
+
 import * as question from '../src/app/api/groups/[groupId]/questions/[questionId]/route';
+import * as questions from '../src/app/api/groups/[groupId]/questions/route';
+import * as group from '../src/app/api/groups/[groupId]/route';
+import * as topic from '../src/app/api/groups/[groupId]/topics/[topicId]/route';
+import * as topics from '../src/app/api/groups/[groupId]/topics/route';
+import * as groups from '../src/app/api/groups/route';
 import { getDb } from '../src/server/db';
 import { respond } from '../src/server/http';
 
@@ -54,8 +56,8 @@ test('server API with real PostgreSQL', async (t) => {
             201,
         );
         ids.push(b.id);
-        const ctx = { params: { groupId: a.id } };
-        const otherCtx = { params: { groupId: b.id } };
+        const ctx = { params: Promise.resolve({ groupId: a.id }) };
+        const otherCtx = { params: Promise.resolve({ groupId: b.id }) };
         const snapshot = async () => result<Group>(await group.GET(request('GET'), ctx));
         const makeTopic = async (name: string, context = ctx) =>
             result<Topic>(await topics.POST(request('POST', { name }), context), 201);
@@ -67,8 +69,12 @@ test('server API with real PostgreSQL', async (t) => {
                 ),
                 201,
             );
-        const topicCtx = (topicId: string) => ({ params: { groupId: a.id, topicId } });
-        const questionCtx = (questionId: string) => ({ params: { groupId: a.id, questionId } });
+        const topicCtx = (topicId: string) => ({
+            params: Promise.resolve({ groupId: a.id, topicId }),
+        });
+        const questionCtx = (questionId: string) => ({
+            params: Promise.resolve({ groupId: a.id, questionId }),
+        });
 
         await t.test(
             'group creation atomically includes one default topic and reads fresh data',
@@ -178,7 +184,7 @@ test('server API with real PostgreSQL', async (t) => {
             assert.equal(
                 (
                     await question.DELETE(request('DELETE'), {
-                        params: { groupId: b.id, questionId: q.id },
+                        params: Promise.resolve({ groupId: b.id, questionId: q.id }),
                     })
                 ).status,
                 404,
@@ -269,7 +275,7 @@ test('server API with real PostgreSQL', async (t) => {
                 );
                 await db.topic.delete({ where: { id: b.topics[0].id } });
                 const response = await topic.DELETE(request('DELETE'), {
-                    params: { groupId: b.id, topicId: regular.id },
+                    params: Promise.resolve({ groupId: b.id, topicId: regular.id }),
                 });
                 assert.equal(response.status, 409);
                 assert.ok(await db.topic.findUnique({ where: { id: regular.id } }));

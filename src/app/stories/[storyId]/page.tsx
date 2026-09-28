@@ -1,10 +1,12 @@
+import { notFound } from 'next/navigation';
+
 import { readStory } from '@/server/stories';
 import { InputError } from '@/server/validation';
-import { notFound } from 'next/navigation';
-import ClientPage from './ClientPage';
+import { StoryDetailsPage } from '@/views/story-details';
 
-export default async function StoryPage({ params }: { params: { storyId: string } }) {
-    if (params.storyId === 'new') return <ClientPage />;
+export default async function StoryPage(props: { params: Promise<{ storyId: string }> }) {
+    const params = await props.params;
+    if (params.storyId === 'new') return <StoryDetailsPage storyId="new" />;
 
     let story;
     try {
@@ -14,5 +16,5 @@ export default async function StoryPage({ params }: { params: { storyId: string 
         throw error;
     }
 
-    return <ClientPage initialStory={story} />;
+    return <StoryDetailsPage storyId={params.storyId} initialStory={story} />;
 }
