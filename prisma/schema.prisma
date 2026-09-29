@@ -7,36 +7,58 @@ datasource db {
   provider = "postgresql"
 }
 
-model QuestionGroup {
+model Category {
   id          String  @id
   name        String
   accentColor String
   topics      Topic[]
+  questions   CategoryQuestion[]
+  trainings   TrainingCategory[]
 }
 
 model Topic {
   id        String        @id
-  groupId   String
+  categoryId String
   name      String
-  isDefault Boolean       @default(false)
-  group     QuestionGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  questions Question[]
+  category  Category      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  questions TopicQuestion[]
   tags      TopicTag[]
+  trainings TrainingTopic[]
 
-  @@index([groupId])
+  @@index([categoryId])
 }
 
 model Question {
-  id       String          @id
-  topicId  String
-  question String
-  answer   String
-  position Int
-  topic    Topic           @relation(fields: [topicId], references: [id], onDelete: Cascade)
-  stories  StoryQuestion[]
-  project  ProjectQuestion?
+  id         String           @id
+  question   String
+  answer     String
+  categories CategoryQuestion[]
+  topics     TopicQuestion[]
+  stories    StoryQuestion[]
+  project    ProjectQuestion?
+  trainings  TrainingQuestion[]
+}
 
-  @@index([topicId, position, id])
+model CategoryQuestion {
+  categoryId String
+  questionId String   @unique
+  position   Int
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@id([categoryId, questionId])
+  @@index([categoryId, position, questionId])
+}
+
+model TopicQuestion {
+  topicId    String
+  questionId String   @unique
+  position   Int
+  topic      Topic    @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@id([topicId, questionId])
+  @@index([topicId, position, questionId])
 }
 
 enum ProjectStatus {
@@ -142,10 +164,76 @@ model StoryTag {
 
 model StoryQuestion {
   storyId    String
-  questionId String
+  questionId String @unique
   story      Story    @relation(fields: [storyId], references: [id], onDelete: Cascade)
   question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
 
   @@id([storyId, questionId])
+  @@index([questionId])
+}
+
+enum TrainingStatus {
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum TrainingType {
+  MANUAL
+  RANDOM
+}
+
+enum TrainingOrder {
+  SEQUENTIAL
+  RANDOM
+}
+
+enum TrainingQuestionStatus {
+  IN_PROGRESS
+  ACCEPTED
+}
+
+model Training {
+  id                  String             @id
+  name                String
+  status              TrainingStatus     @default(IN_PROGRESS)
+  type                TrainingType
+  order               TrainingOrder
+  questionLimit       Int?
+  randomQuestionCount Int?
+  categories          TrainingCategory[]
+  topics              TrainingTopic[]
+  questions           TrainingQuestion[]
+}
+
+model TrainingCategory {
+  trainingId String
+  categoryId String
+  training   Training @relation(fields: [trainingId], references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([trainingId, categoryId])
+  @@index([categoryId])
+}
+
+model TrainingTopic {
+  trainingId String
+  topicId    String
+  training   Training @relation(fields: [trainingId], references: [id], onDelete: Cascade)
+  topic      Topic    @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@id([trainingId, topicId])
+  @@index([topicId])
+}
+
+model TrainingQuestion {
+  trainingId String
+  questionId String
+  position   Int
+  status     TrainingQuestionStatus @default(IN_PROGRESS)
+  training   Training               @relation(fields: [trainingId], references: [id], onDelete: Cascade)
+  question   Question               @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@id([trainingId, questionId])
+  @@index([trainingId, position, questionId])
   @@index([questionId])
 }
