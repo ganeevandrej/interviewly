@@ -37,11 +37,11 @@ the `CategoryQuestion` join table to `Question`.
 project. Before adding the `StoryQuestion.questionId` unique constraint to an existing database,
 the migration must detect and report conflicting links instead of silently discarding them.
 
-Training stores its state, selection mode, question order, optional limit and random count.
+Training stores its state, selection mode, question order and optional time limit per question.
 `TrainingCategory` and `TrainingTopic` retain the selected filters; `TrainingQuestion` retains
 the generated question set, ordering and progress. Foreign keys remove affected training filters
 and questions when their referenced entities are deleted. Repeating a training uses its stored
-questions; only a random training may rebuild its set.
+questions; regeneration only shuffles that saved set.
 
 There are no users or ownership fields. RLS blocks direct Data API access;
 the server database role must have access (the Supabase postgres role does).

@@ -117,13 +117,19 @@ async function syncTopicTag(tx: Prisma.TransactionClient, topicId: string, name:
 }
 
 async function nextCategoryPosition(tx: Prisma.TransactionClient, categoryId: string) {
-    const result = await tx.categoryQuestion.aggregate({ where: { categoryId }, _max: { position: true } });
+    const result = await tx.categoryQuestion.aggregate({
+        where: { categoryId },
+        _max: { position: true },
+    });
 
     return (result._max.position ?? -1) + 1;
 }
 
 async function nextTopicPosition(tx: Prisma.TransactionClient, topicId: string) {
-    const result = await tx.topicQuestion.aggregate({ where: { topicId }, _max: { position: true } });
+    const result = await tx.topicQuestion.aggregate({
+        where: { topicId },
+        _max: { position: true },
+    });
 
     return (result._max.position ?? -1) + 1;
 }
@@ -165,7 +171,9 @@ export function deleteCategory(categoryId: string) {
         });
 
         if (questions.length)
-            await tx.question.deleteMany({ where: { id: { in: questions.map(({ questionId }) => questionId) } } });
+            await tx.question.deleteMany({
+                where: { id: { in: questions.map(({ questionId }) => questionId) } },
+            });
 
         await tx.category.delete({ where: { id: categoryId } });
     });
@@ -199,7 +207,9 @@ export function updateTopic(categoryId: string, topicId: string, input: unknown)
 export function deleteTopic(categoryId: string, topicId: string) {
     return inCategory(categoryId, async (tx) => {
         const topic = await findTopic(tx, categoryId, topicId);
-        const link = await tx.topicTag.findFirst({ where: { topicId: topic.id, isAutoCreated: true } });
+        const link = await tx.topicTag.findFirst({
+            where: { topicId: topic.id, isAutoCreated: true },
+        });
 
         await tx.topic.delete({ where: { id: topic.id } });
 
@@ -250,10 +260,13 @@ export function updateQuestion(categoryId: string, questionId: string, input: un
             data: { question: data.question, answer: data.answer },
         });
 
-        const topicLink = await tx.topicQuestion.findUnique({ where: { questionId: current.questionId } });
+        const topicLink = await tx.topicQuestion.findUnique({
+            where: { questionId: current.questionId },
+        });
 
         if (topicLink?.topicId !== data.topicId) {
-            if (topicLink) await tx.topicQuestion.delete({ where: { questionId: current.questionId } });
+            if (topicLink)
+                await tx.topicQuestion.delete({ where: { questionId: current.questionId } });
 
             if (data.topicId)
                 await tx.topicQuestion.create({
@@ -279,7 +292,11 @@ export function deleteQuestion(categoryId: string, questionId: string) {
 
 export async function prepareCategoryFocus(categoryId: string, questionId: string) {
     const library = await readCategory(categoryId);
-    const questions = library.questions.map(({ id, question, answer }) => ({ id, question, answer }));
+    const questions = library.questions.map(({ id, question, answer }) => ({
+        id,
+        question,
+        answer,
+    }));
 
     if (!questions.some(({ id }) => id === text(questionId, 'Вопрос')))
         throw new InputError('Вопрос не найден в этой категории.', 404);
@@ -304,37 +321,4 @@ export async function prepareTopicFocus(categoryId: string, topicId: string, que
         throw new InputError('Вопрос не найден в этой теме.', 404);
 
     return { questions, questionId };
-}
-
-export const listGroups = listCategories;
-export const createGroup = createCategory;
-export const updateGroup = updateCategory;
-export const deleteGroup = deleteCategory;
-
-export async function readGroup(categoryId: string) {
-    const library = await readCategory(categoryId);
-    const categoryQuestions = new Map(
-        library.categoryQuestions.map(({ questionId, position }) => [questionId, position]),
-    );
-
-    return {
-        ...library.category,
-        topics: library.topics.map((topic) => ({
-            ...topic,
-            groupId: categoryId,
-            isDefault: false,
-            questions: library.topicQuestions
-                .filter(({ topicId }) => topicId === topic.id)
-                .map(({ questionId, position }) => {
-                    const question = library.questions.find(({ id }) => id === questionId)!;
-
-                    return { ...question, topicId: topic.id, position, groupId: categoryId };
-                }),
-        })),
-        questions: library.questions.map((question) => ({
-            ...question,
-            groupId: categoryId,
-            position: categoryQuestions.get(question.id) ?? 0,
-        })),
-    };
 }

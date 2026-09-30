@@ -1,8 +1,8 @@
-import { listGroups } from '@/server/library';
-import { HomePage as HomePageView } from '@/views/home';
+import { listTrainings } from '@/server/trainings';
+import { HomePage } from '@/views/dashboard';
 
-export default async function HomePage() {
-    const groups = await listGroups();
+export default async function HomeRoute() {
+    const trainings = await listTrainings();
 
-    return <HomePageView initialGroups={groups} />;
+    return <HomePage trainings={trainings} />;
 }

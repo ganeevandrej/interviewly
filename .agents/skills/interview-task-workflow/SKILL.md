@@ -54,6 +54,7 @@ After the task is unambiguous and the branch is safe:
 
 - Follow `AGENTS.md`, including code style, file-editing, and verification rules.
 - Keep changes simple and readable. Avoid speculative abstractions and unrelated refactors.
+- When a task requires a new route, API, feature, or behavior, implement it directly. Do not create the appearance of completion through redirects, re-exports, aliases, compatibility wrappers, or similar mechanisms unless the task explicitly requires such compatibility.
 - Preserve existing user changes. Do not delete old code unless the task explicitly requires it and all consumers have been migrated.
 - Use relevant specialized skills for the technologies or workflow involved, but do not load skills merely because a technology exists in the stack.
 - If a tool, plugin, or external permission is required, request it at the point of use and do not silently substitute an unverified assumption.

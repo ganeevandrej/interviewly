@@ -218,4 +218,24 @@ export async function removeProjectQuestion(projectId: string, questionId: strin
         },
     });
 }
+
+export async function prepareProjectFocus(projectId: string, questionId: string) {
+    const project = await getDb().project.findUnique({
+        where: { id: text(projectId, 'Проект') },
+        select: {
+            questions: {
+                include: { question: { select: { id: true, question: true, answer: true } } },
+            },
+        },
+    });
+
+    if (!project) throw new InputError('Проект не найден.', 404);
+
+    const questions = project.questions.map(({ question }) => question);
+    const currentQuestionId = text(questionId, 'Вопрос');
+    if (!questions.some(({ id }) => id === currentQuestionId))
+        throw new InputError('Вопрос не найден в этом проекте.', 404);
+
+    return { questions, questionId: currentQuestionId };
+}
 import 'server-only';

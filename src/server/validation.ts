@@ -29,7 +29,6 @@ export function categoryInput(value: unknown) {
         throw new InputError('Цвет должен иметь формат #RRGGBB.');
     return { name, accentColor };
 }
-export const groupInput = categoryInput;
 export function topicInput(value: unknown) {
     const data = record(value, ['name']);
     return { name: text(data.name, 'Название') };
@@ -56,7 +55,7 @@ export function trainingInput(value: unknown) {
     const questionLimit =
         data.questionLimit === undefined || data.questionLimit === null
             ? null
-            : positiveInteger(data.questionLimit, 'Лимит вопроса');
+            : positiveInteger(data.questionLimit, 'Время на вопрос');
 
     if (data.order !== 'SEQUENTIAL' && data.order !== 'RANDOM')
         throw new InputError('Порядок тренировки должен быть SEQUENTIAL или RANDOM.');
@@ -65,7 +64,8 @@ export function trainingInput(value: unknown) {
         name: text(data.name, 'Название'),
         order: data.order,
         questionLimit,
-        categoryIds: data.categoryIds === undefined ? [] : stringList(data.categoryIds, 'Категории'),
+        categoryIds:
+            data.categoryIds === undefined ? [] : stringList(data.categoryIds, 'Категории'),
         topicIds: data.topicIds === undefined ? [] : stringList(data.topicIds, 'Темы'),
         questionIds: data.questionIds === undefined ? [] : stringList(data.questionIds, 'Вопросы'),
     };

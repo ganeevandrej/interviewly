@@ -1,10 +1,9 @@
 'use client';
 
-import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import MenuBookRoundedIcon from '@mui/icons-material/MenuBookRounded';
-import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
-import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
+import RecordVoiceOverRoundedIcon from '@mui/icons-material/RecordVoiceOverRounded';
+import SchoolRoundedIcon from '@mui/icons-material/SchoolRounded';
 import WorkOutlineRoundedIcon from '@mui/icons-material/WorkOutlineRounded';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -12,15 +11,50 @@ import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 import type { ReactNode } from 'react';
 
 type AppShellProps = {
     children: ReactNode;
-    onCreate?: () => void;
 };
 
-export function AppShell({ children, onCreate }: AppShellProps) {
+const items = [
+    { href: '/', label: 'Главная', icon: <HomeRoundedIcon /> },
+    { href: '/stories', label: 'Истории', icon: <MenuBookRoundedIcon /> },
+    { href: '/projects', label: 'Проекты', icon: <WorkOutlineRoundedIcon /> },
+    { href: '/knowledge-base', label: 'База знаний', icon: <MenuBookRoundedIcon /> },
+    { href: '/trainings', label: 'Тренировки', icon: <SchoolRoundedIcon /> },
+    { href: '/interview', label: 'Собеседование', icon: <RecordVoiceOverRoundedIcon /> },
+];
+
+export function AppShell({ children }: AppShellProps) {
+    const pathname = usePathname();
+
+    function navigationItem(item: (typeof items)[number], mobile = false) {
+        const isCurrent = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href);
+
+        return (
+            <Button
+                key={item.href}
+                component={Link}
+                href={item.href}
+                startIcon={item.icon}
+                aria-current={isCurrent ? 'page' : undefined}
+                sx={{
+                    justifyContent: mobile ? 'center' : 'start',
+                    color: isCurrent ? 'primary.main' : 'text.secondary',
+                    backgroundColor: isCurrent
+                        ? (theme) => theme.interviewly.surfaces.primarySubtle
+                        : undefined,
+                    ...(mobile ? { minWidth: 0, flexDirection: 'column', fontSize: 10 } : {}),
+                }}
+            >
+                {item.label}
+            </Button>
+        );
+    }
+
     return (
         <Box sx={{ minHeight: '100vh', display: { md: 'flex' } }}>
             <Box
@@ -37,47 +71,7 @@ export function AppShell({ children, onCreate }: AppShellProps) {
                 }}
             >
                 <Typography variant="h6">Interviewly</Typography>
-                <Stack gap={1}>
-                    <Button
-                        component={Link}
-                        href="/"
-                        startIcon={<HomeRoundedIcon />}
-                        sx={{
-                            justifyContent: 'start',
-                            backgroundColor: (theme) => theme.interviewly.surfaces.primarySubtle,
-                        }}
-                    >
-                        Главная
-                    </Button>
-                    <Button
-                        startIcon={<SearchRoundedIcon />}
-                        sx={{ justifyContent: 'start', color: 'text.secondary' }}
-                    >
-                        Поиск
-                    </Button>
-                    <Button
-                        component={Link}
-                        href="/stories"
-                        startIcon={<MenuBookRoundedIcon />}
-                        sx={{ justifyContent: 'start', color: 'text.secondary' }}
-                    >
-                        Истории
-                    </Button>
-                    <Button
-                        component={Link}
-                        href="/projects"
-                        startIcon={<WorkOutlineRoundedIcon />}
-                        sx={{ justifyContent: 'start', color: 'text.secondary' }}
-                    >
-                        Проекты
-                    </Button>
-                    <Button
-                        startIcon={<SettingsRoundedIcon />}
-                        sx={{ justifyContent: 'start', color: 'text.secondary' }}
-                    >
-                        Настройки
-                    </Button>
-                </Stack>
+                <Stack gap={1}>{items.map((item) => navigationItem(item))}</Stack>
             </Box>
 
             <Box component="main" sx={{ flex: 1, pb: { xs: 10, md: 0 } }}>
@@ -95,7 +89,7 @@ export function AppShell({ children, onCreate }: AppShellProps) {
                     bottom: 0,
                     zIndex: 'appBar',
                     display: { xs: 'grid', md: 'none' },
-                    gridTemplateColumns: 'repeat(6, 1fr)',
+                    gridTemplateColumns: 'repeat(6, minmax(0, 1fr))',
                     px: 1,
                     py: 1,
                     borderTop: '1px solid',
@@ -103,49 +97,7 @@ export function AppShell({ children, onCreate }: AppShellProps) {
                     backgroundColor: 'background.paper',
                 }}
             >
-                <Button
-                    component={Link}
-                    href="/"
-                    startIcon={<HomeRoundedIcon />}
-                    sx={{ minWidth: 0, flexDirection: 'column' }}
-                >
-                    Главная
-                </Button>
-                <Button
-                    startIcon={<SearchRoundedIcon />}
-                    sx={{ minWidth: 0, flexDirection: 'column', color: 'text.secondary' }}
-                >
-                    Поиск
-                </Button>
-                <Button
-                    onClick={onCreate}
-                    startIcon={<AddRoundedIcon />}
-                    sx={{ minWidth: 0, flexDirection: 'column' }}
-                >
-                    Создать
-                </Button>
-                <Button
-                    component={Link}
-                    href="/stories"
-                    startIcon={<MenuBookRoundedIcon />}
-                    sx={{ minWidth: 0, flexDirection: 'column', color: 'text.secondary' }}
-                >
-                    Истории
-                </Button>
-                <Button
-                    component={Link}
-                    href="/projects"
-                    startIcon={<WorkOutlineRoundedIcon />}
-                    sx={{ minWidth: 0, flexDirection: 'column', color: 'text.secondary' }}
-                >
-                    Проекты
-                </Button>
-                <Button
-                    startIcon={<SettingsRoundedIcon />}
-                    sx={{ minWidth: 0, flexDirection: 'column', color: 'text.secondary' }}
-                >
-                    Настройки
-                </Button>
+                {items.map((item) => navigationItem(item, true))}
             </Box>
         </Box>
     );

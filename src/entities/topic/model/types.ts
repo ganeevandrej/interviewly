@@ -1,6 +1,6 @@
 export type Topic = {
     id: string;
-    groupId: string;
+    categoryId: string;
     name: string;
     isDefault: boolean;
 };
