@@ -21,7 +21,7 @@ export function text(value: unknown, field: string): string {
         throw new InputError('Заполните поле «' + field + '».');
     return value.trim();
 }
-export function groupInput(value: unknown) {
+export function categoryInput(value: unknown) {
     const data = record(value, ['name', 'accentColor']);
     const name = text(data.name, 'Название');
     const accentColor = text(data.accentColor, 'Цвет');
@@ -29,6 +29,7 @@ export function groupInput(value: unknown) {
         throw new InputError('Цвет должен иметь формат #RRGGBB.');
     return { name, accentColor };
 }
+export const groupInput = categoryInput;
 export function topicInput(value: unknown) {
     const data = record(value, ['name']);
     return { name: text(data.name, 'Название') };
@@ -41,6 +42,40 @@ export function questionInput(value: unknown) {
         question: text(data.question, 'Вопрос'),
         answer: text(data.answer, 'Ответ'),
     };
+}
+
+export function trainingInput(value: unknown) {
+    const data = record(value, [
+        'name',
+        'order',
+        'questionLimit',
+        'categoryIds',
+        'topicIds',
+        'questionIds',
+    ]);
+    const questionLimit =
+        data.questionLimit === undefined || data.questionLimit === null
+            ? null
+            : positiveInteger(data.questionLimit, 'Лимит вопроса');
+
+    if (data.order !== 'SEQUENTIAL' && data.order !== 'RANDOM')
+        throw new InputError('Порядок тренировки должен быть SEQUENTIAL или RANDOM.');
+
+    return {
+        name: text(data.name, 'Название'),
+        order: data.order,
+        questionLimit,
+        categoryIds: data.categoryIds === undefined ? [] : stringList(data.categoryIds, 'Категории'),
+        topicIds: data.topicIds === undefined ? [] : stringList(data.topicIds, 'Темы'),
+        questionIds: data.questionIds === undefined ? [] : stringList(data.questionIds, 'Вопросы'),
+    };
+}
+
+function positiveInteger(value: unknown, field: string) {
+    if (!Number.isInteger(value) || (value as number) < 1)
+        throw new InputError('Поле «' + field + '» должно быть положительным целым числом.');
+
+    return value as number;
 }
 
 const storyFields = [

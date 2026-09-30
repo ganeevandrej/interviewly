@@ -1,52 +1,37 @@
 # Server API
 
-Stage 2 implements database operations. The browser store remains on localStorage until stage 3.
-No authentication or per-user ownership: all application visitors use the same data.
+Responses have the form { data: ... }; errors have the form { error: string }.
+All mutable requests require Content-Type: application/json. Responses are not cached.
 
-## Routes
+## Categories
 
-| Method | Path                                       | Body / response                              |
-| ------ | ------------------------------------------ | -------------------------------------------- |
-| GET    | /api/groups                                | All groups with nested topics and questions  |
-| POST   | /api/groups                                | { name, accentColor }                        |
-| GET    | /api/groups/:groupId                       | One group with nested topics and questions   |
-| PUT    | /api/groups/:groupId                       | { name, accentColor }                        |
-| DELETE | /api/groups/:groupId                       | Delete group, topics and questions           |
-| POST   | /api/groups/:groupId/topics                | { name }                                     |
-| PUT    | /api/groups/:groupId/topics/:topicId       | { name }                                     |
-| DELETE | /api/groups/:groupId/topics/:topicId       | Move questions to default, then delete topic |
-| POST   | /api/groups/:groupId/questions             | { question, answer, topicId? }               |
-| PUT    | /api/groups/:groupId/questions/:questionId | { question, answer, topicId? }               |
-| DELETE | /api/groups/:groupId/questions/:questionId | Delete question                              |
+| Method | Path | Body |
+| --- | --- | --- |
+| GET, POST | /api/categories | name and accentColor for POST |
+| GET, PUT, DELETE | /api/categories/:categoryId | name and accentColor for PUT |
+| POST | /api/categories/:categoryId/topics | name |
+| PUT, DELETE | /api/categories/:categoryId/topics/:topicId | name for PUT |
+| POST | /api/categories/:categoryId/questions | question, answer, optional topicId |
+| PUT, DELETE | /api/categories/:categoryId/questions/:questionId | question, answer, optional topicId for PUT |
 
-POST/PUT require Content-Type: application/json. PUT replaces editable fields.
-A missing or null topicId chooses the group's system topic.
-Read topics/questions from the nested group response.
-Responses: { data: ... }; POST returns 201, DELETE returns 204 without a body.
-Errors: { error: string }, with 400 invalid input/JSON, 404 missing or wrong-group record,
-409 protected system topic or conflict, 415 wrong content type, 500 database failure.
-Responses are not cached. Driver details and credentials are never returned.
+Category reads return flat category, topics, questions, categoryQuestions and topicQuestions
+DTOs. A question always belongs to one category and may belong to one topic in that category.
+Deleting a topic only removes that topic's links; deleting a category removes its questions and
+every related link.
 
-## Rules
+## Trainings
 
-- The server generates IDs; group creation atomically creates its own default topic.
-- Topic.isDefault is internal. The system topic cannot be renamed or deleted via API.
-- Names, questions and answers must contain non-whitespace text; colors use #RRGGBB.
-- Unexpected fields are rejected. Clients cannot set group ownership, isDefault or position.
-- Questions can move between topics only within the same group.
-- Positions are assigned on the server. New/moved questions are appended; editing in place preserves order.
-- Topic deletion appends its questions to the default topic in their existing order.
-- Group deletion cascades only within that group.
-- Group mutations lock the group row in a transaction so competing creates, moves and deletes
-  cannot lose questions or assign the same next position. This protects writes through this service;
-  manual database writes must preserve the same rules.
-- Reads use name/id for groups and topics, system topic first, then position/id for questions.
+| Method | Path | Body |
+| --- | --- | --- |
+| GET, POST | /api/trainings | Training input for POST |
+| GET, PUT, DELETE | /api/trainings/:trainingId | Training input for PUT |
+| POST | /api/trainings/:trainingId/start | — |
+| POST | /api/trainings/:trainingId/restart | — |
+| POST | /api/trainings/:trainingId/regenerate | — |
+| PUT | /api/trainings/:trainingId/questions/:questionId | status ACCEPTED |
 
-## Verification
-
-npm run test:integration runs the actual route handlers against the database configured in .env.local.
-It verifies CRUD, validation, group isolation, protected topics, concurrent positions and deletion.
-It creates uniquely identified test groups and removes only those groups in finally.
-npm test covers the existing browser behavior; npm run build validates the Next.js routes.
-
-Source: src/server/library.ts (operations), validation.ts (inputs), http.ts (responses).
+Training input contains name, order, optional questionLimit, categoryIds, topicIds and
+questionIds. Selecting a category or topic includes all of its questions; questionIds adds
+individual questions. The server removes duplicates, validates every referenced record, and
+stores the resulting set and its order. Order is SEQUENTIAL or RANDOM; regeneration only
+shuffles the already saved set. A completed training is restarted before it can be started again.

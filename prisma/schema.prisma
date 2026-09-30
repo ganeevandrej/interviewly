@@ -177,11 +177,6 @@ enum TrainingStatus {
   COMPLETED
 }
 
-enum TrainingType {
-  MANUAL
-  RANDOM
-}
-
 enum TrainingOrder {
   SEQUENTIAL
   RANDOM
@@ -196,10 +191,8 @@ model Training {
   id                  String             @id
   name                String
   status              TrainingStatus     @default(IN_PROGRESS)
-  type                TrainingType
   order               TrainingOrder
   questionLimit       Int?
-  randomQuestionCount Int?
   categories          TrainingCategory[]
   topics              TrainingTopic[]
   questions           TrainingQuestion[]

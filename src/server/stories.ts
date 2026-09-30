@@ -9,7 +9,7 @@ import type { Prisma } from '../generated/prisma/client';
 const storyInclude = {
     tags: { include: { tag: true }, orderBy: { tag: { name: 'asc' } } },
     questions: {
-        include: { question: { include: { topic: { select: { groupId: true } } } } },
+        include: { question: { include: { categories: { select: { categoryId: true } } } } },
         orderBy: { questionId: 'asc' },
     },
 } satisfies Prisma.StoryInclude;
@@ -22,7 +22,7 @@ function serializeStory(story: Prisma.StoryGetPayload<{ include: typeof storyInc
         questions: questions.map(({ question }) => ({
             id: question.id,
             question: question.question,
-            groupId: question.topic.groupId,
+            groupId: question.categories[0]?.categoryId ?? '',
         })),
     };
 }
