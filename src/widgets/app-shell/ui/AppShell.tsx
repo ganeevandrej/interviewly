@@ -1,104 +1,127 @@
 'use client';
 
-import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
-import MenuBookRoundedIcon from '@mui/icons-material/MenuBookRounded';
-import RecordVoiceOverRoundedIcon from '@mui/icons-material/RecordVoiceOverRounded';
-import SchoolRoundedIcon from '@mui/icons-material/SchoolRounded';
-import WorkOutlineRoundedIcon from '@mui/icons-material/WorkOutlineRounded';
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
+import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
+import Drawer from '@mui/material/Drawer';
+import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
-import Link from 'next/link';
+import { styled } from '@mui/material/styles';
 import { usePathname } from 'next/navigation';
+import { useState } from 'react';
+
+import { appShellText } from '../constants/appShell';
+
+import { AppBrand } from './AppBrand';
+import { AppNavigation } from './AppNavigation';
+import { AppSidebarFooter } from './AppSidebarFooter';
 
 import type { ReactNode } from 'react';
 
-type AppShellProps = {
-    children: ReactNode;
-};
-
-const items = [
-    { href: '/', label: 'Главная', icon: <HomeRoundedIcon /> },
-    { href: '/stories', label: 'Истории', icon: <MenuBookRoundedIcon /> },
-    { href: '/projects', label: 'Проекты', icon: <WorkOutlineRoundedIcon /> },
-    { href: '/knowledge-base', label: 'База знаний', icon: <MenuBookRoundedIcon /> },
-    { href: '/trainings', label: 'Тренировки', icon: <SchoolRoundedIcon /> },
-    { href: '/interview', label: 'Собеседование', icon: <RecordVoiceOverRoundedIcon /> },
-];
+type AppShellProps = { children: ReactNode };
 
 export function AppShell({ children }: AppShellProps) {
     const pathname = usePathname();
-
-    function navigationItem(item: (typeof items)[number], mobile = false) {
-        const isCurrent = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href);
-
-        return (
-            <Button
-                key={item.href}
-                component={Link}
-                href={item.href}
-                startIcon={item.icon}
-                aria-current={isCurrent ? 'page' : undefined}
-                sx={{
-                    justifyContent: mobile ? 'center' : 'start',
-                    color: isCurrent ? 'primary.main' : 'text.secondary',
-                    backgroundColor: isCurrent
-                        ? (theme) => theme.interviewly.surfaces.primarySubtle
-                        : undefined,
-                    ...(mobile ? { minWidth: 0, flexDirection: 'column', fontSize: 10 } : {}),
-                }}
-            >
-                {item.label}
-            </Button>
-        );
-    }
+    const [isDrawerOpen, setDrawerOpen] = useState(false);
+    const closeDrawer = () => setDrawerOpen(false);
 
     return (
-        <Box sx={{ minHeight: '100vh', display: { md: 'flex' } }}>
-            <Box
-                component="aside"
-                sx={{
-                    display: { xs: 'none', md: 'flex' },
-                    width: 248,
-                    p: 2,
-                    borderRight: '1px solid',
-                    borderColor: 'divider',
-                    backgroundColor: 'background.default',
-                    flexDirection: 'column',
-                    gap: 3,
-                }}
-            >
-                <Typography variant="h6">Interviewly</Typography>
-                <Stack gap={1}>{items.map((item) => navigationItem(item))}</Stack>
-            </Box>
+        <ShellRoot>
+            <DesktopSidebar component="aside">
+                <AppBrand />
+                <AppNavigation pathname={pathname} />
+                <Box sx={{ flex: 1 }} />
+                <AppSidebarFooter />
+            </DesktopSidebar>
 
-            <Box component="main" sx={{ flex: 1, pb: { xs: 10, md: 0 } }}>
-                <Container maxWidth="lg" sx={{ py: { xs: 3, md: 6 } }}>
-                    {children}
-                </Container>
-            </Box>
+            <ContentRoot>
+                <MobileHeader component="header">
+                    <AppBrand compact />
+                    <IconButton
+                        aria-label={appShellText.openNavigation}
+                        onClick={() => setDrawerOpen(true)}
+                        sx={{ width: 44, height: 44, backgroundColor: 'background.default' }}
+                    >
+                        <MenuRoundedIcon />
+                    </IconButton>
+                </MobileHeader>
 
-            <Box
-                component="nav"
-                sx={{
-                    position: 'fixed',
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    zIndex: 'appBar',
-                    display: { xs: 'grid', md: 'none' },
-                    gridTemplateColumns: 'repeat(6, minmax(0, 1fr))',
-                    px: 1,
-                    py: 1,
-                    borderTop: '1px solid',
-                    borderColor: 'divider',
-                    backgroundColor: 'background.paper',
-                }}
-            >
-                {items.map((item) => navigationItem(item, true))}
-            </Box>
-        </Box>
+                <Box component="main">
+                    <PageContainer maxWidth={false}>{children}</PageContainer>
+                </Box>
+            </ContentRoot>
+
+            <MobileDrawer anchor="left" open={isDrawerOpen} onClose={closeDrawer}>
+                <DrawerContent>
+                    <DrawerHeader>
+                        <AppBrand compact />
+                        <IconButton
+                            aria-label={appShellText.closeNavigation}
+                            onClick={closeDrawer}
+                            sx={{ width: 44, height: 44, backgroundColor: 'background.default' }}
+                        >
+                            <CloseRoundedIcon />
+                        </IconButton>
+                    </DrawerHeader>
+                    <DrawerNavigation>
+                        <AppNavigation pathname={pathname} onNavigate={closeDrawer} />
+                    </DrawerNavigation>
+                    <Box sx={{ flex: 1 }} />
+                    <AppSidebarFooter />
+                </DrawerContent>
+            </MobileDrawer>
+        </ShellRoot>
     );
 }
+
+const ShellRoot = styled(Box)(({ theme }) => ({
+    minHeight: '100vh',
+    display: 'flex',
+    backgroundColor: theme.palette.background.default,
+}));
+const DesktopSidebar = styled(Box)(({ theme }) => ({
+    position: 'sticky',
+    top: 0,
+    display: 'none',
+    width: 240,
+    height: '100vh',
+    flexDirection: 'column',
+    gap: theme.spacing(3),
+    padding: theme.spacing(4, 2.5, 3.5),
+    borderRight: `1px solid ${theme.palette.divider}`,
+    backgroundColor: theme.palette.background.paper,
+    [theme.breakpoints.up('md')]: { display: 'flex' },
+}));
+const ContentRoot = styled(Box)({ minWidth: 0, flex: 1 });
+const MobileHeader = styled(Box)(({ theme }) => ({
+    display: 'flex',
+    height: 64,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: theme.spacing(0, 2.5),
+    borderBottom: `1px solid ${theme.palette.divider}`,
+    backgroundColor: theme.palette.background.paper,
+    [theme.breakpoints.up('md')]: { display: 'none' },
+}));
+const PageContainer = styled(Container)(({ theme }) => ({
+    maxWidth: '1200px !important',
+    padding: theme.spacing(3, 2.5),
+    [theme.breakpoints.up('md')]: { padding: theme.spacing(4, 5) },
+}));
+const MobileDrawer = styled(Drawer)(({ theme }) => ({
+    '& .MuiDrawer-paper': {
+        width: 312,
+        padding: theme.spacing(2.5),
+        backgroundColor: theme.palette.background.paper,
+        backgroundImage: 'none',
+    },
+}));
+const DrawerContent = styled(Stack)({ height: '100%' });
+const DrawerHeader = styled(Stack)({
+    minHeight: 48,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+});
+const DrawerNavigation = styled(Stack)(({ theme }) => ({ marginTop: theme.spacing(2.75) }));
