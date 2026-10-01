@@ -51,6 +51,6 @@ export const baseApi = createApi({
     refetchOnFocus: true,
     refetchOnReconnect: true,
     keepUnusedDataFor: 60,
-    tagTypes: ['Project', 'Story', 'Library', 'Group', 'Topic', 'Question'],
+    tagTypes: ['Project', 'Story', 'Library', 'Category', 'Topic', 'Question', 'Training'],
     endpoints: () => ({}),
 });

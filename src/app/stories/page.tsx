@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { listStories } from '@/server/stories';
 import { StoryListPage } from '@/views/story-list';
 

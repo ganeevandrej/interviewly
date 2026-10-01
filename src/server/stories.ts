@@ -9,7 +9,7 @@ import type { Prisma } from '../generated/prisma/client';
 const storyInclude = {
     tags: { include: { tag: true }, orderBy: { tag: { name: 'asc' } } },
     questions: {
-        include: { question: { include: { topic: { select: { groupId: true } } } } },
+        include: { question: { include: { categories: { select: { categoryId: true } } } } },
         orderBy: { questionId: 'asc' },
     },
 } satisfies Prisma.StoryInclude;
@@ -22,7 +22,7 @@ function serializeStory(story: Prisma.StoryGetPayload<{ include: typeof storyInc
         questions: questions.map(({ question }) => ({
             id: question.id,
             question: question.question,
-            groupId: question.topic.groupId,
+            categoryId: question.categories[0]?.categoryId ?? '',
         })),
     };
 }
@@ -131,5 +131,25 @@ export async function updateStory(storyId: string, input: unknown) {
 
 export async function deleteStory(storyId: string) {
     await getDb().story.delete({ where: { id: text(storyId, 'История') } });
+}
+
+export async function prepareStoryFocus(storyId: string, questionId: string) {
+    const story = await getDb().story.findUnique({
+        where: { id: text(storyId, 'История') },
+        select: {
+            questions: {
+                include: { question: { select: { id: true, question: true, answer: true } } },
+            },
+        },
+    });
+
+    if (!story) throw new InputError('История не найдена.', 404);
+
+    const questions = story.questions.map(({ question }) => question);
+    const currentQuestionId = text(questionId, 'Вопрос');
+    if (!questions.some(({ id }) => id === currentQuestionId))
+        throw new InputError('Вопрос не найден в этой истории.', 404);
+
+    return { questions, questionId: currentQuestionId };
 }
 import 'server-only';

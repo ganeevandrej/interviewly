@@ -12,6 +12,7 @@ export default defineConfig([
         ignores: [
             '.agents/**',
             '.next/**',
+            'next-env.d.ts',
             'node_modules/**',
             'dist/**',
             'build/**',

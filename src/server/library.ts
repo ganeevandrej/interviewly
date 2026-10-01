@@ -4,205 +4,321 @@ import { randomUUID } from 'node:crypto';
 import { Prisma } from '../generated/prisma/client';
 
 import { getDb } from './db';
-import { InputError, groupInput, topicInput, questionInput, text } from './validation';
+import { categoryInput, InputError, questionInput, text, topicInput } from './validation';
 
-const groupInclude = {
+const categoryInclude = {
     topics: {
-        orderBy: [{ isDefault: 'desc' }, { name: 'asc' }, { id: 'asc' }],
-        include: { questions: { orderBy: [{ position: 'asc' }, { id: 'asc' }] } },
+        orderBy: [{ name: 'asc' }, { id: 'asc' }],
+        include: { questions: { orderBy: [{ position: 'asc' }, { questionId: 'asc' }] } },
     },
-} satisfies Prisma.QuestionGroupInclude;
+    questions: {
+        orderBy: [{ position: 'asc' }, { questionId: 'asc' }],
+        include: { question: true },
+    },
+} satisfies Prisma.CategoryInclude;
 
-export function listGroups() {
-    return getDb().questionGroup.findMany({
+type CategoryPayload = Prisma.CategoryGetPayload<{ include: typeof categoryInclude }>;
+
+function serializeCategory(category: CategoryPayload) {
+    const { topics, questions, ...data } = category;
+
+    return {
+        category: data,
+        topics: topics.map((topic) => ({
+            id: topic.id,
+            categoryId: topic.categoryId,
+            name: topic.name,
+        })),
+        questions: questions.map(({ question }) => question),
+        categoryQuestions: questions.map(({ categoryId, questionId, position }) => ({
+            categoryId,
+            questionId,
+            position,
+        })),
+        topicQuestions: topics.flatMap(({ questions: topicQuestions }) => topicQuestions),
+    };
+}
+
+export function listCategories() {
+    return getDb().category.findMany({
         orderBy: [{ name: 'asc' }, { id: 'asc' }],
         select: { id: true, name: true, accentColor: true },
     });
 }
-export async function readGroup(groupId: string) {
-    const group = await getDb().questionGroup.findUnique({
-        where: { id: text(groupId, 'Группа') },
-        include: groupInclude,
+
+export async function readCategory(categoryId: string) {
+    const category = await getDb().category.findUnique({
+        where: { id: text(categoryId, 'Категория') },
+        include: categoryInclude,
     });
-    if (!group) throw new InputError('Группа не найдена.', 404);
-    return group;
+
+    if (!category) throw new InputError('Категория не найдена.', 404);
+
+    return serializeCategory(category);
 }
 
-export function createGroup(input: unknown) {
-    const data = groupInput(input);
-    return getDb().questionGroup.create({
-        data: {
-            ...data,
-            id: randomUUID(),
-            topics: {
-                create: { id: randomUUID(), name: 'Без темы', isDefault: true },
-            },
-        },
-        include: groupInclude,
-    });
+export function createCategory(input: unknown) {
+    const data = categoryInput(input);
+
+    return getDb().category.create({ data: { ...data, id: randomUUID() } });
 }
 
-// Serialize writes within one group. In particular, deleting a topic must not race
-// with question creation/movement, because the topic FK cascades deletes.
-async function inGroup<T>(
-    groupId: string,
+async function inCategory<T>(
+    categoryId: string,
     operation: (tx: Prisma.TransactionClient) => Promise<T>,
 ) {
-    const id = text(groupId, 'Группа');
-    return getDb().$transaction(
-        async (tx) => {
-            const rows = await tx.$queryRaw<
-                { id: string }[]
-            >`SELECT "id" FROM "QuestionGroup" WHERE "id" = ${id} FOR UPDATE`;
-            if (!rows.length) throw new InputError('Группа не найдена.', 404);
-            return operation(tx);
-        },
-        {
-            isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted,
-            maxWait: 10000,
-            timeout: 20000,
-        },
-    );
+    const id = text(categoryId, 'Категория');
+
+    return getDb().$transaction(async (tx) => {
+        const category = await tx.category.findUnique({ where: { id } });
+
+        if (!category) throw new InputError('Категория не найдена.', 404);
+
+        return operation(tx);
+    });
 }
 
-async function findTopic(tx: Prisma.TransactionClient, groupId: string, topicId: string) {
-    const topic = await tx.topic.findFirst({ where: { id: text(topicId, 'Тема'), groupId } });
-    if (!topic) throw new InputError('Тема не найдена в этой группе.', 404);
+async function findTopic(tx: Prisma.TransactionClient, categoryId: string, topicId: string) {
+    const topic = await tx.topic.findFirst({
+        where: { id: text(topicId, 'Тема'), categoryId },
+    });
+
+    if (!topic) throw new InputError('Тема не найдена в этой категории.', 404);
+
     return topic;
 }
 
-async function defaultTopic(tx: Prisma.TransactionClient, groupId: string) {
-    const topic = await tx.topic.findFirst({ where: { groupId, isDefault: true } });
-    if (!topic) throw new InputError('В группе отсутствует системная тема.', 409);
-    return topic;
+async function findQuestion(tx: Prisma.TransactionClient, categoryId: string, questionId: string) {
+    const question = await tx.categoryQuestion.findFirst({
+        where: { categoryId, questionId: text(questionId, 'Вопрос') },
+        include: { question: true },
+    });
+
+    if (!question) throw new InputError('Вопрос не найден в этой категории.', 404);
+
+    return question;
 }
 
 async function syncTopicTag(tx: Prisma.TransactionClient, topicId: string, name: string) {
     const link = await tx.topicTag.findFirst({ where: { topicId, isAutoCreated: true } });
+
     if (link) {
         await tx.tag.update({ where: { id: link.tagId }, data: { name } });
         return;
     }
+
     const tag = await tx.tag.upsert({
         where: { name },
         update: {},
         create: { id: randomUUID(), name },
     });
+
     await tx.topicTag.create({ data: { topicId, tagId: tag.id, isAutoCreated: true } });
 }
 
-async function nextPosition(tx: Prisma.TransactionClient, topicId: string) {
-    const result = await tx.question.aggregate({ where: { topicId }, _max: { position: true } });
+async function nextCategoryPosition(tx: Prisma.TransactionClient, categoryId: string) {
+    const result = await tx.categoryQuestion.aggregate({
+        where: { categoryId },
+        _max: { position: true },
+    });
+
     return (result._max.position ?? -1) + 1;
 }
 
-async function findQuestion(tx: Prisma.TransactionClient, groupId: string, questionId: string) {
-    const question = await tx.question.findFirst({
-        where: { id: text(questionId, 'Вопрос'), topic: { groupId } },
+async function nextTopicPosition(tx: Prisma.TransactionClient, topicId: string) {
+    const result = await tx.topicQuestion.aggregate({
+        where: { topicId },
+        _max: { position: true },
     });
-    if (!question) throw new InputError('Вопрос не найден в этой группе.', 404);
-    return question;
+
+    return (result._max.position ?? -1) + 1;
 }
 
-export function updateGroup(groupId: string, input: unknown) {
-    const data = groupInput(input);
-    return inGroup(groupId, (tx) => tx.questionGroup.update({ where: { id: groupId }, data }));
+async function serializeQuestion(
+    tx: Prisma.TransactionClient,
+    categoryId: string,
+    questionId: string,
+) {
+    const link = await tx.categoryQuestion.findFirst({
+        where: { categoryId, questionId },
+        include: { question: true },
+    });
+
+    if (!link) throw new InputError('Вопрос не найден в этой категории.', 404);
+
+    const topic = await tx.topicQuestion.findUnique({ where: { questionId } });
+
+    return {
+        ...link.question,
+        categoryId,
+        topicId: topic?.topicId ?? null,
+        position: link.position,
+        topicPosition: topic?.position ?? null,
+    };
 }
 
-export function deleteGroup(groupId: string) {
-    return inGroup(groupId, async (tx) => {
-        await tx.questionGroup.delete({ where: { id: groupId } });
+export function updateCategory(categoryId: string, input: unknown) {
+    const data = categoryInput(input);
+
+    return inCategory(categoryId, (tx) => tx.category.update({ where: { id: categoryId }, data }));
+}
+
+export function deleteCategory(categoryId: string) {
+    return inCategory(categoryId, async (tx) => {
+        const questions = await tx.categoryQuestion.findMany({
+            where: { categoryId },
+            select: { questionId: true },
+        });
+
+        if (questions.length)
+            await tx.question.deleteMany({
+                where: { id: { in: questions.map(({ questionId }) => questionId) } },
+            });
+
+        await tx.category.delete({ where: { id: categoryId } });
     });
 }
 
-export function createTopic(groupId: string, input: unknown) {
+export function createTopic(categoryId: string, input: unknown) {
     const data = topicInput(input);
-    return inGroup(groupId, async (tx) => {
-        const topic = await tx.topic.create({ data: { ...data, id: randomUUID(), groupId } });
+
+    return inCategory(categoryId, async (tx) => {
+        const topic = await tx.topic.create({ data: { ...data, id: randomUUID(), categoryId } });
+
         await syncTopicTag(tx, topic.id, topic.name);
+
         return topic;
     });
 }
 
-export function updateTopic(groupId: string, topicId: string, input: unknown) {
+export function updateTopic(categoryId: string, topicId: string, input: unknown) {
     const data = topicInput(input);
-    return inGroup(groupId, async (tx) => {
-        const topic = await findTopic(tx, groupId, topicId);
-        if (topic.isDefault) throw new InputError('Системную тему нельзя переименовать.', 409);
+
+    return inCategory(categoryId, async (tx) => {
+        const topic = await findTopic(tx, categoryId, topicId);
         const result = await tx.topic.update({ where: { id: topic.id }, data });
+
         await syncTopicTag(tx, topic.id, result.name);
+
         return result;
     });
 }
 
-export function deleteTopic(groupId: string, topicId: string) {
-    return inGroup(groupId, async (tx) => {
-        const topic = await findTopic(tx, groupId, topicId);
-        if (topic.isDefault) throw new InputError('Системную тему нельзя удалить.', 409);
-        const target = await defaultTopic(tx, groupId);
-        const position = await nextPosition(tx, target.id);
-        // Move the whole topic in one query, keeping the original order after existing questions.
-        await tx.$executeRaw`
-      WITH ordered AS (
-        SELECT "id", row_number() OVER (ORDER BY "position", "id") - 1 AS offset
-        FROM "Question" WHERE "topicId" = ${topic.id}
-      )
-      UPDATE "Question" AS q
-      SET "topicId" = ${target.id}, "position" = (${position} + ordered.offset)::integer
-      FROM ordered WHERE q."id" = ordered."id"
-    `;
+export function deleteTopic(categoryId: string, topicId: string) {
+    return inCategory(categoryId, async (tx) => {
+        const topic = await findTopic(tx, categoryId, topicId);
         const link = await tx.topicTag.findFirst({
             where: { topicId: topic.id, isAutoCreated: true },
         });
+
         await tx.topic.delete({ where: { id: topic.id } });
+
         if (link) await tx.tag.delete({ where: { id: link.tagId } });
     });
 }
 
-export function createQuestion(groupId: string, input: unknown) {
+export function createQuestion(categoryId: string, input: unknown) {
     const data = questionInput(input);
-    return inGroup(groupId, async (tx) => {
-        const topic =
-            data.topicId === null
-                ? await defaultTopic(tx, groupId)
-                : await findTopic(tx, groupId, data.topicId);
-        return tx.question.create({
+
+    return inCategory(categoryId, async (tx) => {
+        if (data.topicId) await findTopic(tx, categoryId, data.topicId);
+
+        const question = await tx.question.create({
+            data: { id: randomUUID(), question: data.question, answer: data.answer },
+        });
+        await tx.categoryQuestion.create({
             data: {
-                ...data,
-                id: randomUUID(),
-                topicId: topic.id,
-                position: await nextPosition(tx, topic.id),
+                categoryId,
+                questionId: question.id,
+                position: await nextCategoryPosition(tx, categoryId),
             },
         });
+
+        if (data.topicId)
+            await tx.topicQuestion.create({
+                data: {
+                    topicId: data.topicId,
+                    questionId: question.id,
+                    position: await nextTopicPosition(tx, data.topicId),
+                },
+            });
+
+        return serializeQuestion(tx, categoryId, question.id);
     });
 }
 
-export function updateQuestion(groupId: string, questionId: string, input: unknown) {
+export function updateQuestion(categoryId: string, questionId: string, input: unknown) {
     const data = questionInput(input);
-    return inGroup(groupId, async (tx) => {
-        const question = await findQuestion(tx, groupId, questionId);
-        const topic =
-            data.topicId === null
-                ? await defaultTopic(tx, groupId)
-                : await findTopic(tx, groupId, data.topicId);
-        return tx.question.update({
-            where: { id: question.id },
-            data: {
-                ...data,
-                topicId: topic.id,
-                position:
-                    question.topicId === topic.id
-                        ? question.position
-                        : await nextPosition(tx, topic.id),
-            },
+
+    return inCategory(categoryId, async (tx) => {
+        const current = await findQuestion(tx, categoryId, questionId);
+
+        if (data.topicId) await findTopic(tx, categoryId, data.topicId);
+
+        await tx.question.update({
+            where: { id: current.questionId },
+            data: { question: data.question, answer: data.answer },
         });
+
+        const topicLink = await tx.topicQuestion.findUnique({
+            where: { questionId: current.questionId },
+        });
+
+        if (topicLink?.topicId !== data.topicId) {
+            if (topicLink)
+                await tx.topicQuestion.delete({ where: { questionId: current.questionId } });
+
+            if (data.topicId)
+                await tx.topicQuestion.create({
+                    data: {
+                        topicId: data.topicId,
+                        questionId: current.questionId,
+                        position: await nextTopicPosition(tx, data.topicId),
+                    },
+                });
+        }
+
+        return serializeQuestion(tx, categoryId, current.questionId);
     });
 }
 
-export function deleteQuestion(groupId: string, questionId: string) {
-    return inGroup(groupId, async (tx) => {
-        const question = await findQuestion(tx, groupId, questionId);
-        await tx.question.delete({ where: { id: question.id } });
+export function deleteQuestion(categoryId: string, questionId: string) {
+    return inCategory(categoryId, async (tx) => {
+        const question = await findQuestion(tx, categoryId, questionId);
+
+        await tx.question.delete({ where: { id: question.questionId } });
     });
 }
-import 'server-only';
+
+export async function prepareCategoryFocus(categoryId: string, questionId: string) {
+    const library = await readCategory(categoryId);
+    const questions = library.questions.map(({ id, question, answer }) => ({
+        id,
+        question,
+        answer,
+    }));
+
+    if (!questions.some(({ id }) => id === text(questionId, 'Вопрос')))
+        throw new InputError('Вопрос не найден в этой категории.', 404);
+
+    return { questions, questionId };
+}
+
+export async function prepareTopicFocus(categoryId: string, topicId: string, questionId: string) {
+    const library = await readCategory(categoryId);
+
+    if (!library.topics.some(({ id }) => id === text(topicId, 'Тема')))
+        throw new InputError('Тема не найдена в этой категории.', 404);
+
+    const questionIds = library.topicQuestions
+        .filter((link) => link.topicId === topicId)
+        .map((link) => link.questionId);
+    const questions = library.questions
+        .filter((question) => questionIds.includes(question.id))
+        .map(({ id, question, answer }) => ({ id, question, answer }));
+
+    if (!questions.some(({ id }) => id === text(questionId, 'Вопрос')))
+        throw new InputError('Вопрос не найден в этой теме.', 404);
+
+    return { questions, questionId };
+}

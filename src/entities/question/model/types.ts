@@ -1,7 +1,7 @@
 export type Question = {
     id: string;
-    groupId: string;
-    topicId: string;
+    categoryId: string;
+    topicId: string | null;
     position: number;
     question: string;
     answer: string;

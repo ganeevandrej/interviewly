@@ -1,6 +1,6 @@
 export type StoryTag = { id: string; name: string };
 
-export type StoryQuestion = { id: string; question: string; groupId: string };
+export type StoryQuestion = { id: string; question: string; categoryId: string };
 
 export type Story = {
     id: string;

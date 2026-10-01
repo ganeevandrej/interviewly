@@ -4,9 +4,9 @@ import type { Question, QuestionInput } from '@/entities/question/model/types';
 
 export const questionApi = baseApi.injectEndpoints({
     endpoints: (build) => ({
-        createQuestion: build.mutation<Question, { groupId: string; input: QuestionInput }>({
-            query: ({ groupId, input }) => ({
-                url: `groups/${encodeURIComponent(groupId)}/questions`,
+        createQuestion: build.mutation<Question, { categoryId: string; input: QuestionInput }>({
+            query: ({ categoryId, input }) => ({
+                url: `categories/${encodeURIComponent(categoryId)}/questions`,
                 method: 'POST',
                 body: input,
             }),
@@ -14,18 +14,18 @@ export const questionApi = baseApi.injectEndpoints({
         }),
         updateQuestion: build.mutation<
             Question,
-            { groupId: string; questionId: string; input: QuestionInput }
+            { categoryId: string; questionId: string; input: QuestionInput }
         >({
-            query: ({ groupId, questionId, input }) => ({
-                url: `groups/${encodeURIComponent(groupId)}/questions/${encodeURIComponent(questionId)}`,
+            query: ({ categoryId, questionId, input }) => ({
+                url: `categories/${encodeURIComponent(categoryId)}/questions/${encodeURIComponent(questionId)}`,
                 method: 'PUT',
                 body: input,
             }),
             invalidatesTags: ['Library', 'Question'],
         }),
-        deleteQuestion: build.mutation<void, { groupId: string; questionId: string }>({
-            query: ({ groupId, questionId }) => ({
-                url: `groups/${encodeURIComponent(groupId)}/questions/${encodeURIComponent(questionId)}`,
+        deleteQuestion: build.mutation<void, { categoryId: string; questionId: string }>({
+            query: ({ categoryId, questionId }) => ({
+                url: `categories/${encodeURIComponent(categoryId)}/questions/${encodeURIComponent(questionId)}`,
                 method: 'DELETE',
             }),
             invalidatesTags: ['Library', 'Question'],

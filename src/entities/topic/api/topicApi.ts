@@ -4,25 +4,25 @@ import type { Topic } from '@/entities/topic/model/types';
 
 export const topicApi = baseApi.injectEndpoints({
     endpoints: (build) => ({
-        createTopic: build.mutation<Topic, { groupId: string; name: string }>({
-            query: ({ groupId, name }) => ({
-                url: `groups/${encodeURIComponent(groupId)}/topics`,
+        createTopic: build.mutation<Topic, { categoryId: string; name: string }>({
+            query: ({ categoryId, name }) => ({
+                url: `categories/${encodeURIComponent(categoryId)}/topics`,
                 method: 'POST',
                 body: { name },
             }),
             invalidatesTags: ['Library', 'Topic'],
         }),
-        updateTopic: build.mutation<Topic, { groupId: string; topicId: string; name: string }>({
-            query: ({ groupId, topicId, name }) => ({
-                url: `groups/${encodeURIComponent(groupId)}/topics/${encodeURIComponent(topicId)}`,
+        updateTopic: build.mutation<Topic, { categoryId: string; topicId: string; name: string }>({
+            query: ({ categoryId, topicId, name }) => ({
+                url: `categories/${encodeURIComponent(categoryId)}/topics/${encodeURIComponent(topicId)}`,
                 method: 'PUT',
                 body: { name },
             }),
             invalidatesTags: ['Library', 'Topic'],
         }),
-        deleteTopic: build.mutation<void, { groupId: string; topicId: string }>({
-            query: ({ groupId, topicId }) => ({
-                url: `groups/${encodeURIComponent(groupId)}/topics/${encodeURIComponent(topicId)}`,
+        deleteTopic: build.mutation<void, { categoryId: string; topicId: string }>({
+            query: ({ categoryId, topicId }) => ({
+                url: `categories/${encodeURIComponent(categoryId)}/topics/${encodeURIComponent(topicId)}`,
                 method: 'DELETE',
             }),
             invalidatesTags: ['Library', 'Topic', 'Question'],

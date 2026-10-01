@@ -16,27 +16,41 @@ The check uses the same server client and rolls back its own transaction.
 
 ## Schema
 
-The database hierarchy is QuestionGroup -> Topic -> Question.
-Each topic belongs to exactly one group; questions reference only topicId.
-IDs remain strings supplied by callers. Question.position records ordering within a topic;
-read with orderBy: [{ position: 'asc' }, { id: 'asc' }].
+The knowledge-base hierarchy is Category -> Topic, with Question as an independent entity.
+`CategoryQuestion` gives every question exactly one category and stores its position within it.
+`TopicQuestion` optionally gives a question one topic and stores its position within that topic.
+Both links use a composite primary key and a unique `questionId`, so a question cannot belong to
+more than one category or topic. IDs remain strings supplied by callers.
 
-Topic.isDefault identifies the system topic displayed as "Без темы".
-A partial unique index allows at most one default topic per group.
-The stage 2 server API creates this topic with each group, protects it from removal/renaming,
-and moves questions to it before deleting a regular topic in a transaction. See ../src/server/README.md.
-Foreign keys cascade: deleting a group deletes its topics and their questions.
-Directly deleting a topic also deletes its questions, so application deletion must perform
-that move first. The db:check script verifies this sequence and group isolation.
+There is no system topic or "Без темы" entity. A question without `TopicQuestion` is displayed
+directly in its category. The server must validate that a question linked to a topic belongs to
+the same category as that topic.
+
+Deleting a topic removes its `TopicQuestion`, `TopicTag`, and `TrainingTopic` links, while its
+questions remain in their categories. Deleting a question removes its category, topic, story,
+project, and training links. Deleting a category must be implemented by the server as a
+transaction: delete every linked question first, then delete the category; this also cascades to
+its topics and their links. A database foreign key alone cannot cascade from a category through
+the `CategoryQuestion` join table to `Question`.
+
+`StoryQuestion` and `ProjectQuestion` each allow a question to belong to at most one story or
+project. Before adding the `StoryQuestion.questionId` unique constraint to an existing database,
+the migration must detect and report conflicting links instead of silently discarding them.
+
+Training stores its state, selection mode, question order and optional time limit per question.
+`TrainingCategory` and `TrainingTopic` retain the selected filters; `TrainingQuestion` retains
+the generated question set, ordering and progress. Foreign keys remove affected training filters
+and questions when their referenced entities are deleted. Repeating a training uses its stored
+questions; regeneration only shuffles that saved set.
 
 There are no users or ownership fields. RLS blocks direct Data API access;
 the server database role must have access (the Supabase postgres role does).
 
-The group_topics migration targets the verified empty initial database and aborts if it
-contains records. Existing localStorage v1/v2 remains untouched. During stage 4 import,
-shared categories must become separate topics per group, and uncategorized questions
-must reference their group's default topic. The browser still uses the old local model
-until the server/interface stages are implemented.
+The pending category/training migration must rename `QuestionGroup` to `Category`, create
+`CategoryQuestion` from the current question topic and its group's id, create `TopicQuestion`
+only for ordinary topics, then remove `Question.topicId`, `Topic.isDefault`, and the system
+topics. It must preserve positions and fail with a clear report if existing story links conflict.
+Existing localStorage remains untouched until the server and interface stages are implemented.
 
 ## Migration ownership
 

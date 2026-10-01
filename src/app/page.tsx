@@ -1,8 +1,10 @@
-import { listGroups } from '@/server/library';
-import { HomePage as HomePageView } from '@/views/home';
+export const dynamic = 'force-dynamic';
 
-export default async function HomePage() {
-    const groups = await listGroups();
+import { listTrainings } from '@/server/trainings';
+import { HomePage } from '@/views/dashboard';
 
-    return <HomePageView initialGroups={groups} />;
+export default async function HomeRoute() {
+    const trainings = await listTrainings();
+
+    return <HomePage trainings={trainings} />;
 }
