@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { listTrainings } from '@/server/trainings';
 import { TrainingListPage } from '@/views/training';
 

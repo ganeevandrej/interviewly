@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { listCategories } from '@/server/library';
 import { KnowledgeBasePage } from '@/views/knowledge-base';
 
