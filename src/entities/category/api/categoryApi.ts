@@ -1,6 +1,6 @@
 import { baseApi } from '@/shared/api/baseApi';
 
-import type { Category } from '../model/types';
+import type { Category, CategoryDeletionImpact } from '../model/types';
 
 export const categoryApi = baseApi.injectEndpoints({
     endpoints: (build) => ({
@@ -20,8 +20,15 @@ export const categoryApi = baseApi.injectEndpoints({
             query: (id) => ({ url: `categories/${encodeURIComponent(id)}`, method: 'DELETE' }),
             invalidatesTags: ['Library', 'Category', 'Topic', 'Question', 'Training'],
         }),
+        getCategoryDeletionImpact: build.query<CategoryDeletionImpact, string>({
+            query: (id) => `categories/${encodeURIComponent(id)}/deletion-impact`,
+        }),
     }),
 });
 
-export const { useCreateCategoryMutation, useUpdateCategoryMutation, useDeleteCategoryMutation } =
-    categoryApi;
+export const {
+    useCreateCategoryMutation,
+    useDeleteCategoryMutation,
+    useLazyGetCategoryDeletionImpactQuery,
+    useUpdateCategoryMutation,
+} = categoryApi;

@@ -9,13 +9,17 @@ All mutable requests require Content-Type: application/json. Responses are not c
 | ---------------- | ------------------------------------------------- | ------------------------------------------ |
 | GET, POST        | /api/categories                                   | name and accentColor for POST              |
 | GET, PUT, DELETE | /api/categories/:categoryId                       | name and accentColor for PUT               |
+| GET              | /api/categories/:categoryId/deletion-impact       | —                                          |
 | POST             | /api/categories/:categoryId/topics                | name                                       |
 | PUT, DELETE      | /api/categories/:categoryId/topics/:topicId       | name for PUT                               |
 | POST             | /api/categories/:categoryId/questions             | question, answer, optional topicId         |
 | PUT, DELETE      | /api/categories/:categoryId/questions/:questionId | question, answer, optional topicId for PUT |
 
-Category reads return flat category, topics, questions, categoryQuestions and topicQuestions
-DTOs. A question always belongs to one category and may belong to one topic in that category.
+Category list items include the numbers of topics and questions. The deletion-impact endpoint
+returns the number of trainings that reference the category, its topics, or its questions, together
+with their ids, names and statuses.
+Category reads return flat category, topics, questions, categoryQuestions and topicQuestions DTOs.
+A question always belongs to one category and may belong to one topic in that category.
 Deleting a topic only removes that topic's links; deleting a category removes its questions and
 every related link.
 

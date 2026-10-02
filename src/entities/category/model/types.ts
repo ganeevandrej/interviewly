@@ -4,6 +4,16 @@ export type Category = {
     accentColor: string;
 };
 
+export type CategorySummary = Category & {
+    topicsCount: number;
+    questionsCount: number;
+};
+
+export type CategoryDeletionImpact = {
+    trainingCount: number;
+    trainings: { id: string; name: string; status: 'IN_PROGRESS' | 'COMPLETED' }[];
+};
+
 export type CategoryQuestion = {
     id: string;
     categoryId: string;

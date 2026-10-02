@@ -40,10 +40,66 @@ function serializeCategory(category: CategoryPayload) {
 }
 
 export function listCategories() {
-    return getDb().category.findMany({
-        orderBy: [{ name: 'asc' }, { id: 'asc' }],
-        select: { id: true, name: true, accentColor: true },
+    return getDb()
+        .category.findMany({
+            orderBy: [{ name: 'asc' }, { id: 'asc' }],
+            select: {
+                id: true,
+                name: true,
+                accentColor: true,
+                _count: { select: { topics: true, questions: true } },
+            },
+        })
+        .then((categories) =>
+            categories.map(({ _count, ...category }) => ({
+                ...category,
+                topicsCount: _count.topics,
+                questionsCount: _count.questions,
+            })),
+        );
+}
+
+export async function getCategoryDeletionImpact(categoryId: string) {
+    const id = text(categoryId, 'Категория');
+    const category = await getDb().category.findUnique({
+        where: { id },
+        select: {
+            topics: { select: { id: true } },
+            questions: { select: { questionId: true } },
+            trainings: { select: { trainingId: true } },
+        },
     });
+
+    if (!category) throw new InputError('Категория не найдена.', 404);
+
+    const [topicTrainings, questionTrainings] = await Promise.all([
+        getDb().trainingTopic.findMany({
+            where: { topicId: { in: category.topics.map(({ id: topicId }) => topicId) } },
+            select: { trainingId: true },
+        }),
+        getDb().trainingQuestion.findMany({
+            where: {
+                questionId: {
+                    in: category.questions.map(({ questionId }) => questionId),
+                },
+            },
+            select: { trainingId: true },
+        }),
+    ]);
+
+    const trainingIds = new Set([
+        ...category.trainings.map(({ trainingId }) => trainingId),
+        ...topicTrainings.map(({ trainingId }) => trainingId),
+        ...questionTrainings.map(({ trainingId }) => trainingId),
+    ]);
+
+    const trainings = await getDb().training.findMany({
+        where: { id: { in: [...trainingIds] } },
+        orderBy: [{ name: 'asc' }, { id: 'asc' }],
+        select: { id: true, name: true, status: true },
+    });
+
+    return { trainingCount: trainings.length, trainings };
 }
 
 export async function readCategory(categoryId: string) {
