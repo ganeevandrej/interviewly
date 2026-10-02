@@ -5,14 +5,28 @@ import { createTheme } from '@mui/material/styles';
 declare module '@mui/material/styles' {
     interface Theme {
         interviewly: {
-            surfaces: { primarySubtle: string; input: string; pressed: string };
+            surfaces: {
+                primarySubtle: string;
+                secondarySubtle: string;
+                infoSubtle: string;
+                input: string;
+                pressed: string;
+                raised: string;
+            };
             shadows: { panel: string };
         };
     }
 
     interface ThemeOptions {
         interviewly?: {
-            surfaces?: { primarySubtle?: string; input?: string; pressed?: string };
+            surfaces?: {
+                primarySubtle?: string;
+                secondarySubtle?: string;
+                infoSubtle?: string;
+                input?: string;
+                pressed?: string;
+                raised?: string;
+            };
             shadows?: { panel?: string };
         };
     }
@@ -44,7 +58,14 @@ export const theme = createTheme({
     },
     shape: { borderRadius: 12 },
     interviewly: {
-        surfaces: { primarySubtle: '#193B38', input: '#101417', pressed: '#303D46' },
+        surfaces: {
+            primarySubtle: '#193B38',
+            secondarySubtle: '#302A43',
+            infoSubtle: '#243348',
+            input: '#101417',
+            pressed: '#303D46',
+            raised: '#20282F',
+        },
         shadows: { panel: '0 10px 28px rgba(0, 0, 0, 0.16)' },
     },
     components: {

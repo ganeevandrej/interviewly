@@ -5,6 +5,7 @@ export type {
     TrainingQuestionStatus,
     TrainingStatus,
 } from './model/types';
+export { TrainingCard } from './ui/TrainingCard';
 export {
     useAcceptTrainingQuestionMutation,
     useCreateTrainingMutation,
