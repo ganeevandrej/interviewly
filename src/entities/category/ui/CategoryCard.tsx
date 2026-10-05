@@ -3,9 +3,11 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
+import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import Link from 'next/link';
 
+import { categoryText } from '../constants/categoryText';
 import { formatCount } from '../lib/formatCount';
 
 import type { CategorySummary } from '../model/types';
@@ -18,77 +20,44 @@ type CategoryCardProps = {
 
 export function CategoryCard({ category, action }: CategoryCardProps) {
     return (
-        <Paper variant="outlined" sx={{ minHeight: { xs: 154, md: 259 }, p: { xs: 2, md: 3 } }}>
-            <Stack sx={{ display: { xs: 'none', md: 'flex' }, height: '100%' }}>
+        <CardRoot variant="outlined">
+            <DesktopContent>
                 <Stack direction="row" justifyContent="space-between" alignItems="center">
-                    <Box
-                        sx={{
-                            display: 'grid',
-                            width: 44,
-                            height: 44,
-                            placeItems: 'center',
-                            borderRadius: 1.5,
-                            backgroundColor: category.accentColor,
-                            color: 'primary.contrastText',
-                        }}
-                    >
+                    <DesktopIcon color={category.accentColor}>
                         <FolderOutlinedIcon />
-                    </Box>
+                    </DesktopIcon>
                     {action}
                 </Stack>
                 <Typography variant="h5" sx={{ mt: 2 }}>
                     {category.name}
                 </Typography>
                 <Typography color="text.secondary" sx={{ mt: 1.5 }}>
-                    {formatCount(category.topicsCount, 'тема', 'темы', 'тем')} ·{' '}
-                    {formatCount(category.questionsCount, 'вопрос', 'вопроса', 'вопросов')}
+                    {formatCount(category.topicsCount, ...categoryText.topics)} ·{' '}
+                    {formatCount(category.questionsCount, ...categoryText.questions)}
                 </Typography>
-                <Box
-                    sx={{
-                        width: '100%',
-                        height: 4,
-                        mt: 2,
-                        borderRadius: 999,
-                        backgroundColor: 'divider',
-                        overflow: 'hidden',
-                    }}
-                >
-                    <Box
-                        sx={{
-                            width: 68,
-                            height: '100%',
-                            borderRadius: 'inherit',
-                            backgroundColor: category.accentColor,
-                        }}
-                    />
-                </Box>
+                <ProgressTrack>
+                    <ProgressValue color={category.accentColor} />
+                </ProgressTrack>
                 <Button
                     component={Link}
                     href={`/knowledge-base/category/${category.id}`}
                     variant="outlined"
                     sx={{ alignSelf: 'end', minWidth: 180, mt: 2.25 }}
                 >
-                    Открыть категорию
+                    {categoryText.open}
                 </Button>
-            </Stack>
-            <Stack sx={{ display: { md: 'none' }, height: '100%' }}>
+            </DesktopContent>
+            <MobileContent>
                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                     <Stack direction="row" gap={1.5} alignItems="center">
-                        <Box
-                            sx={{
-                                width: 12,
-                                height: 12,
-                                borderRadius: '50%',
-                                backgroundColor: category.accentColor,
-                            }}
-                        />
+                        <MobileDot color={category.accentColor} />
                         <Typography variant="h5">{category.name}</Typography>
                     </Stack>
                     {action}
                 </Stack>
                 <Typography color="text.secondary" sx={{ mt: 1.5 }}>
-                    {formatCount(category.topicsCount, 'тема', 'темы', 'тем')} ·{' '}
-                    {formatCount(category.questionsCount, 'вопрос', 'вопроса', 'вопросов')}
+                    {formatCount(category.topicsCount, ...categoryText.topics)} ·{' '}
+                    {formatCount(category.questionsCount, ...categoryText.questions)}
                 </Typography>
                 <Box sx={{ flex: 1 }} />
                 <Button
@@ -97,9 +66,66 @@ export function CategoryCard({ category, action }: CategoryCardProps) {
                     variant="outlined"
                     sx={{ alignSelf: 'end', minWidth: 113, mt: 1.5 }}
                 >
-                    Открыть
+                    {categoryText.openShort}
                 </Button>
-            </Stack>
-        </Paper>
+            </MobileContent>
+        </CardRoot>
     );
 }
+
+const CardRoot = styled(Paper)(({ theme }) => ({
+    minHeight: 154,
+    padding: theme.spacing(2),
+    [theme.breakpoints.up('md')]: { minHeight: 259, padding: theme.spacing(3) },
+}));
+
+const DesktopContent = styled(Stack)(({ theme }) => ({
+    display: 'none',
+    height: '100%',
+    [theme.breakpoints.up('md')]: { display: 'flex' },
+}));
+
+const MobileContent = styled(Stack)(({ theme }) => ({
+    display: 'flex',
+    height: '100%',
+    [theme.breakpoints.up('md')]: { display: 'none' },
+}));
+
+const DesktopIcon = styled(Box, { shouldForwardProp: (prop) => prop !== 'color' })<{
+    color: string;
+}>(({ color }) => ({
+    display: 'grid',
+    width: 44,
+    height: 44,
+    placeItems: 'center',
+    borderRadius: 6,
+    backgroundColor: color,
+    color: 'primary.contrastText',
+}));
+
+const MobileDot = styled(Box, { shouldForwardProp: (prop) => prop !== 'color' })<{ color: string }>(
+    ({ color }) => ({
+        width: 12,
+        height: 12,
+        borderRadius: '50%',
+        backgroundColor: color,
+    }),
+);
+
+const ProgressTrack = styled(Box)(({ theme }) => ({
+    width: '100%',
+    height: 4,
+    marginTop: theme.spacing(2),
+    borderRadius: 999,
+    backgroundColor: theme.palette.divider,
+    overflow: 'hidden',
+}));
+
+const ProgressValue = styled(Box, { shouldForwardProp: (prop) => prop !== 'color' })<{
+    color: string;
+}>(({ color }) => ({
+    width: 68,
+    height: '100%',
+    borderRadius: 'inherit',
+    backgroundColor: color,
+}));

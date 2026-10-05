@@ -3,7 +3,10 @@ import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
+import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
+
+import { knowledgeBaseText } from '../constants/knowledgeBaseText';
 
 type EmptyStateProps = {
     onCreate: () => void;
@@ -11,44 +14,30 @@ type EmptyStateProps = {
 
 export function EmptyState({ onCreate }: EmptyStateProps) {
     return (
-        <Stack
-            alignItems="center"
-            textAlign="center"
-            sx={{ minHeight: { xs: 500, sm: 560 }, pt: { xs: 12.5, sm: 14 } }}
-        >
+        <EmptyStateRoot>
             <Stack alignItems="center" gap={1.25}>
-                <Box
-                    sx={{
-                        display: 'grid',
-                        width: { xs: 128, sm: 180 },
-                        height: { xs: 128, sm: 150 },
-                        placeItems: 'center',
-                        borderRadius: '50%',
-                        backgroundColor: (theme) => theme.interviewly.surfaces.primarySubtle,
-                    }}
-                >
+                <Illustration>
                     <AccountTreeRoundedIcon
                         sx={{ fontSize: { xs: 50, sm: 58 }, color: 'primary.main' }}
                     />
-                </Box>
+                </Illustration>
                 <Typography
                     variant="body2"
                     color="text.secondary"
                     sx={{ display: { xs: 'none', sm: 'block' } }}
                 >
-                    Структура начинается здесь
+                    {knowledgeBaseText.emptyEyebrow}
                 </Typography>
             </Stack>
             <Typography variant="h4" sx={{ mt: { xs: 2, sm: 2.25 } }}>
-                Создайте первую категорию
+                {knowledgeBaseText.emptyTitle}
             </Typography>
             <Typography color="text.secondary" sx={{ maxWidth: 560, mt: 1.5 }}>
                 <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
-                    Категории объединяют связанные темы и вопросы — так нужные материалы проще
-                    находить и повторять.
+                    {knowledgeBaseText.emptyDescription}
                 </Box>
                 <Box component="span" sx={{ display: { sm: 'none' } }}>
-                    Объединяйте связанные темы и вопросы, чтобы быстрее находить материалы.
+                    {knowledgeBaseText.emptyDescriptionCompact}
                 </Box>
             </Typography>
             <Button
@@ -57,8 +46,26 @@ export function EmptyState({ onCreate }: EmptyStateProps) {
                 onClick={onCreate}
                 sx={{ width: { xs: 306, sm: 186 }, mt: { xs: 2, sm: 2.25 } }}
             >
-                Создать категорию
+                {knowledgeBaseText.createCategory}
             </Button>
-        </Stack>
+        </EmptyStateRoot>
     );
 }
+
+const EmptyStateRoot = styled(Stack)(({ theme }) => ({
+    minHeight: 500,
+    alignItems: 'center',
+    paddingTop: theme.spacing(12.5),
+    textAlign: 'center',
+    [theme.breakpoints.up('sm')]: { minHeight: 560, paddingTop: theme.spacing(14) },
+}));
+
+const Illustration = styled(Box)(({ theme }) => ({
+    display: 'grid',
+    width: 128,
+    height: 128,
+    placeItems: 'center',
+    borderRadius: '50%',
+    backgroundColor: theme.interviewly.surfaces.primarySubtle,
+    [theme.breakpoints.up('sm')]: { width: 180, height: 150 },
+}));

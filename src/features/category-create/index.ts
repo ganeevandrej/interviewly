@@ -1,1 +1,1 @@
-export { CategoryCreateDialog } from './ui/CategoryCreateDialog';
+export { CategoryCreateAdapter } from './ui/CategoryCreateAdapter';

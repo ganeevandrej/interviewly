@@ -1,1 +1,1 @@
-export { CategoryDeleteFeature } from './ui/CategoryDeleteFeature';
+export { CategoryDeleteAdapter } from './ui/CategoryDeleteAdapter';
