@@ -16,10 +16,15 @@ export function CategoryDeleteAdapter({ category, onDeleted }: Props) {
         <EntityDeleteFeature
             entity={category}
             entityName="категорию"
+            deleteLabel="Удалить категорию"
+            description="Вместе с категорией будут удалены все её темы и вопросы. Данные связанных тренировок могут измениться."
             getEntityId={(item) => item.id}
-            getDeletionImpact={async (item) => ({
-                trainingCount: (await getDeletionImpact(item.id).unwrap()).trainingCount,
+            getSummary={(item) => ({
+                title: item.name,
+                meta: `${item.topicsCount} тем · ${item.questionsCount} вопросов`,
+                accentColor: item.accentColor,
             })}
+            getDeletionImpact={async (item) => getDeletionImpact(item.id).unwrap()}
             onDelete={(item) => deleteCategory(item.id).unwrap()}
             onDeleted={onDeleted}
         />

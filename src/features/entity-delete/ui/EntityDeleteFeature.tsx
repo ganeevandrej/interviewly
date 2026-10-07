@@ -1,22 +1,21 @@
 import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 import IconButton from '@mui/material/IconButton';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 
 import { entityDeleteText } from '../constants/entityDeleteText';
 
-export type DeletionImpact = { trainingCount: number };
+
+import { EntityDeleteDialog } from './EntityDeleteDialog';
+
+import type { DeletionImpact, EntitySummary } from '../model/types';
 
 export type EntityDeleteFeatureProps<TEntity> = {
     entity: TEntity;
     entityName: string;
+    deleteLabel?: string;
+    description?: string;
     getEntityId: (entity: TEntity) => string;
+    getSummary?: (entity: TEntity) => EntitySummary;
     getDeletionImpact: (entity: TEntity) => Promise<DeletionImpact>;
     onDelete: (entity: TEntity) => Promise<void>;
     onDeleted: (id: string) => void;
@@ -25,70 +24,80 @@ export type EntityDeleteFeatureProps<TEntity> = {
 export function EntityDeleteFeature<TEntity>({
     entity,
     entityName,
+    deleteLabel = entityDeleteText.delete,
+    description = entityDeleteText.description,
     getEntityId,
+    getSummary,
     getDeletionImpact,
     onDelete,
     onDeleted,
 }: EntityDeleteFeatureProps<TEntity>) {
     const [open, setOpen] = useState(false);
     const [impact, setImpact] = useState<DeletionImpact>();
-    const [loading, setLoading] = useState(false);
+    const [isChecking, setChecking] = useState(false);
+    const [isDeleting, setDeleting] = useState(false);
+    const [hasImpactError, setImpactError] = useState(false);
+    const [deleteError, setDeleteError] = useState(false);
+    const summary = getSummary?.(entity);
 
-    async function confirm() {
-        setLoading(true);
-        await onDelete(entity);
-        onDeleted(getEntityId(entity));
-        setLoading(false);
-        setOpen(false);
+    function openDialog() {
+        setOpen(true);
+        setImpact(undefined);
+        setImpactError(false);
+        setDeleteError(false);
     }
 
     async function checkImpact() {
-        setLoading(true);
-        setImpact(await getDeletionImpact(entity));
-        setLoading(false);
+        setChecking(true);
+        setImpactError(false);
+
+        try {
+            setImpact(await getDeletionImpact(entity));
+        } catch {
+            setImpactError(true);
+        } finally {
+            setChecking(false);
+        }
+    }
+
+    async function confirm() {
+        setDeleting(true);
+        setDeleteError(false);
+
+        try {
+            await onDelete(entity);
+            onDeleted(getEntityId(entity));
+            setOpen(false);
+        } catch {
+            setDeleteError(true);
+        } finally {
+            setDeleting(false);
+        }
     }
 
     return (
         <>
             <IconButton
                 aria-label={entityDeleteText.deleteAriaLabel(entityName)}
-                onClick={() => setOpen(true)}
+                onClick={openDialog}
             >
                 <DeleteOutlineRoundedIcon />
             </IconButton>
-            <Dialog open={open} onClose={() => !loading && setOpen(false)} fullWidth maxWidth="sm">
-                <DialogTitle>{entityDeleteText.title(entityName)}</DialogTitle>
-                <DialogContent>
-                    <Stack gap={2}>
-                        <Typography>{entityDeleteText.description}</Typography>
-                        {!impact && (
-                            <Button onClick={checkImpact} disabled={loading}>
-                                {entityDeleteText.checkLinks}
-                            </Button>
-                        )}
-                        {impact && (
-                            <Typography
-                                color={impact.trainingCount ? 'warning.main' : 'success.main'}
-                            >
-                                {entityDeleteText.linkedTrainings(impact.trainingCount)}
-                            </Typography>
-                        )}
-                    </Stack>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setOpen(false)} disabled={loading}>
-                        {entityDeleteText.cancel}
-                    </Button>
-                    <Button
-                        color="error"
-                        variant="outlined"
-                        onClick={confirm}
-                        disabled={!impact || loading}
-                    >
-                        {entityDeleteText.delete}
-                    </Button>
-                </DialogActions>
-            </Dialog>
+            <EntityDeleteDialog
+                open={open}
+                onClose={() => !isDeleting && setOpen(false)}
+                entityName={entityName}
+                description={description}
+                summary={summary}
+                impact={impact}
+                isChecking={isChecking}
+                isDeleting={isDeleting}
+                hasImpactError={hasImpactError}
+                deleteError={deleteError}
+                deleteLabel={deleteLabel}
+                onCheckImpact={checkImpact}
+                onConfirm={confirm}
+            />
         </>
     );
 }
