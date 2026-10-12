@@ -28,6 +28,7 @@ function serializeCategory(category: CategoryPayload) {
             id: topic.id,
             categoryId: topic.categoryId,
             name: topic.name,
+            accentColor: topic.accentColor,
         })),
         questions: questions.map(({ question }) => question),
         categoryQuestions: questions.map(({ categoryId, questionId, position }) => ({
@@ -90,6 +91,41 @@ export async function getCategoryDeletionImpact(categoryId: string) {
     const trainingIds = new Set([
         ...category.trainings.map(({ trainingId }) => trainingId),
         ...topicTrainings.map(({ trainingId }) => trainingId),
+        ...questionTrainings.map(({ trainingId }) => trainingId),
+    ]);
+
+    const trainings = await getDb().training.findMany({
+        where: { id: { in: [...trainingIds] } },
+        orderBy: [{ name: 'asc' }, { id: 'asc' }],
+        select: { id: true, name: true, status: true },
+    });
+
+    return { trainingCount: trainings.length, trainings };
+}
+
+export async function getTopicDeletionImpact(categoryId: string, topicId: string) {
+    const id = text(categoryId, 'Категория');
+    const topic = await getDb().topic.findFirst({
+        where: { id: text(topicId, 'Тема'), categoryId: id },
+        select: {
+            questions: { select: { questionId: true } },
+            trainings: { select: { trainingId: true } },
+        },
+    });
+
+    if (!topic) throw new InputError('Тема не найдена в этой категории.', 404);
+
+    const questionTrainings = await getDb().trainingQuestion.findMany({
+        where: {
+            questionId: {
+                in: topic.questions.map(({ questionId }) => questionId),
+            },
+        },
+        select: { trainingId: true },
+    });
+
+    const trainingIds = new Set([
+        ...topic.trainings.map(({ trainingId }) => trainingId),
         ...questionTrainings.map(({ trainingId }) => trainingId),
     ]);
 

@@ -39,6 +39,8 @@ import type { CategoryLibrary, CategoryQuestion } from '@/entities/category';
 
 type QuestionDraft = { id?: string; question: string; answer: string; topicId: string | null };
 
+const defaultTopicAccentColor = '#70DECF';
+
 function questionFromLibrary(library: CategoryLibrary): CategoryQuestion[] {
     const topicByQuestionId = new Map(
         library.topicQuestions.map((link) => [link.questionId, link.topicId]),
@@ -115,6 +117,7 @@ export default function CategoryDetailsPage({
                 categoryId: library.category.id,
                 topicId: editingTopicId,
                 name: topicName,
+                accentColor: library.topics.find((item) => item.id === editingTopicId)!.accentColor,
             }).unwrap();
             setLibrary((current) => ({
                 ...current,
@@ -124,6 +127,7 @@ export default function CategoryDetailsPage({
             const created = await createTopic({
                 categoryId: library.category.id,
                 name: topicName,
+                accentColor: defaultTopicAccentColor,
             }).unwrap();
             setLibrary((current) => ({ ...current, topics: [...current.topics, created] }));
         }

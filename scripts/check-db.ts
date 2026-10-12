@@ -22,7 +22,13 @@ async function main() {
                     id: categoryId,
                     name: 'Database check',
                     accentColor: '#000000',
-                    topics: { create: { id: topicId, name: 'Основы' } },
+                    topics: {
+                        create: {
+                            id: topicId,
+                            name: 'Основы',
+                            accentColor: '#70DECF'
+                        }
+                    },
                 },
             });
             await tx.question.create({
@@ -43,7 +49,10 @@ async function main() {
             assert.equal(saved.topics[0].topicId, topicId);
 
             await tx.topic.delete({ where: { id: topicId } });
-            assert.equal((await tx.question.findUniqueOrThrow({ where: { id: questionId } })).id, questionId);
+            assert.equal(
+                (await tx.question.findUniqueOrThrow({ where: { id: questionId } })).id,
+                questionId,
+            );
 
             await tx.question.delete({ where: { id: questionId } });
             await tx.category.delete({ where: { id: categoryId } });
@@ -54,7 +63,9 @@ async function main() {
     } finally {
         await db.$disconnect();
     }
-    console.log('Database check passed: category, topic and independent question links. Transaction rolled back.');
+    console.log(
+        'Database check passed: category, topic and independent question links. Transaction rolled back.',
+    );
 }
 
 main().catch((error: unknown) => {
