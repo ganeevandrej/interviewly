@@ -20,26 +20,22 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 
-import { useDeleteCategoryMutation, useUpdateCategoryMutation } from '@/entities/category';
 import {
     useCreateQuestionMutation,
     useDeleteQuestionMutation,
     useUpdateQuestionMutation,
 } from '@/entities/question';
-import {
-    useCreateTopicMutation,
-    useDeleteTopicMutation,
-    useUpdateTopicMutation,
-} from '@/entities/topic';
+import { CategoryEditAdapter } from '@/features/category-edit';
+import { ThemeCreateAdapter } from '@/features/theme-create';
+import { ThemeDeleteAdapter } from '@/features/theme-delete';
+import { ThemeEditAdapter } from '@/features/theme-edit';
 import { AppShell } from '@/widgets/app-shell';
 
 import type { CategoryLibrary, CategoryQuestion } from '@/entities/category';
 
 type QuestionDraft = { id?: string; question: string; answer: string; topicId: string | null };
-
-const defaultTopicAccentColor = '#70DECF';
 
 function questionFromLibrary(library: CategoryLibrary): CategoryQuestion[] {
     const topicByQuestionId = new Map(
@@ -61,26 +57,72 @@ function questionFromLibrary(library: CategoryLibrary): CategoryQuestion[] {
 
 export default function CategoryDetailsPage({
     initialLibrary,
+    initialCategory,
+    hasContentError = false,
     topicId,
 }: {
-    initialLibrary: CategoryLibrary;
+    initialLibrary?: CategoryLibrary;
+    initialCategory?: CategoryLibrary['category'];
+    hasContentError?: boolean;
     topicId?: string;
 }) {
     const router = useRouter();
-    const [library, setLibrary] = useState(initialLibrary);
+    const [library, setLibrary] = useState(
+        initialLibrary ?? {
+            category: initialCategory ?? { id: '', name: '', accentColor: '#70DECF' },
+            topics: [],
+            questions: [],
+            categoryQuestions: [],
+            topicQuestions: [],
+        },
+    );
     const [editingCategory, setEditingCategory] = useState(false);
-    const [topicName, setTopicName] = useState('');
+    const [creatingTopic, setCreatingTopic] = useState(false);
     const [editingTopicId, setEditingTopicId] = useState<string>();
     const [draft, setDraft] = useState<QuestionDraft>();
-    const [updateCategory] = useUpdateCategoryMutation();
-    const [deleteCategory] = useDeleteCategoryMutation();
-    const [createTopic] = useCreateTopicMutation();
-    const [updateTopic] = useUpdateTopicMutation();
-    const [deleteTopic] = useDeleteTopicMutation();
     const [createQuestion] = useCreateQuestionMutation();
     const [updateQuestion] = useUpdateQuestionMutation();
     const [deleteQuestion] = useDeleteQuestionMutation();
-    const questions = useMemo(() => questionFromLibrary(library), [library]);
+
+    if (hasContentError) {
+        return (
+            <AppShell>
+                <Stack gap={3}>
+                    {initialCategory && (
+                        <Box>
+                            <Typography variant="h3">{initialCategory.name}</Typography>
+                            <Typography color="text.secondary">
+                                Создавайте темы и вопросы, чтобы удобно готовиться к собеседованию.
+                            </Typography>
+                        </Box>
+                    )}
+                    <Paper
+                        variant="outlined"
+                        sx={{
+                            minHeight: { xs: 404, md: 358 },
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: 2,
+                            textAlign: 'center',
+                            backgroundColor: 'error.dark',
+                            borderColor: 'error.main',
+                        }}
+                    >
+                        <Typography variant="h5">Не удалось загрузить данные</Typography>
+                        <Typography color="text.secondary">
+                            Проверьте подключение к интернету и попробуйте ещё раз.
+                        </Typography>
+                        <Button variant="outlined" color="error" onClick={() => router.refresh()}>
+                            Повторить
+                        </Button>
+                    </Paper>
+                </Stack>
+            </AppShell>
+        );
+    }
+    const questions = questionFromLibrary(library);
     const topic = topicId ? library.topics.find((item) => item.id === topicId) : undefined;
     const visibleQuestions = topicId
         ? questions.filter((item) => item.topicId === topicId)
@@ -94,50 +136,7 @@ export default function CategoryDetailsPage({
         );
     }
 
-    async function saveCategory(name: string, accentColor: string) {
-        const category = await updateCategory({
-            id: library.category.id,
-            input: { name, accentColor },
-        }).unwrap();
-
-        setLibrary((current) => ({ ...current, category }));
-        setEditingCategory(false);
-    }
-
-    async function removeCategory() {
-        await deleteCategory(library.category.id).unwrap();
-        router.replace('/knowledge-base');
-    }
-
-    async function saveTopic() {
-        if (!topicName.trim()) return;
-
-        if (editingTopicId) {
-            const updated = await updateTopic({
-                categoryId: library.category.id,
-                topicId: editingTopicId,
-                name: topicName,
-                accentColor: library.topics.find((item) => item.id === editingTopicId)!.accentColor,
-            }).unwrap();
-            setLibrary((current) => ({
-                ...current,
-                topics: current.topics.map((item) => (item.id === updated.id ? updated : item)),
-            }));
-        } else {
-            const created = await createTopic({
-                categoryId: library.category.id,
-                name: topicName,
-                accentColor: defaultTopicAccentColor,
-            }).unwrap();
-            setLibrary((current) => ({ ...current, topics: [...current.topics, created] }));
-        }
-
-        setTopicName('');
-        setEditingTopicId(undefined);
-    }
-
     async function removeTopic(id: string) {
-        await deleteTopic({ categoryId: library.category.id, topicId: id }).unwrap();
         setLibrary((current) => ({
             ...current,
             topics: current.topics.filter((item) => item.id !== id),
@@ -185,7 +184,7 @@ export default function CategoryDetailsPage({
     return (
         <AppShell>
             <Stack gap={3}>
-                <Button
+                {topic && <Button
                     component={Link}
                     href={
                         topic
@@ -196,86 +195,30 @@ export default function CategoryDetailsPage({
                     sx={{ alignSelf: 'start' }}
                 >
                     {topic ? 'К категории' : 'К базе знаний'}
-                </Button>
+                </Button>}
                 <Stack direction="row" justifyContent="space-between" alignItems="start" gap={2}>
                     <Box>
-                        <Typography variant="h3">{title}</Typography>
+                        <Stack direction="row" gap={1.5} alignItems="center">
+                            {!topic && <Box sx={{ width: 8, height: 36, borderRadius: 1, backgroundColor: library.category.accentColor }} />}
+                            <Typography variant="h3">{title}</Typography>
+                        </Stack>
                         <Typography color="text.secondary">
-                            {topic ? 'Вопросы темы' : 'Вопросы категории и её темы'}
+                            {topic ? 'Вопросы темы' : 'Создавайте темы и вопросы, чтобы удобно готовиться к собеседованию.'}
                         </Typography>
                     </Box>
                     {!topic && (
-                        <Stack direction="row">
-                            <IconButton
-                                onClick={() => setEditingCategory(true)}
-                                aria-label="Редактировать категорию"
-                            >
-                                <EditRoundedIcon />
-                            </IconButton>
-                            <IconButton onClick={removeCategory} aria-label="Удалить категорию">
-                                <DeleteOutlineRoundedIcon />
-                            </IconButton>
-                        </Stack>
+                        <><Button variant="outlined" onClick={() => setEditingCategory(true)} sx={{ display: { xs: 'none', md: 'inline-flex' } }}>Редактировать категорию</Button><IconButton onClick={() => setEditingCategory(true)} aria-label="Редактировать категорию" sx={{ display: { xs: 'inline-flex', md: 'none' } }}><EditRoundedIcon /></IconButton></>
                     )}
                 </Stack>
                 {!topic && (
                     <>
                         <Stack direction="row" justifyContent="space-between" alignItems="center">
                             <Typography variant="h5">Темы</Typography>
-                            <Button
-                                startIcon={<AddRoundedIcon />}
-                                onClick={() => {
-                                    setTopicName('');
-                                    setEditingTopicId(undefined);
-                                }}
-                            >
-                                Добавить тему
-                            </Button>
+                            <Button variant="contained" startIcon={<AddRoundedIcon />} onClick={() => setCreatingTopic(true)}>Создать тему</Button>
                         </Stack>
-                        <Stack direction="row" gap={1} flexWrap="wrap">
-                            {library.topics.map((item) => (
-                                <Paper
-                                    key={item.id}
-                                    variant="outlined"
-                                    sx={{ p: 1, display: 'flex', alignItems: 'center', gap: 1 }}
-                                >
-                                    <Button
-                                        component={Link}
-                                        href={`/knowledge-base/category/${library.category.id}/topic/${item.id}`}
-                                    >
-                                        {item.name}
-                                    </Button>
-                                    <IconButton
-                                        size="small"
-                                        onClick={() => {
-                                            setEditingTopicId(item.id);
-                                            setTopicName(item.name);
-                                        }}
-                                        aria-label="Переименовать тему"
-                                    >
-                                        <EditRoundedIcon fontSize="small" />
-                                    </IconButton>
-                                    <IconButton
-                                        size="small"
-                                        onClick={() => removeTopic(item.id)}
-                                        aria-label="Удалить тему"
-                                    >
-                                        <DeleteOutlineRoundedIcon fontSize="small" />
-                                    </IconButton>
-                                </Paper>
-                            ))}
-                        </Stack>
-                        <Stack direction="row" gap={1}>
-                            <TextField
-                                label={editingTopicId ? 'Название темы' : 'Новая тема'}
-                                value={topicName}
-                                onChange={(event) => setTopicName(event.target.value)}
-                                size="small"
-                            />
-                            <Button onClick={saveTopic} disabled={!topicName.trim()}>
-                                {editingTopicId ? 'Сохранить' : 'Добавить'}
-                            </Button>
-                        </Stack>
+                        {library.topics.length ? <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(3, minmax(0, 1fr))' }, gap: 2 }}>
+                            {library.topics.map((item) => { const questionsCount = library.topicQuestions.filter((link) => link.topicId === item.id).length; return <Paper key={item.id} variant="outlined" sx={{ p: 2.25, display: 'flex', flexDirection: 'column', gap: 1.75, borderRadius: 2 }}><Stack direction="row" justifyContent="space-between" alignItems="center"><Stack direction="row" gap={1.25} alignItems="center"><Box sx={{ width: 12, height: 12, borderRadius: '50%', backgroundColor: item.accentColor }} /><Typography fontWeight={600}>{item.name}</Typography></Stack><Stack direction="row"><IconButton size="small" onClick={() => setEditingTopicId(item.id)} aria-label="Редактировать тему"><EditRoundedIcon fontSize="small" /></IconButton><ThemeDeleteAdapter topic={item} questionsCount={questionsCount} onDeleted={removeTopic} /></Stack></Stack><Typography variant="body2" color="text.secondary">{questionsCount} вопросов</Typography><Button component={Link} href={`/knowledge-base/category/${library.category.id}/topic/${item.id}`} variant="outlined" sx={{ alignSelf: 'flex-end' }}>Открыть</Button></Paper>; })}
+                        </Box> : <EmptyState title="Пока нет тем" description="Создайте первую тему, чтобы собирать вопросы по направлениям." />}
                         <Divider />
                     </>
                 )}
@@ -338,16 +281,11 @@ export default function CategoryDetailsPage({
                             </Paper>
                         ))}
                     </Stack>
-                ) : (
-                    <Typography color="text.secondary">Вопросов пока нет.</Typography>
-                )}
+                ) : <EmptyState title={topic ? 'Пока нет вопросов в теме' : 'Пока нет вопросов без темы'} description="Добавляйте вопросы сразу или создавайте темы для удобной группировки." />}
             </Stack>
-            <CategoryDialog
-                open={editingCategory}
-                category={library.category}
-                onClose={() => setEditingCategory(false)}
-                onSave={saveCategory}
-            />
+            <CategoryEditAdapter category={library.category} open={editingCategory} onClose={() => setEditingCategory(false)} onUpdated={(category) => { setLibrary((current) => ({ ...current, category })); setEditingCategory(false); }} />
+            <ThemeCreateAdapter categoryId={library.category.id} open={creatingTopic} onClose={() => setCreatingTopic(false)} onCreated={(topic) => { setLibrary((current) => ({ ...current, topics: [...current.topics, topic] })); setCreatingTopic(false); }} />
+            {editingTopicId && <ThemeEditAdapter topic={library.topics.find((item) => item.id === editingTopicId)!} open onClose={() => setEditingTopicId(undefined)} onUpdated={(topic) => { setLibrary((current) => ({ ...current, topics: current.topics.map((item) => item.id === topic.id ? topic : item) })); setEditingTopicId(undefined); }} />}
             <QuestionDialog
                 open={Boolean(draft)}
                 draft={draft}
@@ -403,44 +341,38 @@ function updateLibraryQuestion(
     return { ...library, questions, categoryQuestions, topicQuestions };
 }
 
-function CategoryDialog({
-    open,
-    category,
-    onClose,
-    onSave,
-}: {
-    open: boolean;
-    category: CategoryLibrary['category'];
-    onClose: () => void;
-    onSave: (name: string, accentColor: string) => Promise<void>;
-}) {
-    const [name, setName] = useState(category.name);
-    const [accentColor, setAccentColor] = useState(category.accentColor);
-
+function EmptyState({ title, description }: { title: string; description: string }) {
     return (
-        <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs">
-            <DialogTitle>Редактировать категорию</DialogTitle>
-            <DialogContent>
-                <Stack gap={2} sx={{ pt: 1 }}>
-                    <TextField
-                        label="Название"
-                        value={name}
-                        onChange={(event) => setName(event.target.value)}
-                    />
-                    <TextField
-                        label="Цвет"
-                        value={accentColor}
-                        onChange={(event) => setAccentColor(event.target.value)}
-                    />
-                </Stack>
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={onClose}>Отмена</Button>
-                <Button onClick={() => onSave(name, accentColor)} variant="contained">
-                    Сохранить
-                </Button>
-            </DialogActions>
-        </Dialog>
+        <Paper
+            variant="outlined"
+            sx={{
+                minHeight: { xs: 208, md: 176 },
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 1,
+                p: 3,
+                textAlign: 'center',
+            }}
+        >
+            <Box
+                sx={{
+                    display: 'grid',
+                    width: 64,
+                    height: 64,
+                    placeItems: 'center',
+                    borderRadius: 2,
+                    color: 'primary.main',
+                    backgroundColor: 'primary.dark',
+                    fontSize: 26,
+                }}
+            >
+                ▰
+            </Box>
+            <Typography fontSize={18} fontWeight={600}>{title}</Typography>
+            <Typography color="text.secondary">{description}</Typography>
+        </Paper>
     );
 }
 

@@ -138,7 +138,18 @@ export async function getTopicDeletionImpact(categoryId: string, topicId: string
     return { trainingCount: trainings.length, trainings };
 }
 
-export async function readCategory(categoryId: string) {
+export async function readCategoryDetails(categoryId: string) {
+    const category = await getDb().category.findUnique({
+        where: { id: text(categoryId, 'Категория') },
+        select: { id: true, name: true, accentColor: true },
+    });
+
+    if (!category) throw new InputError('Категория не найдена.', 404);
+
+    return category;
+}
+
+export async function readCategoryContent(categoryId: string) {
     const category = await getDb().category.findUnique({
         where: { id: text(categoryId, 'Категория') },
         include: categoryInclude,
@@ -146,7 +157,23 @@ export async function readCategory(categoryId: string) {
 
     if (!category) throw new InputError('Категория не найдена.', 404);
 
-    return serializeCategory(category);
+    const content = serializeCategory(category);
+
+    return {
+        topics: content.topics,
+        questions: content.questions,
+        categoryQuestions: content.categoryQuestions,
+        topicQuestions: content.topicQuestions,
+    };
+}
+
+export async function readCategory(categoryId: string) {
+    const [category, content] = await Promise.all([
+        readCategoryDetails(categoryId),
+        readCategoryContent(categoryId),
+    ]);
+
+    return { category, ...content };
 }
 
 export function createCategory(input: unknown) {

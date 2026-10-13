@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 
-import { readCategory } from '@/server/library';
+import { readCategoryContent, readCategoryDetails } from '@/server/library';
 import { InputError } from '@/server/validation';
 import { CategoryDetailsPage } from '@/views/category-details';
 
@@ -8,9 +8,18 @@ export default async function CategoryRoute(props: { params: Promise<{ categoryI
     const { categoryId } = await props.params;
 
     try {
-        return <CategoryDetailsPage initialLibrary={await readCategory(categoryId)} />;
+        const category = await readCategoryDetails(categoryId);
+
+        try {
+            const content = await readCategoryContent(categoryId);
+
+            return <CategoryDetailsPage initialLibrary={{ category, ...content }} />;
+        } catch {
+            return <CategoryDetailsPage initialCategory={category} hasContentError />;
+        }
     } catch (error) {
         if (error instanceof InputError && error.status === 404) notFound();
-        throw error;
+
+        return <CategoryDetailsPage hasContentError />;
     }
 }
