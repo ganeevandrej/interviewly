@@ -1,5 +1,6 @@
 import { FlatCompat } from '@eslint/eslintrc';
 import { defineConfig } from 'eslint/config';
+import fsdPlugin from 'eslint-plugin-fsd-lint';
 import importPlugin from 'eslint-plugin-import';
 import tseslint from 'typescript-eslint';
 
@@ -28,6 +29,18 @@ export default defineConfig([
     ...tseslint.configs.recommended,
 
     {
+        files: [
+            'src/app/**/*.{js,jsx,ts,tsx}',
+            'src/entities/**/*.{js,jsx,ts,tsx}',
+            'src/features/**/*.{js,jsx,ts,tsx}',
+            'src/shared/**/*.{js,jsx,ts,tsx}',
+            'src/views/**/*.{js,jsx,ts,tsx}',
+            'src/widgets/**/*.{js,jsx,ts,tsx}',
+        ],
+        ...fsdPlugin.configs.recommended,
+    },
+
+    {
         files: ['**/*.cjs'],
         rules: {
             '@typescript-eslint/no-require-imports': 'off',
@@ -41,26 +54,7 @@ export default defineConfig([
 
         rules: {
             'prefer-arrow-callback': 'error',
-
-            'import/order': [
-                'error',
-                {
-                    groups: [
-                        'builtin',
-                        'external',
-                        'internal',
-                        'parent',
-                        'sibling',
-                        'index',
-                        'type',
-                    ],
-                    'newlines-between': 'always',
-                    alphabetize: {
-                        order: 'asc',
-                        caseInsensitive: true,
-                    },
-                },
-            ],
+            'import/order': 'off',
         },
     },
 ]);

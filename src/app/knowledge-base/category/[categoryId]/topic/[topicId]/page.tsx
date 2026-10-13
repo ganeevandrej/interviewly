@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 
 import { readCategory } from '@/server/library';
 import { InputError } from '@/server/validation';
-import { CategoryDetailsPage } from '@/views/category-details';
+import { TopicDetailsPage } from '@/views/topic-details';
 
 export default async function TopicRoute(props: {
     params: Promise<{ categoryId: string; topicId: string }>;
@@ -11,7 +11,7 @@ export default async function TopicRoute(props: {
 
     try {
         return (
-            <CategoryDetailsPage
+            <TopicDetailsPage
                 initialLibrary={await readCategory(categoryId)}
                 topicId={topicId}
             />

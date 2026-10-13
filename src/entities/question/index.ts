@@ -1,4 +1,4 @@
-export type { Question, QuestionInput } from './model/types';
+export type { Question, QuestionDraft, QuestionInput } from './model/types';
 export {
     useCreateQuestionMutation,
     useUpdateQuestionMutation,
