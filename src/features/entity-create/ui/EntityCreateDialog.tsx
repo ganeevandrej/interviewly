@@ -8,7 +8,7 @@ import Stack from '@mui/material/Stack';
 import { styled } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { EntityColorSelectFeature } from '@/features/entity-color-select';
 
@@ -21,6 +21,7 @@ export type EntityCreateDialogProps = {
     nameLabel?: string;
     colorLabel?: string;
     submitLabel?: string;
+    initialValues?: { name: string; color: string };
     onClose: () => void;
     onSubmit: (input: { name: string; color: string }) => Promise<void> | void;
 };
@@ -32,17 +33,24 @@ export function EntityCreateDialog({
     nameLabel = entityCreateText.nameLabel,
     colorLabel,
     submitLabel = entityCreateText.create,
+    initialValues,
     onClose,
     onSubmit,
 }: EntityCreateDialogProps) {
-    const [name, setName] = useState('');
-    const [color, setColor] = useState<string>();
+    const [name, setName] = useState(initialValues?.name ?? '');
+    const [color, setColor] = useState<string | undefined>(initialValues?.color);
+
+    useEffect(() => {
+        if (!open) return;
+
+        setName(initialValues?.name ?? '');
+        setColor(initialValues?.color);
+    }, [initialValues, open]);
 
     async function submit() {
         if (!color) return;
 
         await onSubmit({ name: name.trim(), color });
-        setName('');
         onClose();
     }
 

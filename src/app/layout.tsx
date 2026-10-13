@@ -1,8 +1,8 @@
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
 
-import { Providers } from './providers';
-
 import type { Metadata } from 'next';
+
+import { Providers } from './providers';
 
 export const metadata: Metadata = {
     title: 'Interviewly',

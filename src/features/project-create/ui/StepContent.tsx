@@ -9,7 +9,6 @@ import { TeamEditor } from './TeamEditor';
 import type { ProjectInput, ProjectStep, ProjectTechnology } from '@/entities/project';
 import type { ProjectTechnologyEditorRenderer } from '@/shared/types/project-technology-editor';
 
-
 export function StepContent({
     step,
     form,

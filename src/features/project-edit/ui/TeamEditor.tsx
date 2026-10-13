@@ -8,7 +8,6 @@ import { FieldGroup } from './FieldGroup';
 
 import type { ProjectTeamItem } from '@/entities/project';
 
-
 export function TeamEditor({
     value,
     onChange,

@@ -1,7 +1,7 @@
 'use client';
 
-import { StoryEditor } from '@/features/story-edit';
 import { AppShell } from '@/widgets/app-shell';
+import { StoryEditor } from '@/features/story-edit';
 
 export default function StoryDetailsPage(props: React.ComponentProps<typeof StoryEditor>) {
     return (

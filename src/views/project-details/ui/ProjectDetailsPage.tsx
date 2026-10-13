@@ -1,8 +1,8 @@
 'use client';
 
-import { ProjectTechnologyEditor } from '@/features/project-technology-edit';
 import { ProjectDetailsContent } from '@/widgets/project-details';
 import { ProjectQuestionsWidget } from '@/widgets/project-questions';
+import { ProjectTechnologyEditor } from '@/features/project-technology-edit';
 
 import type { Project } from '@/entities/project';
 

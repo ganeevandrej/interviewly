@@ -2,7 +2,7 @@ import FolderOutlinedIcon from '@mui/icons-material/FolderOutlined';
 import MenuBookOutlinedIcon from '@mui/icons-material/MenuBookOutlined';
 import SubjectOutlinedIcon from '@mui/icons-material/SubjectOutlined';
 
-import type { SectionCardProps } from '../ui/SectionCard';
+import type { SectionCardProps } from '@/views/dashboard/ui/SectionCard';
 
 export const sections = [
     {

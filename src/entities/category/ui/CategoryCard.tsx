@@ -6,12 +6,12 @@ import Stack from '@mui/material/Stack';
 import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import Link from 'next/link';
+import type { ReactNode } from 'react';
 
 import { categoryText } from '../constants/categoryText';
 import { formatCount } from '../lib/formatCount';
 
 import type { CategorySummary } from '../model/types';
-import type { ReactNode } from 'react';
 
 type CategoryCardProps = {
     category: CategorySummary;

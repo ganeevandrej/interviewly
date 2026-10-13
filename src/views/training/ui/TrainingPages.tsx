@@ -16,6 +16,7 @@ import Typography from '@mui/material/Typography';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
+import { AppShell } from '@/widgets/app-shell';
 
 import {
     useCreateTrainingMutation,
@@ -24,7 +25,6 @@ import {
     useRestartTrainingMutation,
     useUpdateTrainingMutation,
 } from '@/entities/training';
-import { AppShell } from '@/widgets/app-shell';
 
 import type { CategoryLibrary } from '@/entities/category';
 import type { Training, TrainingInput } from '@/entities/training';

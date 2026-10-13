@@ -3,10 +3,9 @@
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import type { Project } from '@/entities/project';
 
 import { GlassPanel } from '@/shared/ui/glass-panel';
-
-import type { Project } from '@/entities/project';
 
 export function ProjectReadView({
     project,

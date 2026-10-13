@@ -1,6 +1,5 @@
-import { baseApi } from '@/shared/api/baseApi';
-
 import type { Training, TrainingInput } from '../model/types';
+import { baseApi } from '@/shared/api/baseApi';
 
 export const trainingApi = baseApi.injectEndpoints({
     endpoints: (build) => ({

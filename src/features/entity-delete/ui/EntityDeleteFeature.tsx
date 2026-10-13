@@ -4,7 +4,6 @@ import { useState } from 'react';
 
 import { entityDeleteText } from '../constants/entityDeleteText';
 
-
 import { EntityDeleteDialog } from './EntityDeleteDialog';
 
 import type { DeletionImpact, EntitySummary } from '../model/types';

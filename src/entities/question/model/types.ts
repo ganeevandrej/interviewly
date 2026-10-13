@@ -12,3 +12,7 @@ export type QuestionInput = {
     question: string;
     answer: string;
 };
+
+export type QuestionDraft = QuestionInput & {
+    id?: string;
+};

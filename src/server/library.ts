@@ -28,6 +28,7 @@ function serializeCategory(category: CategoryPayload) {
             id: topic.id,
             categoryId: topic.categoryId,
             name: topic.name,
+            accentColor: topic.accentColor,
         })),
         questions: questions.map(({ question }) => question),
         categoryQuestions: questions.map(({ categoryId, questionId, position }) => ({
@@ -102,7 +103,53 @@ export async function getCategoryDeletionImpact(categoryId: string) {
     return { trainingCount: trainings.length, trainings };
 }
 
-export async function readCategory(categoryId: string) {
+export async function getTopicDeletionImpact(categoryId: string, topicId: string) {
+    const id = text(categoryId, 'Категория');
+    const topic = await getDb().topic.findFirst({
+        where: { id: text(topicId, 'Тема'), categoryId: id },
+        select: {
+            questions: { select: { questionId: true } },
+            trainings: { select: { trainingId: true } },
+        },
+    });
+
+    if (!topic) throw new InputError('Тема не найдена в этой категории.', 404);
+
+    const questionTrainings = await getDb().trainingQuestion.findMany({
+        where: {
+            questionId: {
+                in: topic.questions.map(({ questionId }) => questionId),
+            },
+        },
+        select: { trainingId: true },
+    });
+
+    const trainingIds = new Set([
+        ...topic.trainings.map(({ trainingId }) => trainingId),
+        ...questionTrainings.map(({ trainingId }) => trainingId),
+    ]);
+
+    const trainings = await getDb().training.findMany({
+        where: { id: { in: [...trainingIds] } },
+        orderBy: [{ name: 'asc' }, { id: 'asc' }],
+        select: { id: true, name: true, status: true },
+    });
+
+    return { trainingCount: trainings.length, trainings };
+}
+
+export async function readCategoryDetails(categoryId: string) {
+    const category = await getDb().category.findUnique({
+        where: { id: text(categoryId, 'Категория') },
+        select: { id: true, name: true, accentColor: true },
+    });
+
+    if (!category) throw new InputError('Категория не найдена.', 404);
+
+    return category;
+}
+
+export async function readCategoryContent(categoryId: string) {
     const category = await getDb().category.findUnique({
         where: { id: text(categoryId, 'Категория') },
         include: categoryInclude,
@@ -110,7 +157,23 @@ export async function readCategory(categoryId: string) {
 
     if (!category) throw new InputError('Категория не найдена.', 404);
 
-    return serializeCategory(category);
+    const content = serializeCategory(category);
+
+    return {
+        topics: content.topics,
+        questions: content.questions,
+        categoryQuestions: content.categoryQuestions,
+        topicQuestions: content.topicQuestions,
+    };
+}
+
+export async function readCategory(categoryId: string) {
+    const [category, content] = await Promise.all([
+        readCategoryDetails(categoryId),
+        readCategoryContent(categoryId),
+    ]);
+
+    return { category, ...content };
 }
 
 export function createCategory(input: unknown) {

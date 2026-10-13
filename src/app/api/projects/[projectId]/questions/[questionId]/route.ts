@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic';
 
 export async function DELETE(
     _request: Request,
-    props: { params: Promise<{ projectId: string; questionId: string }> }
+    props: { params: Promise<{ projectId: string; questionId: string }> },
 ) {
     const params = await props.params;
     return respond(() => removeProjectQuestion(params.projectId, params.questionId), 204);

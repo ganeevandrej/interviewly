@@ -7,17 +7,17 @@ import Typography from '@mui/material/Typography';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import { CategoryCard } from '@/entities/category';
+import { knowledgeBaseText } from '@/views/knowledge-base/constants/knowledgeBaseText';
+
+import { CategoryListControls } from '@/views/knowledge-base/ui/CategoryListControls';
+import { EmptyState } from '@/views/knowledge-base/ui/EmptyState';
+import { KnowledgeBaseHeader } from '@/views/knowledge-base/ui/KnowledgeBaseHeader';
+import { LoadError } from '@/views/knowledge-base/ui/LoadError';
+import { AppShell } from '@/widgets/app-shell';
 import { CategoryCreateAdapter } from '@/features/category-create';
 import { CategoryDeleteAdapter } from '@/features/category-delete';
-import { AppShell } from '@/widgets/app-shell';
 
-import { knowledgeBaseText } from '../constants/knowledgeBaseText';
-
-import { CategoryListControls } from './CategoryListControls';
-import { EmptyState } from './EmptyState';
-import { KnowledgeBaseHeader } from './KnowledgeBaseHeader';
-import { LoadError } from './LoadError';
+import { CategoryCard } from '@/entities/category';
 
 import type { Category, CategorySummary } from '@/entities/category';
 

@@ -3,12 +3,12 @@
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { AppShell } from '@/widgets/app-shell';
+import { HomeHero } from '@/views/dashboard/ui/HomeHero';
+import { InterviewFeature } from '@/views/dashboard/ui/InterviewFeature';
+import { SectionNavigation } from '@/views/dashboard/ui/SectionNavigation';
+import { TrainingSection } from '@/views/dashboard/ui/TrainingSection';
 
-import { HomeHero } from './HomeHero';
-import { InterviewFeature } from './InterviewFeature';
-import { SectionNavigation } from './SectionNavigation';
-import { TrainingSection } from './TrainingSection';
+import { AppShell } from '@/widgets/app-shell';
 
 import type { Training } from '@/entities/training';
 

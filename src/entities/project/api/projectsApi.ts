@@ -1,6 +1,5 @@
-import { baseApi } from '@/shared/api/baseApi';
-
 import type { Project, ProjectInput } from '@/entities/project/model/types';
+import { baseApi } from '@/shared/api/baseApi';
 
 export const projectsApi = baseApi.injectEndpoints({
     endpoints: (build) => ({

@@ -5,13 +5,12 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import { useState } from 'react';
 
-import { useUpdateProjectMutation } from '@/entities/project';
-
-
 import { toProjectInput } from '../model/projectInput';
 
 import { EditableList } from './EditableList';
 import { TeamEditor } from './TeamEditor';
+
+import { useUpdateProjectMutation } from '@/entities/project';
 
 import type { Project, ProjectInput } from '@/entities/project';
 import type { ProjectTechnologyEditorRenderer } from '@/shared/types/project-technology-editor';

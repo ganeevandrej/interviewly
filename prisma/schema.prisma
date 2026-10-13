@@ -17,11 +17,12 @@ model Category {
 }
 
 model Topic {
-  id        String        @id
-  categoryId String
-  name      String
-  category  Category      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  questions TopicQuestion[]
+  id          String        @id
+  categoryId  String
+  name        String
+  accentColor String
+  category    Category      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  questions   TopicQuestion[]
   tags      TopicTag[]
   trainings TrainingTopic[]
 

@@ -1,7 +1,7 @@
-import { useCreateCategoryMutation } from '@/entities/category';
 import { EntityCreateDialog } from '@/features/entity-create';
 
 import { categoryCreateText } from '../constants/categoryCreateText';
+import { useCreateCategoryMutation } from '@/entities/category';
 
 import type { Category } from '@/entities/category';
 

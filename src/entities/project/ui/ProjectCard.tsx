@@ -8,9 +8,9 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Link from 'next/link';
 
-import { GlassPanel } from '@/shared/ui/glass-panel';
-
 import type { ProjectListItem } from '../model/types';
+
+import { GlassPanel } from '@/shared/ui/glass-panel';
 
 export function ProjectCard({ project }: { project: ProjectListItem }) {
     return (

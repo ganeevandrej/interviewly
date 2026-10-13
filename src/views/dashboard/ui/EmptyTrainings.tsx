@@ -6,7 +6,7 @@ import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import Link from 'next/link';
 
-import { homePageText } from '../constants/homePageText';
+import { homePageText } from '@/views/dashboard/constants/homePageText';
 
 export function EmptyTrainings() {
     return (

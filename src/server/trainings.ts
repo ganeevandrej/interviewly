@@ -25,7 +25,11 @@ function serializeTraining(training: TrainingPayload) {
         ...data,
         categories: categories.map(({ category }) => category),
         topics: topics.map(({ topic }) => topic),
-        questions: questions.map(({ question, position, status }) => ({ ...question, position, status })),
+        questions: questions.map(({ question, position, status }) => ({
+            ...question,
+            position,
+            status,
+        })),
     };
 }
 
@@ -134,7 +138,10 @@ export async function createTraining(input: unknown) {
 
         await saveTrainingQuestions(tx, training.id, questionIds, data.order);
 
-        return tx.training.findUniqueOrThrow({ where: { id: training.id }, include: trainingInclude });
+        return tx.training.findUniqueOrThrow({
+            where: { id: training.id },
+            include: trainingInclude,
+        });
     });
 
     return serializeTraining(training);
@@ -256,7 +263,8 @@ export async function updateTrainingQuestion(
             where: { trainingId: training, status: 'IN_PROGRESS' },
         });
 
-        if (!remaining) await tx.training.update({ where: { id: training }, data: { status: 'COMPLETED' } });
+        if (!remaining)
+            await tx.training.update({ where: { id: training }, data: { status: 'COMPLETED' } });
     });
 
     return readTraining(training);
@@ -269,5 +277,9 @@ export async function prepareTrainingFocus(trainingId: string, questionId: strin
     if (!training.questions.some(({ id }) => id === question))
         throw new InputError('Вопрос не найден в этой тренировке.', 404);
 
-    return { questions: training.questions, questionId: question, questionLimit: training.questionLimit };
+    return {
+        questions: training.questions,
+        questionId: question,
+        questionLimit: training.questionLimit,
+    };
 }

@@ -26,8 +26,25 @@ export type CategoryQuestion = {
 
 export type CategoryLibrary = {
     category: Category;
-    topics: { id: string; categoryId: string; name: string }[];
-    questions: { id: string; question: string; answer: string }[];
-    categoryQuestions: { categoryId: string; questionId: string; position: number }[];
-    topicQuestions: { topicId: string; questionId: string; position: number }[];
+    topics: {
+        id: string;
+        categoryId: string;
+        name: string;
+        accentColor: string;
+    }[];
+    questions: {
+        id: string;
+        question: string;
+        answer: string;
+    }[];
+    categoryQuestions: {
+        categoryId: string;
+        questionId: string;
+        position: number;
+    }[];
+    topicQuestions: {
+        topicId: string;
+        questionId: string;
+        position: number;
+    }[];
 };

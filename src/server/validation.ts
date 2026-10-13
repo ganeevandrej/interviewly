@@ -30,8 +30,13 @@ export function categoryInput(value: unknown) {
     return { name, accentColor };
 }
 export function topicInput(value: unknown) {
-    const data = record(value, ['name']);
-    return { name: text(data.name, 'Название') };
+    const data = record(value, ['name', 'accentColor']);
+    const name = text(data.name, 'Название');
+    const accentColor = text(data.accentColor, 'Цвет');
+    if (!/^#[0-9a-f]{6}$/i.test(accentColor))
+        throw new InputError('Цвет должен иметь формат #RRGGBB.');
+
+    return { name, accentColor };
 }
 export function questionInput(value: unknown) {
     const data = record(value, ['topicId', 'question', 'answer']);

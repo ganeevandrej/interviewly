@@ -1,6 +1,5 @@
-import { baseApi } from '@/shared/api/baseApi';
-
 import type { Category, CategoryDeletionImpact } from '../model/types';
+import { baseApi } from '@/shared/api/baseApi';
 
 export const categoryApi = baseApi.injectEndpoints({
     endpoints: (build) => ({
