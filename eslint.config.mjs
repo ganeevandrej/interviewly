@@ -38,6 +38,15 @@ export default defineConfig([
             'src/widgets/**/*.{js,jsx,ts,tsx}',
         ],
         ...fsdPlugin.configs.recommended,
+        rules: {
+            'fsd/forbidden-imports': 'warn',
+            'fsd/no-cross-slice-dependency': 'warn',
+            'fsd/no-global-store-imports': 'warn',
+            'fsd/no-public-api-sidestep': 'warn',
+            'fsd/no-relative-imports': 'warn',
+            'fsd/no-ui-in-business-logic': 'warn',
+            'fsd/ordered-imports': 'warn',
+        },
     },
 
     {
