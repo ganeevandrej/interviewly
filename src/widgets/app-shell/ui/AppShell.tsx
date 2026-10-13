@@ -11,13 +11,13 @@ import { styled } from '@mui/material/styles';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 
+import type { ReactNode } from 'react';
+
 import { appShellText } from '../constants/appShell';
 
 import { AppBrand } from './AppBrand';
 import { AppNavigation } from './AppNavigation';
 import { AppSidebarFooter } from './AppSidebarFooter';
-
-import type { ReactNode } from 'react';
 
 type AppShellProps = { children: ReactNode };
 

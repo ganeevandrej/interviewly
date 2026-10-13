@@ -3,10 +3,10 @@ import Stack from '@mui/material/Stack';
 import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
-import { homePageText } from '../constants/homePageText';
-import { sections } from '../constants/sections';
+import { homePageText } from '@/views/dashboard/constants/homePageText';
+import { sections } from '@/views/dashboard/constants/sections';
 
-import { SectionCard } from './SectionCard';
+import { SectionCard } from '@/views/dashboard/ui/SectionCard';
 
 export function SectionNavigation() {
     return (

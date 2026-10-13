@@ -4,9 +4,9 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
-import { formatCount } from '@/entities/category';
+import { knowledgeBaseText } from '@/views/knowledge-base/constants/knowledgeBaseText';
 
-import { knowledgeBaseText } from '../constants/knowledgeBaseText';
+import { formatCount } from '@/entities/category';
 
 type Props = { search: string; count: number; onSearchChange: (value: string) => void };
 

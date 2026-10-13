@@ -5,16 +5,16 @@ All mutable requests require Content-Type: application/json. Responses are not c
 
 ## Categories
 
-| Method           | Path                                              | Body                                       |
-| ---------------- | ------------------------------------------------- | ------------------------------------------ |
-| GET, POST        | /api/categories                                   | name and accentColor for POST              |
-| GET, PUT, DELETE | /api/categories/:categoryId                       | name and accentColor for PUT               |
-| GET              | /api/categories/:categoryId/deletion-impact       | —                                          |
-| POST             | /api/categories/:categoryId/topics                | name and accentColor                       |
-| GET              | /api/categories/:categoryId/topics/:topicId/deletion-impact | —                                  |
-| PUT, DELETE      | /api/categories/:categoryId/topics/:topicId       | name and accentColor for PUT               |
-| POST             | /api/categories/:categoryId/questions             | question, answer, optional topicId         |
-| PUT, DELETE      | /api/categories/:categoryId/questions/:questionId | question, answer, optional topicId for PUT |
+| Method           | Path                                                        | Body                                       |
+| ---------------- | ----------------------------------------------------------- | ------------------------------------------ |
+| GET, POST        | /api/categories                                             | name and accentColor for POST              |
+| GET, PUT, DELETE | /api/categories/:categoryId                                 | name and accentColor for PUT               |
+| GET              | /api/categories/:categoryId/deletion-impact                 | —                                          |
+| POST             | /api/categories/:categoryId/topics                          | name and accentColor                       |
+| GET              | /api/categories/:categoryId/topics/:topicId/deletion-impact | —                                          |
+| PUT, DELETE      | /api/categories/:categoryId/topics/:topicId                 | name and accentColor for PUT               |
+| POST             | /api/categories/:categoryId/questions                       | question, answer, optional topicId         |
+| PUT, DELETE      | /api/categories/:categoryId/questions/:questionId           | question, answer, optional topicId for PUT |
 
 Category list items include the numbers of topics and questions. The deletion-impact endpoint
 returns the number of trainings that reference the category, its topics, or its questions, together

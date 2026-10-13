@@ -7,10 +7,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 
-import {
-    useCreateQuestionMutation,
-    useUpdateQuestionMutation,
-} from '@/entities/question';
+import { useCreateQuestionMutation, useUpdateQuestionMutation } from '@/entities/question';
 
 import type { Question, QuestionDraft } from '@/entities/question';
 import type { Topic } from '@/entities/topic';

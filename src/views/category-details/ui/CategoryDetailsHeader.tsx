@@ -18,9 +18,7 @@ export function CategoryDetailsHeader({ name, accentColor, onEdit }: Props) {
                     <AccentBar sx={{ backgroundColor: accentColor }} />
                     <Typography variant="h3">{name}</Typography>
                 </Stack>
-                <Typography color="text.secondary">
-                    {categoryDetailsText.description}
-                </Typography>
+                <Typography color="text.secondary">{categoryDetailsText.description}</Typography>
             </Box>
             <>
                 <Button

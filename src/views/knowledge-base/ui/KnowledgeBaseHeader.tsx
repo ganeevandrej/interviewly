@@ -5,7 +5,7 @@ import Stack from '@mui/material/Stack';
 import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
-import { knowledgeBaseText } from '../constants/knowledgeBaseText';
+import { knowledgeBaseText } from '@/views/knowledge-base/constants/knowledgeBaseText';
 
 type Props = { hidden: boolean; onCreate: () => void };
 

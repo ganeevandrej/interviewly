@@ -5,9 +5,9 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Link from 'next/link';
+import { AppShell } from '@/widgets/app-shell';
 
 import { ProjectCard } from '@/entities/project';
-import { AppShell } from '@/widgets/app-shell';
 
 import type { ProjectListItem } from '@/entities/project';
 

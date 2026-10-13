@@ -10,6 +10,6 @@ export type TopicDeletionImpact = {
     trainings: {
         id: string;
         name: string;
-        status: 'IN_PROGRESS' | 'COMPLETED'
+        status: 'IN_PROGRESS' | 'COMPLETED';
     }[];
 };

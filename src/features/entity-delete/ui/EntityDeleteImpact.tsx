@@ -69,4 +69,3 @@ const RetryButton = styled(Button)(({ theme }) => ({
     fontSize: 13,
     fontWeight: 600,
 }));
-

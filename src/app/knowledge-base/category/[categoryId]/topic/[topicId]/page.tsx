@@ -11,10 +11,7 @@ export default async function TopicRoute(props: {
 
     try {
         return (
-            <TopicDetailsPage
-                initialLibrary={await readCategory(categoryId)}
-                topicId={topicId}
-            />
+            <TopicDetailsPage initialLibrary={await readCategory(categoryId)} topicId={topicId} />
         );
     } catch (error) {
         if (error instanceof InputError && error.status === 404) notFound();

@@ -40,11 +40,11 @@ const SummaryDot = styled(Box, { shouldForwardProp: (prop) => prop !== 'color' }
 const SummaryTitle = styled(Typography)({
     fontSize: 15,
     fontWeight: 600,
-    lineHeight: '22px'
+    lineHeight: '22px',
 });
 
 const SummaryMeta = styled(Typography)({
     color: '#B0BEC7',
     fontSize: 13,
-    lineHeight: '19px'
+    lineHeight: '19px',
 });

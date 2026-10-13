@@ -30,21 +30,21 @@ export type CategoryLibrary = {
         id: string;
         categoryId: string;
         name: string;
-        accentColor: string
+        accentColor: string;
     }[];
     questions: {
         id: string;
         question: string;
-        answer: string
+        answer: string;
     }[];
     categoryQuestions: {
         categoryId: string;
         questionId: string;
-        position: number
+        position: number;
     }[];
     topicQuestions: {
         topicId: string;
         questionId: string;
-        position: number
+        position: number;
     }[];
 };

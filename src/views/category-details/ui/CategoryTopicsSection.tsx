@@ -9,10 +9,10 @@ import Stack from '@mui/material/Stack';
 import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import Link from 'next/link';
-
-import { ThemeDeleteAdapter } from '@/features/theme-delete';
 import { categoryDetailsText } from '@/views/category-details/constants/categoryDetailsText';
 import { EmptyState } from '@/views/category-details/ui/EmptyState';
+
+import { ThemeDeleteAdapter } from '@/features/theme-delete';
 
 import type { CategoryLibrary } from '@/entities/category';
 

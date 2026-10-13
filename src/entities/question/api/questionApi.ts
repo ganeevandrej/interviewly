@@ -1,6 +1,5 @@
-import { baseApi } from '@/shared/api/baseApi';
-
 import type { Question, QuestionInput } from '@/entities/question/model/types';
+import { baseApi } from '@/shared/api/baseApi';
 
 export const questionApi = baseApi.injectEndpoints({
     endpoints: (build) => ({

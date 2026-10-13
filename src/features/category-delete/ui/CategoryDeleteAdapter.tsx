@@ -1,8 +1,8 @@
+import { EntityDeleteFeature } from '@/features/entity-delete';
 import {
     useDeleteCategoryMutation,
     useLazyGetCategoryDeletionImpactQuery,
 } from '@/entities/category';
-import { EntityDeleteFeature } from '@/features/entity-delete';
 
 import type { CategorySummary } from '@/entities/category';
 

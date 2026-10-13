@@ -1,5 +1,5 @@
-import { useDeleteQuestionMutation } from '@/entities/question';
 import { EntityDeleteFeature } from '@/features/entity-delete';
+import { useDeleteQuestionMutation } from '@/entities/question';
 
 import type { Question } from '@/entities/question';
 

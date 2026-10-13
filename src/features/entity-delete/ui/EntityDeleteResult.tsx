@@ -50,7 +50,7 @@ const NoDependencies = styled(Stack)(({ theme }) => ({
 }));
 
 const LinkedSection = styled(Stack)(({ theme }) => ({
-    gap: theme.spacing(1)
+    gap: theme.spacing(1),
 }));
 
 const LinkedHeader = styled(Stack)(({ theme }) => ({
@@ -63,7 +63,7 @@ const LinkedHeader = styled(Stack)(({ theme }) => ({
 const LinkedTitle = styled(Typography)({
     fontSize: 14,
     fontWeight: 600,
-    lineHeight: '20px'
+    lineHeight: '20px',
 });
 
 const LinkedCount = styled(Typography)({
@@ -74,7 +74,7 @@ const LinkedCount = styled(Typography)({
 });
 
 const LinkedList = styled(Stack)(({ theme }) => ({
-    gap: theme.spacing(1)
+    gap: theme.spacing(1),
 }));
 
 const LinkedRow = styled(Stack)(({ theme }) => ({

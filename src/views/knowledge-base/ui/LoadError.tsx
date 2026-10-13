@@ -3,7 +3,7 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { knowledgeBaseText } from '../constants/knowledgeBaseText';
+import { knowledgeBaseText } from '@/views/knowledge-base/constants/knowledgeBaseText';
 
 type LoadErrorProps = {
     onRetry: () => void;

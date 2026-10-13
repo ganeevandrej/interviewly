@@ -12,13 +12,16 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Link from 'next/link';
 import { useState } from 'react';
+import {
+    questionFromLibrary,
+    updateLibraryQuestion,
+} from '@/views/category-details/model/categoryDetailsModel';
+import { topicDetailsText } from '@/views/topic-details/constants/topicDetailsText';
+import { AppShell } from '@/widgets/app-shell';
 
 import { QuestionDeleteAdapter } from '@/features/question-delete';
 import { QuestionUpsertDialog } from '@/features/question-upsert';
 import { ThemeEditAdapter } from '@/features/theme-edit';
-import { questionFromLibrary, updateLibraryQuestion } from '@/views/category-details/model/categoryDetailsModel';
-import { topicDetailsText } from '@/views/topic-details/constants/topicDetailsText';
-import { AppShell } from '@/widgets/app-shell';
 
 import type { CategoryLibrary } from '@/entities/category';
 import type { QuestionDraft } from '@/entities/question';
@@ -70,9 +73,14 @@ export default function TopicDetailsPage({
                 <Stack direction="row" justifyContent="space-between" alignItems="start" gap={2}>
                     <Box>
                         <Typography variant="h3">{topic.name}</Typography>
-                        <Typography color="text.secondary">{topicDetailsText.description}</Typography>
+                        <Typography color="text.secondary">
+                            {topicDetailsText.description}
+                        </Typography>
                     </Box>
-                    <IconButton onClick={() => setEditing(true)} aria-label={topicDetailsText.editTopic}>
+                    <IconButton
+                        onClick={() => setEditing(true)}
+                        aria-label={topicDetailsText.editTopic}
+                    >
                         <EditRoundedIcon />
                     </IconButton>
                 </Stack>

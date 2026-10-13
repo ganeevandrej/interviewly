@@ -1,5 +1,5 @@
-import { useDeleteTopicMutation, useLazyGetTopicDeletionImpactQuery } from '@/entities/topic';
 import { EntityDeleteFeature } from '@/features/entity-delete';
+import { useDeleteTopicMutation, useLazyGetTopicDeletionImpactQuery } from '@/entities/topic';
 
 import type { Topic } from '@/entities/topic';
 

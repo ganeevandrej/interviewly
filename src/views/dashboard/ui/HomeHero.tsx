@@ -6,7 +6,7 @@ import { styled } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
-import { homePageText } from '../constants/homePageText';
+import { homePageText } from '@/views/dashboard/constants/homePageText';
 
 export function HomeHero() {
     return (

@@ -5,11 +5,6 @@ import Typography from '@mui/material/Typography';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-
-import { CategoryEditAdapter } from '@/features/category-edit';
-import { QuestionUpsertDialog } from '@/features/question-upsert';
-import { ThemeCreateAdapter } from '@/features/theme-create';
-import { ThemeEditAdapter } from '@/features/theme-edit';
 import { categoryDetailsText } from '@/views/category-details/constants/categoryDetailsText';
 import {
     questionFromLibrary,
@@ -20,6 +15,11 @@ import { CategoryDetailsHeader } from '@/views/category-details/ui/CategoryDetai
 import { CategoryQuestionsSection } from '@/views/category-details/ui/CategoryQuestionsSection';
 import { CategoryTopicsSection } from '@/views/category-details/ui/CategoryTopicsSection';
 import { AppShell } from '@/widgets/app-shell';
+
+import { CategoryEditAdapter } from '@/features/category-edit';
+import { QuestionUpsertDialog } from '@/features/question-upsert';
+import { ThemeCreateAdapter } from '@/features/theme-create';
+import { ThemeEditAdapter } from '@/features/theme-edit';
 
 import type { CategoryLibrary } from '@/entities/category';
 import type { QuestionDraft } from '@/entities/question';

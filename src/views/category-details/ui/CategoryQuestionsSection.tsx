@@ -7,10 +7,10 @@ import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Link from 'next/link';
-
-import { QuestionDeleteAdapter } from '@/features/question-delete';
 import { categoryDetailsText } from '@/views/category-details/constants/categoryDetailsText';
 import { EmptyState } from '@/views/category-details/ui/EmptyState';
+
+import { QuestionDeleteAdapter } from '@/features/question-delete';
 
 import type { CategoryQuestion } from '@/entities/category';
 

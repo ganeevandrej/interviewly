@@ -1,6 +1,5 @@
-import { baseApi } from '@/shared/api/baseApi';
-
 import type { Topic, TopicDeletionImpact } from '@/entities/topic/model/types';
+import { baseApi } from '@/shared/api/baseApi';
 
 export const topicApi = baseApi.injectEndpoints({
     endpoints: (build) => ({

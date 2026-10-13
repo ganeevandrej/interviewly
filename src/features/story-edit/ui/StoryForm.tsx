@@ -5,9 +5,9 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
-import { GlassPanel } from '@/shared/ui/glass-panel';
-
 import type { StoryInput } from '@/entities/story';
+
+import { GlassPanel } from '@/shared/ui/glass-panel';
 
 type StoryTextFieldName =
     'context' | 'problem' | 'responsibility' | 'solution' | 'difficulties' | 'learned';

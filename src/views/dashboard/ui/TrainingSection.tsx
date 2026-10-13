@@ -2,10 +2,10 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import { styled } from '@mui/material/styles';
 
-import { TrainingCard } from '@/entities/training';
+import { EmptyTrainings } from '@/views/dashboard/ui/EmptyTrainings';
+import { TrainingSectionHeader } from '@/views/dashboard/ui/TrainingSectionHeader';
 
-import { EmptyTrainings } from './EmptyTrainings';
-import { TrainingSectionHeader } from './TrainingSectionHeader';
+import { TrainingCard } from '@/entities/training';
 
 import type { Training } from '@/entities/training';
 
